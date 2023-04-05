@@ -8,6 +8,7 @@
 
 %\usepackage{isodate}
 \usepackage{graphicx}
+\usepackage{tikz}
 
 \doctitel{Simplex Integration}
 \docuntertitel{By Domain Subdivision}
@@ -91,5 +92,20 @@ efficiently and accurately
     + \phi_j \int_\Omega 2(\phi -1 )\pardiff[^2]{\phi}{\phi_i} \phi(u) \diff \Omega \vdiff \phi_i \\
 &\phantom{={}} +\phi_j \frac{G_c}{l} \int_\Omega \pardiff{\phi}{\phi_i} + \pardiff[^2]{\phi}{\phi_i} + l^2 \pardiff{\nabla \phi}{\phi_j} \cdot \pardiff{\nabla \phi}{\phi_i} + l^2 \nabla \phi \cdot \pardiff[^2]{\nabla \phi}{\phi_i^2} \diff \Omega \vdiff \phi_i
 \end{align}
+
+\section{Element Description}
+
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \draw[black,thick] (0,0) -- (-60:3cm) -- (-120:3cm) -- cycle;
+        \path (0,0) node[above] {$1$};
+        \path (-60:3cm) node[above] {$2$};
+        \path (-120:3cm) node[above] {$3$};
+        \path (-60:1.5cm) node[above] {$5$};
+        \path (-120:1.5cm) node[above] {$4$};
+        \path (-60:3cm) -- (-120:3cm) node[midway,above] {$6$};
+    \end{tikzpicture}
+\end{Figure}
 
 \end{document}
