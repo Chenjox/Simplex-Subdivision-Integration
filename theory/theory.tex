@@ -95,7 +95,7 @@ efficiently and accurately
 
 \section{Element Description}
 
-\begin{Figure}
+\begin{marginfigure}
     \centering
     \begin{tikzpicture}
         \draw[black,thick] (0,0) -- (-60:3cm) -- (-120:3cm) -- cycle;
@@ -106,6 +106,25 @@ efficiently and accurately
         \path (-120:1.5cm) node[above] {$4$};
         \path (-60:3cm) -- (-120:3cm) node[midway,above] {$6$};
     \end{tikzpicture}
-\end{Figure}
+\end{marginfigure}
+
+Shape Functions in barycentric coordinates \begin{align}
+    N_1(\xi_1,\xi_2,\xi_3) &= \xi_1 \\
+    N_2(\xi_1,\xi_2,\xi_3) &= \xi_2 \\
+    N_3(\xi_1,\xi_2,\xi_3) &= \xi_3 \\
+    N_4(\xi_1,\xi_2,\xi_3) &= 4 \xi_1\xi_3 \\
+    N_5(\xi_1,\xi_2,\xi_3) &= 4 \xi_1\xi_2 \\
+    N_6(\xi_1,\xi_2,\xi_3) &= 4 \xi_2\xi_3
+\end{align}
+
+Barycentric Interpolation Formula \begin{align}
+    P(\xi_1,\xi_2,\xi_3) &= p_1 \xi_1 + p_2 \xi_2 + p_3 \xi_3
+\end{align}
+
+$\xi-\eta$-Transformation \begin{align}
+    \xi &:= \xi_1 \\
+    \eta &:= \xi_2 \\
+    \xi_3 &:= 1 - \xi - \eta
+\end{align}
 
 \end{document}
