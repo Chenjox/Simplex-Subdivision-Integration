@@ -1,0 +1,8 @@
+[package]
+name = "simplex-subdivision-integration"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+num-dual = "0.6.0"
+plotters = "0.3.4"

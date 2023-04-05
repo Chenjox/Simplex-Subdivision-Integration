@@ -1,0 +1,95 @@
+% !TeX root: .\Beleg5.tex
+% arara: pdflatex
+% arara: pdflatex
+\documentclass{mitschrift}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+
+%\usepackage{isodate}
+\usepackage{graphicx}
+
+\doctitel{Simplex Integration}
+\docuntertitel{By Domain Subdivision}
+
+\begin{document}
+\makekopf
+
+\tableofcontents
+
+\pagebreak
+
+\part{Theory}
+
+\section{Problem}
+
+Total Energy in the System: \begin{equation}
+    \Pi = \int_\Omega g(\phi) \psi(\boldsymbol{u}) \diff \Omega + \frac{G_c}{2l} \int_\Omega \phi^2 + l^2 \nabla \phi \cdot \nabla \phi \diff \Omega \abbild \min
+\end{equation} 
+
+Degradation Function \begin{equation}
+    g(\phi) = \left(1 - \phi^2\right)^2 + k
+\end{equation} mit \begin{conditions}
+    k  & being a small but finite scalar such as 10 6 \\
+    G_c & critical energy release rate, material parameter \\
+    l  & \emph{width} of phase field \\
+\psi (u) & strain energy density function\\
+    u & displacement function \\
+    \phi & phase field parameter, ansatz function discussed below \\
+    \nabla \phi & gradient of phase field parameter \\
+\end{conditions}
+
+\begin{equation}
+    \vdiff_u \Pi = \int_\Omega g(\phi) \sigma(\boldsymbol{u}) \pardiff{\varepsilon}{\boldsymbol{u}} \vdiff \boldsymbol{u} = 0
+\end{equation}
+
+\begin{equation}
+    \vdiff_\phi \Pi = \int_\Omega 2(\phi - 1) \vdiff\phi \psi(\boldsymbol{u}) \diff \Omega + \frac{G_c}{l} \int_\Omega \phi \vdiff \phi + l^2 \nabla \phi \cdot \nabla \vdiff \phi \diff \Omega = 0
+\end{equation}
+
+\subsection{Ansatz functions}
+
+\begin{equation}
+    \boldsymbol{u} = \sum_i N_i \boldsymbol{u}_i + \sum_i N_i F \boldsymbol{a}_i 
+\end{equation} mit \begin{conditions}
+    N_i & are quadratic lagrange (standard) shape functions for tetrahedrons \\
+    \boldsymbol{U}_i = \boldsymbol{u}_i, \boldsymbol{a}_i & are nodal degrees of freedom for displacement function \\
+    F & is an enrichment function (sigmoid like, depends on $\phi$, later) \\
+\end{conditions}
+
+\begin{equation}
+    f_{\text{base}} = \sum_i N_i \phi_i
+\end{equation}
+
+\begin{equation}
+    \varsigmait = \frac{f_{\text{base}}}{\sqrt[4]{f_{\text{base}}^2 + k_{\text{res}}}}
+\end{equation} mit \begin{conditions}
+k_\text{reg} & small but finite parameter \\
+\end{conditions}
+
+\begin{align}
+    \phi &= \exp(-\varsigmait) \\
+    \phi &= \exp(-\frac{\varsigmait}{l})
+\end{align}
+
+we need to be able to integrate the residual vectors and the stiffness matrices
+efficiently and accurately
+\begin{equation}
+    \vdiff_{\boldsymbol{U}_i} \Pi = \int_\Omega g(\phi)\boldsymbol{\sigma}(\boldsymbol{u})\pardiff{\varepsilon}{\boldsymbol{u}}\cdot \pardiff{\boldsymbol{u}}{\boldsymbol{U}} \diff \Omega \cdot \vdiff \boldsymbol{U}_i
+\end{equation}
+
+\begin{equation}
+    \vdiff_{\phi_i} \Pi = \int_\Omega 2(\phi - 1) \pardiff{\phi}{\phi_i} \psi(\boldsymbol{u}) \diff \Omega \vdiff\phi_i + \frac{G_c}{l} \int_\Omega \phi \pardiff{\phi}{\phi_i} + l^2 \nabla \phi \cdot \pardiff{\nabla \phi}{\phi_i} \diff \Omega \vdiff \phi_i = 0
+\end{equation}
+
+\begin{equation}
+    \Delta_{U_i} \vdiff_{U_i} \Pi = U_i \cdot \int_\Omega g(\phi) \pardiff{\varepsilon}{U_i}\cdot \mathbb{C}\cdot \pardiff{\varepsilon}{U_i} \diff \Omega \cdot \vdiff U_i 
+\end{equation}
+
+\begin{align}
+    \Delta_{\phi_j} \vdiff_{\phi_i} \Pi &= \phi_j \int_\Omega 2\left(\pardiff{\phi}{\phi_i}\right)^2 \psi(u) \diff \Omega \vdiff \phi_i 
+    + \phi_j \int_\Omega 2(\phi -1 )\pardiff[^2]{\phi}{\phi_i} \phi(u) \diff \Omega \vdiff \phi_i \\
+&\phantom{={}} +\phi_j \frac{G_c}{l} \int_\Omega \pardiff{\phi}{\phi_i} + \pardiff[^2]{\phi}{\phi_i} + l^2 \pardiff{\nabla \phi}{\phi_j} \cdot \pardiff{\nabla \phi}{\phi_i} + l^2 \nabla \phi \cdot \pardiff[^2]{\nabla \phi}{\phi_i^2} \diff \Omega \vdiff \phi_i
+\end{align}
+
+\end{document}
