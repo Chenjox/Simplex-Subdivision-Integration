@@ -5,4 +5,6 @@ edition = "2021"
 
 [dependencies]
 num-dual = "0.6.0"
+indextree = "4.6.0"
+ndarray = "0.15.6"
 plotters = "0.3.4"
