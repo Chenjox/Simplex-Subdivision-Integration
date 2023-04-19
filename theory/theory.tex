@@ -15,6 +15,9 @@
 \doctitel{Simplex Integration}
 \docuntertitel{By Domain Subdivision}
 
+\tikzset{
+  engineering axonometry/.style={x={(222:0.5cm)}, y={(-7:1cm)}, z={(90:1cm)}}
+}
 \newcommand{\simplex}{\boldsymbol{\Delta}}
 
 \begin{document}
@@ -478,6 +481,110 @@ With the Jacobi Matrix of any particular Domain being \begin{equation}
     \end{bmatrix}
 \end{equation}
 
+\pagebreak
+
+\section{Simplex Integration in $n=3$}
+
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[engineering axonometry]
+            \begin{scope}[scale=2]
+                \coordinate (b1) at ({sqrt(8/9)},0,0);
+                \coordinate (b2) at ({-sqrt(2/9)},{sqrt(2/3)},0);
+                \coordinate (b3) at ({-sqrt(2/9)},{-sqrt(2/3)},0);
+                \coordinate (b4) at (0,0,4/3);
+            \end{scope}
+            \draw (b1) -- (b2);
+            \draw (b2) -- (b3);
+            \draw (b3) -- (b1);
+            \draw (b1) -- (b4);
+            \draw (b2) -- (b4);
+            \draw (b3) -- (b4);
+            \node[below] at (b1) {$B_1$};
+            \node[right] at (b2) {$B_2$};
+            \node[left]  at (b3) {$B_3$};
+            \node[above] at (b4) {$B_4$};
+            %% Centroid
+            \draw[fill] (barycentric cs:b1=0.25,b2=0.25,b3=0.25,b4=0.25) coordinate (bc) circle (2pt);% node[below right] {$B_C$};
+            %% Center of Planes
+            \draw[fill] (barycentric cs:b1=0.33,b2=0.33,b3=0.33,b4=0.00) coordinate (ba4) circle (2pt);% node[below right] {$B_1$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.33,b3=0.33,b4=0.33) coordinate (ba1) circle (2pt);% node[below right] {$B_2$};
+            \draw[fill] (barycentric cs:b1=0.33,b2=0.00,b3=0.33,b4=0.33) coordinate (ba2) circle (2pt);% node[below right] {$B_3$};
+            \draw[fill] (barycentric cs:b1=0.33,b2=0.33,b3=0.00,b4=0.33) coordinate (ba3) circle (2pt);% node[below right] {$B_4$};
+            %% Center of Edges
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.50,b3=0.00,b4=0.00) coordinate (be12) circle (2pt);% node[below right] {$B_1$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.50,b4=0.00) coordinate (be23) circle (2pt);% node[below right] {$B_2$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.00,b3=0.50,b4=0.50) coordinate (be34) circle (2pt);% node[below right] {$B_3$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.50,b4=0.00) coordinate (be13) circle (2pt);
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.00,b4=0.50) coordinate (be14) circle (2pt);% node[below right] {$B_3$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.00,b4=0.50) coordinate (be24) circle (2pt);
+            %% Domains
+            \draw[semithick,blue,line join=round] (b1) -- (be12) -- (ba3) -- (bc) -- (ba2) -- (be13) --cycle;
+            \draw[semithick,blue,line join=round] (be12) -- (ba4) -- (be13);
+            \draw[semithick,blue,line join=round] (ba3) -- (be14) -- (ba2);
+            \draw[semithick,blue,line join=round] (b1) -- (be14);
+            \draw[semithick,blue,line join=round] (ba4) -- (bc);
+            %% Domains
+            \draw[semithick,blue,line join=round] (b2) -- (be12) -- (ba3) -- (bc) -- (ba1) -- (be23) --cycle;
+            \draw[semithick,blue,line join=round] (be12) -- (ba4) -- (be13);
+            \draw[semithick,blue,line join=round] (b2) -- (be24) -- (ba3);
+            \draw[semithick,blue,line join=round] (be23) -- (ba4);
+            \draw[semithick,blue,line join=round] (ba4) -- (bc);
+            %% Domains
+            \draw[semithick,blue,line join=round] (ba2) -- (be34) -- (ba1) -- (be24) -- (b4) -- (be14) --cycle;
+            %%
+            \draw[semithick,blue,line join=round] (b4) -- (be34) -- (b3) -- (be13);
+            \draw[semithick,blue,line join=round] (b3) -- (be23);
+        \end{scope}
+        \begin{scope}[shift={(5.0,0.0)},engineering axonometry]
+            \begin{scope}[scale=2]
+                \coordinate (b1) at ({sqrt(8/9)},0,0);
+                \coordinate (b2) at ({-sqrt(2/9)},{sqrt(2/3)},0);
+                \coordinate (b3) at ({-sqrt(2/9)},{-sqrt(2/3)},0);
+                \coordinate (b4) at (0,0,4/3);
+            \end{scope}
+            \draw (b1) -- (b2);
+            \draw (b2) -- (b3);
+            \draw (b3) -- (b1);
+            \draw (b1) -- (b4);
+            \draw (b2) -- (b4);
+            \draw (b3) -- (b4);
+            \node[below] at (b1) {$B_1$};
+            \node[right] at (b2) {$B_2$};
+            \node[left]  at (b3) {$B_3$};
+            \node[above] at (b4) {$B_4$};
+            %% Centroid
+            %\draw[fill] (barycentric cs:b1=0.25,b2=0.25,b3=0.25,b4=0.25) coordinate (bc) circle (2pt);% node[below right] {$B_C$};
+            %% Center of Planes
+            %\draw[fill] (barycentric cs:b1=0.33,b2=0.33,b3=0.33,b4=0.00) coordinate (ba4) circle (2pt);% node[below right] {$B_1$};
+            %\draw[fill] (barycentric cs:b1=0.00,b2=0.33,b3=0.33,b4=0.33) coordinate (ba1) circle (2pt);% node[below right] {$B_2$};
+            %\draw[fill] (barycentric cs:b1=0.33,b2=0.00,b3=0.33,b4=0.33) coordinate (ba2) circle (2pt);% node[below right] {$B_3$};
+            %\draw[fill] (barycentric cs:b1=0.33,b2=0.33,b3=0.00,b4=0.33) coordinate (ba3) circle (2pt);% node[below right] {$B_4$};
+            %% Center of Edges
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.50,b3=0.00,b4=0.00) coordinate (be12) circle (2pt);% node[below right] {$B_1$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.50,b4=0.00) coordinate (be23) circle (2pt);% node[below right] {$B_2$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.00,b3=0.50,b4=0.50) coordinate (be34) circle (2pt);% node[below right] {$B_3$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.50,b4=0.00) coordinate (be13) circle (2pt);
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.00,b4=0.50) coordinate (be14) circle (2pt);% node[below right] {$B_3$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.00,b4=0.50) coordinate (be24) circle (2pt);
+            %% Domains
+            \newcommand{\drawsimplex}[4]{
+                \draw[semithick,blue,line join=round] (#1) -- (#2);
+                \draw[semithick,blue,line join=round] (#1) -- (#3);
+                \draw[semithick,blue,line join=round] (#1) -- (#4);
+                \draw[semithick,blue,line join=round] (#2) -- (#3);
+                \draw[semithick,blue,line join=round] (#2) -- (#4);
+                \draw[semithick,blue,line join=round] (#3) -- (#4);
+            }
+            \drawsimplex{b1}{be13}{be12}{be14}
+            \drawsimplex{b2}{be12}{be23}{be24}
+            \drawsimplex{b3}{be13}{be23}{be34}
+            \drawsimplex{b4}{be24}{be34}{be14}
+            \draw[semithick,blue,line join=round] (be13) -- (be24);
+        \end{scope}
+    \end{tikzpicture}
+\end{Figure}
 
 
 \end{document}
