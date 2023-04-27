@@ -35,7 +35,7 @@ pub trait Simplex2DFunction {
 /// Allows for easy substitution of simplex integration schemes.
 pub trait Simplex2DIntegrator {
     /// This function will be called on a single simplex, given in the third argument.
-    fn integrate(&self, func: &Box<dyn Simplex2DFunction>, simplex: &Simplex2D) -> f64;
+    fn integrate<T : Simplex2DFunction>(&self, func: &Box<T>, simplex: &Simplex2D) -> f64;
 }
 
 /// A Dummy Struct implementing a Constant function for the given Simplex.
@@ -43,6 +43,15 @@ pub struct Constant2DFunction;
 
 pub struct Constant2DFunctionHistory {
     history: RefCell<Vec<Array1<f64>>>,
+}
+
+impl Constant2DFunctionHistory {
+    pub fn new() -> Self {
+        return Constant2DFunctionHistory { history: RefCell::new(Vec::new()) }
+    }
+    pub fn get_history(self) -> Vec<Array1<f64>> {
+        return self.history.take();
+    }
 }
 
 impl Simplex2DFunction for Constant2DFunction {

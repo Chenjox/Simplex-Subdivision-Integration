@@ -368,6 +368,19 @@ The Weights and Points of the 1D Gauss-Legendre Integration are given as: \begin
             \draw[blue,semithick] (cb1) -- (cb4) -- (cbb) -- (cb5) -- cycle;
             \draw[blue,semithick] (cb2) -- (cb6) -- (cbb) -- (cb5) -- cycle;
             \draw[blue,semithick] (cb3) -- (cb4) -- (cbb) -- (cb6) -- cycle;
+            %
+            %\draw[fill,red] (barycentric cs:ca=0.419,cb=0.291,cc=0.291) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.556,cb=0.078,cc=0.367) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.556,cb=0.367,cc=0.078) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.804,cb=0.098,cc=0.098) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.291,cb=0.419,cc=0.291) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.367,cb=0.556,cc=0.078) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.078,cb=0.556,cc=0.367) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.098,cb=0.804,cc=0.098) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.291,cb=0.291,cc=0.419) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.078,cb=0.367,cc=0.556) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.367,cb=0.078,cc=0.556) coordinate (cb1) circle (2pt);
+            %\draw[fill,red] (barycentric cs:ca=0.098,cb=0.098,cc=0.804) coordinate (cb1) circle (2pt);
         \end{scope}
         \begin{scope}[shift={(10,0)}] 
             \node at (0,-2) {Integration Space ${[-1,1]}^2$};
@@ -480,6 +493,104 @@ With the Jacobi Matrix of any particular Domain being \begin{equation}
         \pardiff{G_4}{X} &\pardiff{G_4}{Y} \\
     \end{bmatrix}
 \end{equation}
+
+\subsubsection{Gauss Point Distribution}
+
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[shift={(0,0)}] 
+            \node at (3,0.5) {Gauss Points $n=2$};
+            \draw[black,thick] (3,4) coordinate (ca) 
+              -- +(-60:3cm) coordinate (cb) 
+              -- +(-120:3cm) coordinate (cc) -- cycle;
+            %\path (0,0) node[above] {$1$};
+            %\path (-60:3cm) node[above right] {$2$};
+            %\path (-120:3cm) node[above left] {$3$};
+            %\path (-60:1.5cm) node[above right] {$5$};
+            %\path (-120:1.5cm) node[above left] {$4$};
+            %\path (-60:3cm) -- (-120:3cm) node[midway,above] {$6$};
+            \draw[blue,semithick] (cb1) -- (cb4) -- (cbb) -- (cb5) -- cycle;
+            \draw[blue,semithick] (cb2) -- (cb6) -- (cbb) -- (cb5) -- cycle;
+            \draw[blue,semithick] (cb3) -- (cb4) -- (cbb) -- (cb6) -- cycle;
+            %
+            \draw[fill,red] (barycentric cs:ca=0.583,cb=0.208,cc=0.208) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.208,cb=0.583,cc=0.208) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.208,cb=0.208,cc=0.583) coordinate (cb1) circle (2pt);
+        \end{scope}
+        \begin{scope}[shift={(3.5,0)}] 
+            \node at (3,0.5) {Gauss Points $n=2$};
+            \draw[black,thick] (3,4) coordinate (ca) 
+              -- +(-60:3cm) coordinate (cb) 
+              -- +(-120:3cm) coordinate (cc) -- cycle;
+            %\path (0,0) node[above] {$1$};
+            %\path (-60:3cm) node[above right] {$2$};
+            %\path (-120:3cm) node[above left] {$3$};
+            %\path (-60:1.5cm) node[above right] {$5$};
+            %\path (-120:1.5cm) node[above left] {$4$};
+            %\path (-60:3cm) -- (-120:3cm) node[midway,above] {$6$};
+            \draw[blue,semithick] (cb1) -- (cb4) -- (cbb) -- (cb5) -- cycle;
+            \draw[blue,semithick] (cb2) -- (cb6) -- (cbb) -- (cb5) -- cycle;
+            \draw[blue,semithick] (cb3) -- (cb4) -- (cbb) -- (cb6) -- cycle;
+            %
+            \draw[fill,red] (barycentric cs:ca=0.419,cb=0.291,cc=0.291) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.556,cb=0.078,cc=0.367) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.556,cb=0.367,cc=0.078) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.804,cb=0.098,cc=0.098) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.291,cb=0.419,cc=0.291) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.367,cb=0.556,cc=0.078) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.078,cb=0.556,cc=0.367) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.098,cb=0.804,cc=0.098) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.291,cb=0.291,cc=0.419) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.078,cb=0.367,cc=0.556) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.367,cb=0.078,cc=0.556) coordinate (cb1) circle (2pt);
+            \draw[fill,red] (barycentric cs:ca=0.098,cb=0.098,cc=0.804) coordinate (cb1) circle (2pt);
+        \end{scope}
+        \begin{scope}[shift={(7,0)}] 
+            \node at (3,0.5) {Gauss Points $n=3$};
+            \draw[black,thick] (3,4) coordinate (ca) 
+              -- +(-60:3cm) coordinate (cb) 
+              -- +(-120:3cm) coordinate (cc) -- cycle;
+            %\path (0,0) node[above] {$1$};
+            %\path (-60:3cm) node[above right] {$2$};
+            %\path (-120:3cm) node[above left] {$3$};
+            %\path (-60:1.5cm) node[above right] {$5$};
+            %\path (-120:1.5cm) node[above left] {$4$};
+            %\path (-60:3cm) -- (-120:3cm) node[midway,above] {$6$};
+            \draw[blue,semithick] (cb1) -- (cb4) -- (cbb) -- (cb5) -- cycle;
+            \draw[blue,semithick] (cb2) -- (cb6) -- (cbb) -- (cb5) -- cycle;
+            \draw[blue,semithick] (cb3) -- (cb4) -- (cbb) -- (cb6) -- cycle;
+            %
+            \draw[fill,red] (barycentric cs:ca=0.375,cb=0.312,cc=0.312) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.454,cb=0.176,cc=0.370) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.533,cb=0.040,cc=0.427) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.454,cb=0.370,cc=0.176) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.583,cb=0.208,cc=0.208) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.712,cb=0.047,cc=0.241) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.533,cb=0.427,cc=0.040) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.712,cb=0.241,cc=0.047) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.892,cb=0.054,cc=0.054) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.312,cb=0.375,cc=0.312) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.370,cb=0.454,cc=0.176) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.427,cb=0.533,cc=0.040) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.176,cb=0.454,cc=0.370) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.208,cb=0.583,cc=0.208) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.241,cb=0.712,cc=0.047) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.040,cb=0.533,cc=0.427) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.047,cb=0.712,cc=0.241) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.054,cb=0.892,cc=0.054) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.312,cb=0.312,cc=0.375) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.176,cb=0.370,cc=0.454) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.040,cb=0.427,cc=0.533) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.370,cb=0.176,cc=0.454) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.208,cb=0.208,cc=0.583) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.047,cb=0.241,cc=0.712) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.427,cb=0.040,cc=0.533) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.241,cb=0.047,cc=0.712) coordinate (cb1) circle (2pt);
+\draw[fill,red] (barycentric cs:ca=0.054,cb=0.054,cc=0.892) coordinate (cb1) circle (2pt);
+        \end{scope}
+    \end{tikzpicture}
+\end{Figure}
 
 \pagebreak
 

@@ -170,10 +170,10 @@ impl Quadrilateral2DIntegration {
         ];
     }
 
-    fn integrate_quadrilateral(
+    fn integrate_quadrilateral<T : Simplex2DFunction>(
         &self,
         barycentric_domain: &Array2<f64>,
-        func: &Box<dyn Simplex2DFunction>,
+        func: &Box<T>,
         simplex: &Simplex2D,
     ) -> f64 {
         let mut sum = 0.0;
@@ -206,7 +206,7 @@ impl Quadrilateral2DIntegration {
 }
 
 impl Simplex2DIntegrator for Quadrilateral2DIntegration {
-    fn integrate(&self, func: &Box<dyn Simplex2DFunction>, simplex: &Simplex2D) -> f64 {
+    fn integrate<T : Simplex2DFunction>(&self, func: &Box<T>, simplex: &Simplex2D) -> f64 {
         let mut sum = 0.;
         let d1 = Quadrilateral2DIntegration::get_quadrilateral_D1();
         sum += self.integrate_quadrilateral(&d1, func, simplex);
@@ -222,12 +222,19 @@ impl Simplex2DIntegrator for Quadrilateral2DIntegration {
 fn main() {
     // ASSERTION: The Simplex is always rightly oriented.
     let sim = Simplex2D::new(&array![1., 1.], &array![1., 2.], &array![3., 1.]);
-    let inte = Quadrilateral2DIntegration { gauss_degree: 1 };
+    let inte = Quadrilateral2DIntegration { gauss_degree: 3 };
 
-    let func: Box<dyn Simplex2DFunction> = Box::new(Constant2DFunction {});
+    let func = Box::new(Constant2DFunctionHistory::new());
 
     let result = inte.integrate(&func, &sim);
     println!("{}", result);
+
+    let hist = func.get_history();
+
+    for el in hist {
+        //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
+        println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
+    }
     /*
     let tree = &mut Arena::new();
 
