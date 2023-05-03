@@ -592,6 +592,39 @@ With the Jacobi Matrix of any particular Domain being \begin{equation}
     \end{tikzpicture}
 \end{Figure}
 
+\subsection{Simplex Subdivision}
+
+The Coordinates of the Verteces of the 4 Child Simplizes $\simplex_i$ can be calculated with $S$ by \begin{align}
+    S_{\simplex,1} &= S \cdot B_{\simplex,1} = S \cdot \begin{bmatrix}
+        B_1 & B_5 & B_4 \\
+    \end{bmatrix} = S \cdot \begin{bmatrix}
+        1 & 0.5 & 0.5 \\
+        0 & 0.5 & 0 \\
+        0 & 0 & 0.5 \\
+    \end{bmatrix} \\
+    S_{\simplex,2} &= S \cdot B_{\simplex,2} = S \cdot \begin{bmatrix}
+        B_2 & B_6 & B_5 \\
+    \end{bmatrix} = S \cdot \begin{bmatrix}
+        0 & 0   & 0.5 \\
+        1 & 0.5 & 0.5 \\
+        0 & 0.5 & 0   \\
+    \end{bmatrix} \\
+    S_{\simplex,3} &= S \cdot B_{\simplex,3} = S \cdot \begin{bmatrix}
+        B_3 & B_4 & B_6 \\
+    \end{bmatrix} = S \cdot \begin{bmatrix}
+        0 & 0.5 & 0   \\
+        0 & 0   & 0.5 \\
+        1 & 0.5 & 0.5 \\
+    \end{bmatrix} \\
+    S_{\simplex,4} &= S \cdot B_{\simplex,4} = S \cdot \begin{bmatrix}
+        B_4 & B_5 & B_6 \\
+    \end{bmatrix} = S \cdot \begin{bmatrix}
+        0.5 & 0.5 & 0   \\
+        0   & 0.5 & 0.5 \\
+        0.5 & 0   & 0.5 \\
+    \end{bmatrix}
+\end{align}
+
 \pagebreak
 
 \section{Simplex Integration in $n=3$}
