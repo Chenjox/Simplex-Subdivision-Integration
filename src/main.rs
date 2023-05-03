@@ -10,7 +10,7 @@ type Point2D = Array1<f64>;
 type Point3D = Array1<f64>;
 
 type PointMatrix = Array2<f64>;
-/// Poor programmings solution for determinant
+/// Poor programmers solution for determinant
 fn det2x2(mat2x2: &Array2<f64>) -> f64 {
     mat2x2[[0, 0]] * mat2x2[[1, 1]] - mat2x2[[0, 1]] * mat2x2[[1, 0]]
 }
@@ -216,6 +216,22 @@ impl Simplex2DIntegrator for Quadrilateral2DIntegration {
         sum += self.integrate_quadrilateral(&d3, func, simplex);
 
         return sum;
+    }
+}
+
+struct Hierarchic2DIntegration<I : Simplex2DIntegrator> {
+    base_integrator: I
+}
+
+impl<I : Simplex2DIntegrator> Hierarchic2DIntegration<I> {
+
+}
+
+impl<I : Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> {
+    fn integrate<T : Simplex2DFunction>(&self, func: &Box<T>, simplex: &Simplex2D) -> f64 {
+        // It all begins with a tree!
+        
+        unimplemented!();
     }
 }
 
