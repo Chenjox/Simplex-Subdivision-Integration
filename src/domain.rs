@@ -39,26 +39,25 @@ pub trait Simplex2DFunction {
 /// Allows for easy substitution of simplex integration schemes.
 pub trait Simplex2DIntegrator {
     /// This function will be called on a single simplex, given in the third argument.
-    fn integrate<T: Simplex2DFunction>(&self, func: &Box<T>, simplex: &Simplex2D) -> f64;
+    fn integrate<T: Simplex2DFunction>(&self, func: &Box<T>, simplex: &Simplex2D) -> f64 {
+        self.integrate_over_domain(
+            &array![[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+            func,
+            simplex,
+        )
+    }
+
+    /// A more general function which takes a transformation matrix to map to the initial subdomain of the simplex
+    fn integrate_over_domain<T: Simplex2DFunction>(
+        &self,
+        transformation: &Array2<f64>,
+        func: &Box<T>,
+        simplex: &Simplex2D,
+    ) -> f64;
 }
 
 /// A Dummy Struct implementing a Constant function for the given Simplex.
 pub struct Constant2DFunction;
-
-pub struct Constant2DFunctionHistory {
-    history: RefCell<Vec<Array1<f64>>>,
-}
-
-impl Constant2DFunctionHistory {
-    pub fn new() -> Self {
-        return Constant2DFunctionHistory {
-            history: RefCell::new(Vec::new()),
-        };
-    }
-    pub fn get_history(self) -> Vec<Array1<f64>> {
-        return self.history.take();
-    }
-}
 
 impl Simplex2DFunction for Constant2DFunction {
     fn function(&self, _xi1: f64, _xi2: f64, _xi3: f64, _simplex: &Simplex2D) -> f64 {
@@ -66,13 +65,38 @@ impl Simplex2DFunction for Constant2DFunction {
     }
 }
 
-impl Simplex2DFunction for Constant2DFunctionHistory {
-    fn function(&self, _xi1: f64, _xi2: f64, _xi3: f64, _simplex: &Simplex2D) -> f64 {
+pub type Constant2DFunctionHistory = Function2DHistory<Constant2DFunction>;
+
+impl Constant2DFunctionHistory {
+    pub fn new_constant() -> Self {
+        return Function2DHistory::new(Constant2DFunction {});
+    }
+}
+
+pub struct Function2DHistory<F: Simplex2DFunction> {
+    history: RefCell<Vec<Array1<f64>>>,
+    function: F,
+}
+
+impl<F: Simplex2DFunction> Function2DHistory<F> {
+    pub fn new(func: F) -> Self {
+        return Self {
+            history: RefCell::new(Vec::new()),
+            function: func,
+        };
+    }
+    pub fn get_history(self) -> Vec<Array1<f64>> {
+        return self.history.take();
+    }
+}
+
+impl<F: Simplex2DFunction> Simplex2DFunction for Function2DHistory<F> {
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
         {
             let mut history = self.history.borrow_mut();
-            history.push(array![_xi1, _xi2, _xi3]);
+            history.push(array![xi1, xi2, xi3]);
         }
-        1.0
+        self.function.function(xi1, xi2, xi3, simplex)
     }
 }
 

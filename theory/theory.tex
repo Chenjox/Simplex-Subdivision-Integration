@@ -594,6 +594,11 @@ With the Jacobi Matrix of any particular Domain being \begin{equation}
 
 \subsection{Simplex Subdivision}
 
+A Criterion for adaptive integration \begin{align}
+    Q &= \iint_{\simplex} F \diff \simplex \\
+    \varepsilon &= \Bigl\vert Q - \iint_{\simplex_p} F \diff \simplex_p \Bigr\vert
+\end{align}
+
 The Coordinates of the Verteces of the 4 Child Simplizes $\simplex_i$ can be calculated with $S$ by \begin{align}
     S_{\simplex,1} &= S \cdot B_{\simplex,1} = S \cdot \begin{bmatrix}
         B_1 & B_5 & B_4 \\
@@ -624,6 +629,32 @@ The Coordinates of the Verteces of the 4 Child Simplizes $\simplex_i$ can be cal
         0.5 & 0   & 0.5 \\
     \end{bmatrix}
 \end{align}
+
+Coordinates of any Grandchild-Simplizes can be calculated by chaining $B_{\simplex,i}$ Transformations
+
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \draw[black,thick] (3,4) coordinate (ca) 
+              -- +(-60:3cm) coordinate (cb) 
+              -- +(-120:3cm) coordinate (cc) -- cycle;
+              %\draw[fill,blue] (barycentric cs:ca=0.583,cb=0.208,cc=0.208) coordinate (cb1) circle (2pt);
+              %\draw[fill,blue] (barycentric cs:ca=0.208,cb=0.583,cc=0.208) coordinate (cb1) circle (2pt);
+              %\draw[fill,blue] (barycentric cs:ca=0.208,cb=0.208,cc=0.583) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.792,cb=0.104,cc=0.104) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.604,cb=0.292,cc=0.104) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.604,cb=0.104,cc=0.292) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.104,cb=0.792,cc=0.104) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.104,cb=0.604,cc=0.292) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.292,cb=0.604,cc=0.104) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.104,cb=0.104,cc=0.792) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.292,cb=0.104,cc=0.604) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.104,cb=0.292,cc=0.604) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.396,cb=0.208,cc=0.396) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.396,cb=0.396,cc=0.208) coordinate (cb1) circle (2pt);
+              \draw[fill,red] (barycentric cs:ca=0.208,cb=0.396,cc=0.396) coordinate (cb1) circle (2pt);
+    \end{tikzpicture}
+\end{Figure}
 
 \pagebreak
 

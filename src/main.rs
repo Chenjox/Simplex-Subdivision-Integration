@@ -206,13 +206,21 @@ impl Quadrilateral2DIntegration {
 }
 
 impl Simplex2DIntegrator for Quadrilateral2DIntegration {
-    fn integrate<T: Simplex2DFunction>(&self, func: &Box<T>, simplex: &Simplex2D) -> f64 {
+    fn integrate_over_domain<T: Simplex2DFunction>(
+        &self,
+        transformation: &Array2<f64>,
+        func: &Box<T>,
+        simplex: &Simplex2D,
+    ) -> f64 {
         let mut sum = 0.;
         let d1 = Quadrilateral2DIntegration::get_quadrilateral_D1();
+        let d1 = transformation.dot(&d1);
         sum += self.integrate_quadrilateral(&d1, func, simplex);
         let d2 = Quadrilateral2DIntegration::get_quadrilateral_D2();
+        let d2 = transformation.dot(&d2);
         sum += self.integrate_quadrilateral(&d2, func, simplex);
         let d3 = Quadrilateral2DIntegration::get_quadrilateral_D3();
+        let d3 = transformation.dot(&d3);
         sum += self.integrate_quadrilateral(&d3, func, simplex);
 
         return sum;
@@ -223,42 +231,42 @@ struct Hierarchic2DIntegration<I: Simplex2DIntegrator> {
     base_integrator: I,
 }
 
-impl<I : Simplex2DIntegrator> Hierarchic2DIntegration<I> {
+impl<I: Simplex2DIntegrator> Hierarchic2DIntegration<I> {
     fn subdivision_transformations() -> [Array2<f64>; 4] {
         return [
-            array![ // S1
+            array![
+                // S1
                 [1., 0.5, 0.5],
-                [0., 0.5, 0. ],
-                [0., 0. , 0.5]
+                [0., 0.5, 0.],
+                [0., 0., 0.5]
             ],
-            array![ // S2
+            array![
+                // S2
                 [0., 0.0, 0.5],
                 [1., 0.5, 0.5],
                 [0., 0.5, 0.0]
             ],
-            array![ // S3
+            array![
+                // S3
                 [0., 0.5, 0.0],
                 [0., 0.0, 0.5],
                 [1., 0.5, 0.5]
             ],
-            array![ // S4
+            array![
+                // S4
                 [0.5, 0.5, 0.0],
-                [0. , 0.5, 0.5],
+                [0., 0.5, 0.5],
                 [0.5, 0.0, 0.5]
-            ]
+            ],
         ];
     }
 
     fn get_transformation(parent_vector: &Vec<u8>) -> Array2<f64> {
         let transformations = Hierarchic2DIntegration::<I>::subdivision_transformations();
-        let mut result = array![
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0]
-        ];
-        for i in 0..parent_vector.len()-1 {
+        let mut result = array![[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]];
+        for i in 0..parent_vector.len() - 1 {
             let current = parent_vector[i];
-            let current_transformation = &transformations[current as usize];
+            let current_transformation = &transformations[(current - 1) as usize];
             result = result.dot(current_transformation)
         }
         return result;
@@ -277,61 +285,128 @@ impl NodeData {
 }
 
 impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> {
-    fn integrate<T: Simplex2DFunction>(&self, func: &Box<T>, simplex: &Simplex2D) -> f64 {
+    fn integrate_over_domain<T: Simplex2DFunction>(
+        &self,
+        transformation: &Array2<f64>,
+        func: &Box<T>,
+        simplex: &Simplex2D,
+    ) -> f64 {
         // It all begins with a tree!
         let tree = &mut Arena::new();
         let root_node_id = tree.new_node(NodeData::new(false, 0));
 
         let mut state_changed = true;
         let precision_threshold = 0.0001;
+        let mut result = 0.;
 
-        let mut next_edge = Some(NodeEdge::Start(root_node_id));
-        while let Some(current_edge) = next_edge {
-            next_edge = current_edge.next_traverse(&tree);
-            let current_id = match current_edge {
-                NodeEdge::Start(_) => continue,
-                NodeEdge::End(id) => id,
-            };
+        while state_changed {
+            // Grundsätzlich wird sich der Baum nicht ändern
+            state_changed = false;
+            // Das Integral wird von vorn Integriert.
+            result = 0.;
+            // Alle Knoten DFS durchgehen
+            let mut next_edge = Some(NodeEdge::Start(root_node_id));
+            while let Some(current_edge) = next_edge {
+                next_edge = current_edge.next_traverse(&tree);
+                let current_id = match current_edge {
+                    NodeEdge::Start(_) => continue,
+                    NodeEdge::End(id) => id,
+                };
 
-            // Wenn der mometane Knoten ein Blattknoten ist, dann....
-            if tree[current_id].first_child().is_none() {
-                // Ermittle alle Vorfahren
-                let mut vec = Vec::new();
-                vec.push(tree[current_id].get().number);
+                // Wenn der mometane Knoten ein Blattknoten ist, dann....
+                if tree[current_id].first_child().is_none() {
+                    // Ermittle alle Vorfahren
+                    let mut vec = Vec::new();
+                    vec.push(tree[current_id].get().number);
 
-                let mut par = current_id;
-                while let Some(parent) = tree[par].parent() {
-                    vec.push(tree[parent].get().number);
-                    par = parent;
+                    let mut par = current_id;
+                    while let Some(parent) = tree[par].parent() {
+                        vec.push(tree[parent].get().number);
+                        par = parent;
+                    }
+                    // Alle Elternknoten wurden ermittelt.
+                    // `vec` soll nicht mehr bearbeitet werden
+                    let vec = vec;
+                    println!("{:?}", vec);
+
+                    // Jetzt wird das Integral des Blatts bestimmt.
+                    let trans = Hierarchic2DIntegration::<I>::get_transformation(&vec);
+                    let child_transform = transformation.dot(&trans);
+                    result +=
+                        self.base_integrator
+                            .integrate_over_domain(&child_transform, func, simplex);
+
+                    // Wenn das Blatt noch nicht überprüft worden ist
+                    if !tree[current_id].get().checked {
+                        // Dann wird eine Verfeinerungsstufe mehr eingebaut.
+                        let mut child_result = 0.;
+                        for i in 0..4 {
+                            let i_1 = i + 1;
+                            let mut child_vec = vec.clone();
+                            // die temporäre transformationshierachie
+                            child_vec.insert(0, i_1 as u8);
+                            let child_trans =
+                                Hierarchic2DIntegration::<I>::get_transformation(&vec);
+                            let child_transformation = transformation.dot(&child_trans);
+                            child_result += self.base_integrator.integrate_over_domain(
+                                &child_transformation,
+                                func,
+                                simplex,
+                            );
+                        }
+                        if (result - child_result).abs() > precision_threshold {
+                            *tree[current_id].get_mut() = NodeData::new(true, 0);
+                            current_id.append(
+                                tree.new_node(NodeData {
+                                    checked: false,
+                                    number: 1,
+                                }),
+                                tree,
+                            );
+                            current_id.append(
+                                tree.new_node(NodeData {
+                                    checked: false,
+                                    number: 2,
+                                }),
+                                tree,
+                            );
+                            current_id.append(
+                                tree.new_node(NodeData {
+                                    checked: false,
+                                    number: 3,
+                                }),
+                                tree,
+                            );
+                            current_id.append(
+                                tree.new_node(NodeData {
+                                    checked: false,
+                                    number: 4,
+                                }),
+                                tree,
+                            );
+                        } else {
+                            tree[current_id].get_mut().checked = true;
+                        }
+                    }
                 }
-                // Alle Elternknoten wurden ermittelt.
-                println!("{:?}", vec);
 
-                // Wenn _kriterium erreicht_ dann
-                let trans = Hierarchic2DIntegration::<I>::get_transformation(&vec);
-                let child_simplex = Simplex2D::new_from_array(simplex.get_points().dot(&trans));
-
-                let result = self.base_integrator.integrate(func, &child_simplex);
+                //*tree[current_id].get_mut() = 42;
             }
-
-            //todo!("it is possible to modify `arena[current_id]` here!");
-            //*tree[current_id].get_mut() = 42;
         }
 
-        return 0.0;
+        return result;
     }
 }
 
 fn main() {
-    
     // ASSERTION: The Simplex is always rightly oriented.
-    let sim = Simplex2D::new_from_points(&array![1., 1.], &array![1., 2.], &array![3., 1.]);
-    let inte = Quadrilateral2DIntegration { gauss_degree: 3 };
+    let sim = Simplex2D::new_from_points(&array![1., 1.], &array![1., 2.], &array![2., 1.]);
+    let inte = Quadrilateral2DIntegration { gauss_degree: 1 };
     let inte = Hierarchic2DIntegration {
-        base_integrator: inte
+        base_integrator: inte,
     };
 
-    let func = Box::new(Constant2DFunctionHistory::new());
+    let func = Box::new(Constant2DFunctionHistory::new_constant());
 
     let result = inte.integrate(&func, &sim);
     println!("{}", result);
@@ -392,5 +467,4 @@ fn main() {
     //    println!("{}",tree[node].get())
     //}
     */
-
 }
