@@ -1,7 +1,7 @@
 use indextree::{Arena, NodeEdge};
 use ndarray::prelude::*;
 
-use crate::domain::*;
+use crate::{domain::*, problems::PhaseField2DFunction};
 
 mod domain;
 mod problems;
@@ -296,7 +296,7 @@ impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> 
         let root_node_id = tree.new_node(NodeData::new(false, 0));
 
         let mut state_changed = true;
-        let precision_threshold = 0.0001;
+        let precision_threshold = 0.001;
         let mut result = 0.;
 
         while state_changed {
@@ -327,12 +327,12 @@ impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> 
                     // Alle Elternknoten wurden ermittelt.
                     // `vec` soll nicht mehr bearbeitet werden
                     let vec = vec;
-                    println!("{:?}", vec);
+                    //println!("{:?}", vec);
 
                     // Jetzt wird das Integral des Blatts bestimmt.
                     let trans = Hierarchic2DIntegration::<I>::get_transformation(&vec);
                     let child_transform = transformation.dot(&trans);
-                    result +=
+                    let mut current_result =
                         self.base_integrator
                             .integrate_over_domain(&child_transform, func, simplex);
 
@@ -354,45 +354,34 @@ impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> 
                                 simplex,
                             );
                         }
-                        if (result - child_result).abs() > precision_threshold {
-                            *tree[current_id].get_mut() = NodeData::new(true, 0);
-                            current_id.append(
-                                tree.new_node(NodeData {
-                                    checked: false,
-                                    number: 1,
-                                }),
-                                tree,
-                            );
-                            current_id.append(
-                                tree.new_node(NodeData {
-                                    checked: false,
-                                    number: 2,
-                                }),
-                                tree,
-                            );
-                            current_id.append(
-                                tree.new_node(NodeData {
-                                    checked: false,
-                                    number: 3,
-                                }),
-                                tree,
-                            );
-                            current_id.append(
-                                tree.new_node(NodeData {
-                                    checked: false,
-                                    number: 4,
-                                }),
-                                tree,
-                            );
+                        // Wenn die Verfeinerung "genauer" ist, dann wird der Baum angepasst.
+                        if (current_result - child_result).abs() > precision_threshold { 
+                            tree[current_id].get_mut().checked = true;
+                            for i in 1..5 {
+                                current_id.append(
+                                    tree.new_node(NodeData {
+                                        checked: false,
+                                        number: i,
+                                    }),
+                                    tree,
+                                );
+                            }
+                            state_changed = true;
+                            current_result = child_result;
                         } else {
                             tree[current_id].get_mut().checked = true;
                         }
                     }
+                    result += current_result;
+                    
                 }
 
                 //*tree[current_id].get_mut() = 42;
             }
-        }
+            
+            println!("{}",result);
+        }// Iteration ende
+        
 
         return result;
     }
@@ -401,22 +390,30 @@ impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> 
 fn main() {
     // ASSERTION: The Simplex is always rightly oriented.
     let sim = Simplex2D::new_from_points(&array![1., 1.], &array![1., 2.], &array![2., 1.]);
-    let inte = Quadrilateral2DIntegration { gauss_degree: 1 };
+    let inte = Quadrilateral2DIntegration { gauss_degree: 2 };
     let inte = Hierarchic2DIntegration {
         base_integrator: inte,
     };
 
-    let func = Box::new(Constant2DFunctionHistory::new_constant());
+    let func = Box::new(
+        Function2DHistory::new(
+            PhaseField2DFunction {
+                weights: [1.0,1.0,-1.0,1.0,-1.0,1.0]
+            }
+        )
+    );
 
     let result = inte.integrate(&func, &sim);
     println!("{}", result);
 
     let hist = func.get_history();
 
+    println!("{}",hist.len());
+    /*
     for el in hist {
         //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
         println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
-    }
+    } */
 
     /*
     let tree = &mut Arena::new();
