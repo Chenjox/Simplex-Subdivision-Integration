@@ -88,6 +88,9 @@ impl<F: Simplex2DFunction> Function2DHistory<F> {
     pub fn get_history(self) -> Vec<Array1<f64>> {
         return self.history.take();
     }
+    pub fn delete_history(&self) {
+        self.history.borrow_mut().clear();
+    }
 }
 
 impl<F: Simplex2DFunction> Simplex2DFunction for Function2DHistory<F> {

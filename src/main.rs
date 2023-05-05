@@ -1,4 +1,4 @@
-use indextree::{Arena, NodeEdge};
+use indextree::{Arena, NodeEdge, NodeId};
 use ndarray::prelude::*;
 
 use crate::{domain::*, problems::PhaseField2DFunction};
@@ -382,7 +382,6 @@ impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> 
             println!("{}",result);
         }// Iteration ende
         
-
         return result;
     }
 }
