@@ -12,6 +12,9 @@
 \usepackage{graphicx}
 \usepackage{tikz}
 
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Bary}{\mathbb{B}}
+
 \doctitel{Simplex Integration}
 \docuntertitel{By Domain Subdivision}
 
@@ -36,9 +39,9 @@ Total Energy in the System: \begin{equation}
 \end{equation} 
 
 Degradation Function \begin{equation}
-    g(\phi) = \left(1 - \phi^2\right)^2 + k
+    g(\phi) = \left(1 - \phi^2\right) + k
 \end{equation} mit \begin{conditions}
-    k  & being a small but finite scalar such as 10 6 \\
+    k  & being a small but finite scalar such as $\num{10e-6}$ \\
     G_c & critical energy release rate, material parameter \\
     l  & \emph{width} of phase field \\
 \psi (u) & strain energy density function\\
@@ -154,7 +157,19 @@ Es gilt: \begin{align}
 
 \section{Simplex Integration in $n=2$}
 
-\subsection{Simplex Integration}
+First start with definitions:
+
+\paragraph{Pure Integrator} is any quadrature formula of the simplex: \begin{equation}
+    I = \iint_{\simplex} f(\xi_1, \xi_2, \xi_3) \diff \simplex \approx \sum_{i} w_i f(\xi_{1,i}, \xi_{2,i}, \xi_{3,i})
+\end{equation} The Term \emph{pure} is used for telling them apart from subdivision integrators.
+
+\paragraph{Subdivision Integrators} are Integrators of the form: \begin{equation}
+    I = \iint_{\simplex} f(\xi_1, \xi_2, \xi_3) \diff \simplex = \sum_{i} \iint_{\simplex_i} f(\xi_1, \xi_2, \xi_3) \diff \simplex_i
+\end{equation} which then will be evaluated by pure Integrators.
+
+\subsection{Pure Integrators}
+
+\subsubsection{Quadrilaterial Integrator}
 
 Characteristic points in barycentric coordinates
 \begin{marginfigure}
@@ -240,63 +255,7 @@ Mapping functions from the $[-1,1] \times [-1,1]$ $X$-$Y$-Unit Square \begin{ali
     B_{D_3}(X,Y) &= B_3 \cdot G_1(X,Y) + B_4 \cdot G_2(X,Y) + B_6 \cdot G_3(X,Y) + B_C \cdot G_4(X,Y) \label{eqn:DomainTrans3}
 \end{align}
 
-\pagebreak
-
-\subsection{Simplex Subdivision}
-
-The Integral over a parent Simplex $\boldsymbol{\Delta}_p$, can be expressed as an Integral over 4 Child Simpleces $\boldsymbol{\Delta}_i$: 
-\begin{marginfigure}
-    \centering
-    \begin{tikzpicture}
-        \draw[black,thick] (0,0) coordinate (ca) 
-          -- (-60:3cm) coordinate (cb) 
-          -- (-120:3cm) coordinate (cc) -- cycle;
-        %\path (0,0) node[above] {$1$};
-        %\path (-60:3cm) node[above right] {$2$};
-        %\path (-120:3cm) node[above left] {$3$};
-        %\path (-60:1.5cm) node[above right] {$5$};
-        %\path (-120:1.5cm) node[above left] {$4$};
-        %\path (-60:3cm) -- (-120:3cm) node[midway,above] {$6$};
-        %\draw[fill] (barycentric cs:ca=0.333,cb=0.333,cc=0.333) coordinate (cbb) circle (2pt) node[below right] {$B_C$};
-        \draw[fill] (barycentric cs:ca=1.0,cb=0.0,cc=0.0) coordinate (cb1) circle (2pt) node[above] {$B_1$};
-        \draw[fill] (barycentric cs:ca=0.0,cb=1.0,cc=0.0) coordinate (cb2) circle (2pt) node[above right] {$B_2$};
-        \draw[fill] (barycentric cs:ca=0.0,cb=0.0,cc=1.0) coordinate (cb3) circle (2pt) node[above left] {$B_3$};
-        \draw[fill] (barycentric cs:ca=0.5,cb=0.0,cc=0.5) coordinate (cb4) circle (2pt) node[above left] {$B_4$};
-        \draw[fill] (barycentric cs:ca=0.5,cb=0.5,cc=0.0) coordinate (cb5) circle (2pt) node[above right] {$B_5$};
-        \draw[fill] (barycentric cs:ca=0.0,cb=0.5,cc=0.5) coordinate (cb6) circle (2pt) node[below] {$B_6$};
-        \draw[blue,semithick] (cb1) -- (cb5) -- (cb4) -- cycle;
-        \draw[blue,semithick] (cb2) -- (cb6) -- (cb5) -- cycle;
-        \draw[blue,semithick] (cb3) -- (cb4) -- (cb6) -- cycle;
-        \draw[blue,semithick] (cb4) -- (cb5) -- (cb6) -- cycle;
-        \node at (barycentric cs:cb1=1,cb5=1,cb4=1) {$\boldsymbol{\Delta}_1$};
-        \node at (barycentric cs:cb2=1,cb6=1,cb5=1) {$\boldsymbol{\Delta}_2$};
-        \node at (barycentric cs:cb3=1,cb4=1,cb6=1) {$\boldsymbol{\Delta}_3$};
-        \node at (barycentric cs:cb4=1,cb5=1,cb6=1) {$\boldsymbol{\Delta}_4$};
-    \end{tikzpicture}
-\end{marginfigure}
-\begin{align}
-    \iint_{\boldsymbol{\Delta}_p} F \diff\boldsymbol{\Delta}_p &= \iint_{\boldsymbol{\Delta}_1} F \diff\boldsymbol{\Delta}_1 + \iint_{\boldsymbol{\Delta}_2} F \diff\boldsymbol{\Delta}_2 +\iint_{\boldsymbol{\Delta}_3} F \diff\boldsymbol{\Delta}_3 + \iint_{\boldsymbol{\Delta}_4} F \diff\boldsymbol{\Delta}_4
-\end{align}
-
-The Coordinates of a Child Simplex $\simplex_i$ can be expressed in local-barycentric coordinates $\xi_{i,1}',\, \xi_{i,2}',\, \xi_{i,3}'$
-
-The corresponding Transformation from the local coordinate System into the global is given by \begin{align}
-   T_{lg}(\xi_{i,1}', \xi_{i,2}', \xi_{i,3}') &= B_{i,1}\xi_{i,1}' + B_{i,2}\xi_{i,2}' + B_{i,3} \xi_{i,3}'
-\end{align} where $B_{i,j}$ are the coordinates of the Verteces of the Child Simplex $\simplex_i$.
-
-This can be done recursively, to get a desired accuracy.
-%
-%The Vertices of e.g. the $[B_3,B_4,B_6]$ Child Simplex can be calculated by \begin{align}
-%    \begin{bmatrix}
-%        B_1' & B_2' & B_3' \\ 
-%    \end{bmatrix} &= \begin{bmatrix}
-%        B_3 & B_4 & B_6 \\ 
-%    \end{bmatrix} \begin{bmatrix}
-%        B_1 & B_2 & B_3 \\ 
-%    \end{bmatrix}
-%\end{align}
-
-\subsection{Numerical Integration Scheme}
+\paragraph{Numerical Integration Scheme}
 
 The Integration is done on the Square $[-1,1] \times [-1, 1]$, which allows for Gaussian Integration to be used: \begin{equation}
     \iint_{[-1,1] \times [-1, 1]} F(X,Y) \diff (X,Y) \approx \sum_i \sum_j F(X_i,X_j) w_i w_j 
@@ -314,7 +273,7 @@ The Weights and Points of the 1D Gauss-Legendre Integration are given as: \begin
     & & X &= -\sqrt{\frac{3}{5}} & w &= \frac{5}{9} \\
 \end{align*}
 
-\subsection{Integraltransformation}
+\paragraph{Integral transformation} from the 3 Domains into any simplex.
 
 \begin{Figure}
     \centering
@@ -494,7 +453,7 @@ With the Jacobi Matrix of any particular Domain being \begin{equation}
     \end{bmatrix}
 \end{equation}
 
-\subsubsection{Gauss Point Distribution}
+\paragraph{Gauss Point Distribution} for the three Orders of Integration used.
 
 \begin{Figure}
     \centering
@@ -591,6 +550,70 @@ With the Jacobi Matrix of any particular Domain being \begin{equation}
         \end{scope}
     \end{tikzpicture}
 \end{Figure}
+
+\subsubsection{Sphere Integrator}
+
+\subsubsection{Other Quadrature Formulas}
+
+\pagebreak
+
+\subsection{Subdivision Integrator}
+
+Because any triangle can be decomposed into 4 similar triangles, the subdivision algorithm turns out to be quite practical in implementation.
+
+The Integral over a parent Simplex $\boldsymbol{\Delta}_p$, can be expressed as an Integral over 4 Child Simpleces $\boldsymbol{\Delta}_i$: 
+\begin{marginfigure}
+    \centering
+    \begin{tikzpicture}
+        \draw[black,thick] (0,0) coordinate (ca) 
+          -- (-60:3cm) coordinate (cb) 
+          -- (-120:3cm) coordinate (cc) -- cycle;
+        %\path (0,0) node[above] {$1$};
+        %\path (-60:3cm) node[above right] {$2$};
+        %\path (-120:3cm) node[above left] {$3$};
+        %\path (-60:1.5cm) node[above right] {$5$};
+        %\path (-120:1.5cm) node[above left] {$4$};
+        %\path (-60:3cm) -- (-120:3cm) node[midway,above] {$6$};
+        %\draw[fill] (barycentric cs:ca=0.333,cb=0.333,cc=0.333) coordinate (cbb) circle (2pt) node[below right] {$B_C$};
+        \draw[fill] (barycentric cs:ca=1.0,cb=0.0,cc=0.0) coordinate (cb1) circle (2pt) node[above] {$B_1$};
+        \draw[fill] (barycentric cs:ca=0.0,cb=1.0,cc=0.0) coordinate (cb2) circle (2pt) node[above right] {$B_2$};
+        \draw[fill] (barycentric cs:ca=0.0,cb=0.0,cc=1.0) coordinate (cb3) circle (2pt) node[above left] {$B_3$};
+        \draw[fill] (barycentric cs:ca=0.5,cb=0.0,cc=0.5) coordinate (cb4) circle (2pt) node[above left] {$B_4$};
+        \draw[fill] (barycentric cs:ca=0.5,cb=0.5,cc=0.0) coordinate (cb5) circle (2pt) node[above right] {$B_5$};
+        \draw[fill] (barycentric cs:ca=0.0,cb=0.5,cc=0.5) coordinate (cb6) circle (2pt) node[below] {$B_6$};
+        \draw[blue,semithick] (cb1) -- (cb5) -- (cb4) -- cycle;
+        \draw[blue,semithick] (cb2) -- (cb6) -- (cb5) -- cycle;
+        \draw[blue,semithick] (cb3) -- (cb4) -- (cb6) -- cycle;
+        \draw[blue,semithick] (cb4) -- (cb5) -- (cb6) -- cycle;
+        \node at (barycentric cs:cb1=1,cb5=1,cb4=1) {$\boldsymbol{\Delta}_1$};
+        \node at (barycentric cs:cb2=1,cb6=1,cb5=1) {$\boldsymbol{\Delta}_2$};
+        \node at (barycentric cs:cb3=1,cb4=1,cb6=1) {$\boldsymbol{\Delta}_3$};
+        \node at (barycentric cs:cb4=1,cb5=1,cb6=1) {$\boldsymbol{\Delta}_4$};
+    \end{tikzpicture}
+\end{marginfigure}
+\begin{align}
+    \iint_{\boldsymbol{\Delta}_p} F \diff\boldsymbol{\Delta}_p &= \iint_{\boldsymbol{\Delta}_1} F \diff\boldsymbol{\Delta}_1 + \iint_{\boldsymbol{\Delta}_2} F \diff\boldsymbol{\Delta}_2 +\iint_{\boldsymbol{\Delta}_3} F \diff\boldsymbol{\Delta}_3 + \iint_{\boldsymbol{\Delta}_4} F \diff\boldsymbol{\Delta}_4
+\end{align}
+
+The Coordinates of a Child Simplex $\simplex_i$ can be expressed in local-barycentric coordinates $\xi_{i,1}',\, \xi_{i,2}',\, \xi_{i,3}'$
+
+The corresponding Transformation from the local coordinate System into the global is given by \begin{align}
+   T_{lg}(\xi_{i,1}', \xi_{i,2}', \xi_{i,3}') &= B_{i,1}\xi_{i,1}' + B_{i,2}\xi_{i,2}' + B_{i,3} \xi_{i,3}'
+\end{align} where $B_{i,j}$ are the coordinates of the Verteces of the Child Simplex $\simplex_i$.
+
+This can be done recursively, to get a desired accuracy.
+%
+%The Vertices of e.g. the $[B_3,B_4,B_6]$ Child Simplex can be calculated by \begin{align}
+%    \begin{bmatrix}
+%        B_1' & B_2' & B_3' \\ 
+%    \end{bmatrix} &= \begin{bmatrix}
+%        B_3 & B_4 & B_6 \\ 
+%    \end{bmatrix} \begin{bmatrix}
+%        B_1 & B_2 & B_3 \\ 
+%    \end{bmatrix}
+%\end{align}
+
+
 
 \subsection{Simplex Subdivision}
 
