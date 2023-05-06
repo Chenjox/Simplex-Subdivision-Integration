@@ -1,4 +1,3 @@
-
 // Declare the submodule
 pub mod domain;
 pub mod functions;

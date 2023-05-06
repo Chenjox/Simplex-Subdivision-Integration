@@ -36,13 +36,19 @@ pub trait Simplex2DFunction {
 
 /// A general trait implemented by types which supply an integration scheme for a single Simplex.
 /// Allows for easy substitution of simplex integration schemes.
-pub trait Simplex2DIntegrator {
+pub trait Simplex2DIntegrator<D> {
     /// This function will be called on a single simplex, given in the third argument.
-    fn integrate<T: Simplex2DFunction>(&self, func: &Box<T>, simplex: &Simplex2D) -> f64 {
+    fn integrate_simplex<T: Simplex2DFunction>(
+        &self,
+        func: &Box<T>,
+        simplex: &Simplex2D,
+        cache_data: &mut D,
+    ) -> f64 {
         self.integrate_over_domain(
             &array![[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
             func,
             simplex,
+            cache_data,
         )
     }
 
@@ -52,10 +58,19 @@ pub trait Simplex2DIntegrator {
         transformation: &Array2<f64>,
         func: &Box<T>,
         simplex: &Simplex2D,
+        cache_data: &mut D,
     ) -> f64;
 }
 
+pub type PureSimplex2DIntegrator = dyn Simplex2DIntegrator<IntegratorDummy>;
 
+pub struct IntegratorDummy;
+
+impl IntegratorDummy {
+    pub fn get() -> Self {
+        Self {}
+    }
+}
 
 //fn usage(sim: &Simplex2D, func: &Box<dyn Simplex2DFunction>, inte: &Box<dyn Simplex2DIntegrator>) {
 //    let val = inte.integrate(func, sim);

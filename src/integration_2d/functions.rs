@@ -1,6 +1,6 @@
+use crate::integration_2d::domain::*;
 use ndarray::{array, Array1};
 use std::cell::RefCell;
-use crate::integration_2d::domain::*;
 
 /// A Dummy Struct implementing a Constant function for the given Simplex.
 pub struct Constant2DFunction;
@@ -15,7 +15,6 @@ impl Simplex2DFunction for Constant2DFunction {
 pub type Constant2DFunctionHistory = Function2DHistory<Constant2DFunction>;
 
 impl Constant2DFunctionHistory {
-
     /// Helpful constructor function for [`Constant2DFunction`]
     pub fn new_constant() -> Self {
         return Function2DHistory::new(Constant2DFunction {});

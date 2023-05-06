@@ -1,17 +1,23 @@
 use indextree::{Arena, NodeEdge, NodeId};
 use ndarray::prelude::*;
+use std::fmt::write;
+use std::fs::File;
+use std::io::Write;
 
-use crate::{integration_2d::{*, integrators::quadrilaterial_integrator::*, functions::Function2DHistory}, problems::PhaseField2DFunction};
+use crate::{
+    integration_2d::{functions::Function2DHistory, integrators::quadrilaterial_integrator::*, *},
+    problems::PhaseField2DFunction,
+};
 
 mod integration_2d;
 mod problems;
 
-
-struct Hierarchic2DIntegration<I: Simplex2DIntegrator> {
+struct Hierarchic2DIntegration<I: Simplex2DIntegrator<IntegratorDummy>> {
     base_integrator: I,
+    consolidated: bool,
 }
 
-impl<I: Simplex2DIntegrator> Hierarchic2DIntegration<I> {
+impl<I: Simplex2DIntegrator<IntegratorDummy>> Hierarchic2DIntegration<I> {
     fn subdivision_transformations() -> [Array2<f64>; 4] {
         return [
             array![
@@ -47,7 +53,7 @@ impl<I: Simplex2DIntegrator> Hierarchic2DIntegration<I> {
         for i in 0..parent_vector.len() - 1 {
             let current = parent_vector[i];
             let current_transformation = &transformations[(current - 1) as usize];
-            result = result.dot(current_transformation)
+            result = current_transformation.dot(&result);
         }
         return result;
     }
@@ -64,19 +70,47 @@ impl NodeData {
     }
 }
 
-impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> {
+struct Hierarchic2DIntegratorData {
+    cached: bool,
+    root_node_id: NodeId,
+    arena: Arena<NodeData>,
+}
+
+impl Hierarchic2DIntegratorData {
+    fn new_cache() -> Self {
+        let mut arena = Arena::new();
+        let root = arena.new_node(NodeData::new(false, 0));
+        Self {
+            cached: false,
+            arena: arena,
+            root_node_id: root,
+        }
+    }
+}
+
+impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIntegratorData>
+    for Hierarchic2DIntegration<I>
+{
     fn integrate_over_domain<T: Simplex2DFunction>(
         &self,
         transformation: &Array2<f64>,
         func: &Box<T>,
         simplex: &Simplex2D,
+        cached_data: &mut Hierarchic2DIntegratorData,
     ) -> f64 {
+        // Sollte cached_data noch nicht initialisiert worden sein, dann wirds zeit
+        // Danach ist der Cache grundsätzlich gültig.
+        if !cached_data.cached {
+            cached_data.arena = Arena::new();
+            cached_data.root_node_id = cached_data.arena.new_node(NodeData::new(false, 0));
+            cached_data.cached = true;
+        }
         // It all begins with a tree!
-        let tree = &mut Arena::new();
-        let root_node_id = tree.new_node(NodeData::new(false, 0));
+        let tree = &mut cached_data.arena;
+        let root_node_id = cached_data.root_node_id;
 
         let mut state_changed = true;
-        let precision_threshold = 0.001;
+        let precision_threshold = 0.00001;
         let mut result = 0.;
 
         while state_changed {
@@ -112,12 +146,15 @@ impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> 
                     // Jetzt wird das Integral des Blatts bestimmt.
                     let trans = Hierarchic2DIntegration::<I>::get_transformation(&vec);
                     let child_transform = transformation.dot(&trans);
-                    let mut current_result =
-                        self.base_integrator
-                            .integrate_over_domain(&child_transform, func, simplex);
+                    let mut current_result = self.base_integrator.integrate_over_domain(
+                        &child_transform,
+                        func,
+                        simplex,
+                        &mut IntegratorDummy::get(),
+                    );
 
-                    // Wenn das Blatt noch nicht überprüft worden ist
-                    if !tree[current_id].get().checked {
+                    // Wenn das Blatt noch nicht überprüft worden ist und noch nicht consolidiert ist.
+                    if !tree[current_id].get().checked && !self.consolidated {
                         // Dann wird eine Verfeinerungsstufe mehr eingebaut.
                         let mut child_result = 0.;
                         for i in 0..4 {
@@ -132,12 +169,16 @@ impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> 
                                 &child_transformation,
                                 func,
                                 simplex,
+                                &mut IntegratorDummy::get(),
                             );
                         }
                         // Wenn die Verfeinerung "genauer" ist, dann wird der Baum angepasst.
-                        if (current_result - child_result).abs() > precision_threshold { 
+                        if (current_result - child_result).abs() > precision_threshold {
+                            // Dieses Element wurde geprüft
                             tree[current_id].get_mut().checked = true;
-                            for i in 1..5 {
+                            // dem Element fügen wir die Kinder hinzu
+                            for i in 0..4 {
+                                let i = i + 1;
                                 current_id.append(
                                     tree.new_node(NodeData {
                                         checked: false,
@@ -146,53 +187,107 @@ impl<I: Simplex2DIntegrator> Simplex2DIntegrator for Hierarchic2DIntegration<I> 
                                     tree,
                                 );
                             }
+                            // Der Baum hat sich geändert!
                             state_changed = true;
+                            // Das Resultat ist das genauere resultat
                             current_result = child_result;
                         } else {
                             tree[current_id].get_mut().checked = true;
                         }
                     }
                     result += current_result;
-                    
                 }
 
                 //*tree[current_id].get_mut() = 42;
             }
-            
-            println!("{}",result);
-        }// Iteration ende
-        
+
+            //println!("{}",result);
+        } // Iteration ende
+
         return result;
     }
 }
 
 fn main() {
     // ASSERTION: The Simplex is always rightly oriented.
-    let sim = Simplex2D::new_from_points(&array![1., 1.], &array![1., 2.], &array![2., 1.]);
-    let inte = Quadrilateral2DIntegrator::new(2);
+    let sim = Simplex2D::new_from_points(
+        &array![1., 1.],
+        &array![1.5, 1. + (3.0f64).sqrt() / 2.],
+        &array![2., 1.],
+    );
+    let inte = Quadrilateral2DIntegrator::new(1);
     let inte = Hierarchic2DIntegration {
         base_integrator: inte,
+        consolidated: false,
     };
 
-    let func = Box::new(
-        Function2DHistory::new(
-            PhaseField2DFunction {
-                weights: [1.0,1.0,-1.0,1.0,-1.0,1.0]
-            }
-        )
-    );
+    let func = Box::new(Function2DHistory::new(PhaseField2DFunction {
+        weights: [2.0, 2.0, 2.0, 2.0, -0., -0.],
+    }));
 
-    let result = inte.integrate(&func, &sim);
+    let mut cache = Hierarchic2DIntegratorData::new_cache();
+
+/*
+    cache.cached = true;
+    let mut inte = inte;
+    {
+        let arena = &mut cache.arena;
+        let root = &cache.root_node_id;
+        inte.consolidated = true;
+
+        let mut node_id = None;
+        for i in 0..4 {
+            let i = i + 1;
+            node_id = Some(arena.new_node(NodeData {
+                checked: false,
+                number: i,
+            }));
+            root.append(
+                node_id.unwrap(),
+                arena,
+            );
+        }
+
+        let child_node_id = node_id.unwrap();
+        for i in 0..4 {
+            let i = i + 1;
+            node_id = Some(arena.new_node(NodeData {
+                checked: false,
+                number: i,
+            }));
+            child_node_id.append(
+                node_id.unwrap(),
+                arena,
+            );
+        }
+    }
+    let inte = inte;
+*/
+    let result = inte.integrate_simplex(&func, &sim, &mut cache);
     println!("{}", result);
+
+    func.delete_history();
+
+    let result = inte.integrate_simplex(&func, &sim, &mut cache);
 
     let hist = func.get_history();
 
-    println!("{}",hist.len());
-    /*
-    for el in hist {
-        //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
-        println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
-    } */
+    println!("{},{}",result, hist.len());
+
+    //for el in &hist {
+    //    //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
+    //    println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
+    //}
+
+    let mut f = File::create("output.csv").expect("Unable to create file");
+    let points = sim.get_points();
+    for i in 0..3 {
+        writeln!(f, "{} {}", points[[0, i]], points[[1, i]]).expect("Unable to write!");
+    }
+    for i in &hist {
+        let p = points.dot(i);
+        writeln!(f, "{} {}", p[0], p[1]).expect("Unable to write!");
+    }
 
     /*
     let tree = &mut Arena::new();

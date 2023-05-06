@@ -1,6 +1,6 @@
 use crate::domain::Simplex2DFunction;
 
-use self::{shape_func::approx_func, phase_field::phase_field_func};
+use self::{phase_field::phase_field_func, shape_func::approx_func};
 
 const TOLERANCE: f64 = 1e-10;
 
@@ -109,7 +109,7 @@ pub mod phase_field {
 }
 
 pub struct PhaseField2DFunction {
-    pub weights: [f64; 6]
+    pub weights: [f64; 6],
 }
 
 impl Simplex2DFunction for PhaseField2DFunction {
