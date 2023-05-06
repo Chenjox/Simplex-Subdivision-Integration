@@ -99,11 +99,38 @@ efficiently and accurately
 
 \begin{align}
     \Delta_{\phi_j} \vdiff_{\phi_i} \Pi &= \phi_j \int_\Omega 2\left(\pardiff{\phi}{\phi_i}\right)^2 \psi(u) \diff \Omega \vdiff \phi_i 
-    + \phi_j \int_\Omega 2(\phi -1 )\pardiff[^2]{\phi}{\phi_i} \phi(u) \diff \Omega \vdiff \phi_i \\
+    + \phi_j \int_\Omega 2(\phi -1 )\pardiff[^2]{\phi}{\phi_i^2} \psi(u) \diff \Omega \vdiff \phi_i \\
 &\phantom{={}} +\phi_j \frac{G_c}{l} \int_\Omega \pardiff{\phi}{\phi_i} + \pardiff[^2]{\phi}{\phi_i} + l^2 \pardiff{\nabla \phi}{\phi_j} \cdot \pardiff{\nabla \phi}{\phi_i} + l^2 \nabla \phi \cdot \pardiff[^2]{\nabla \phi}{\phi_i^2} \diff \Omega \vdiff \phi_i
 \end{align}
 
-\section{Element Description}
+\subsection{Numerical Work}
+
+\begin{align} % https://www.desmos.com/calculator/ibitgx2dws
+    \pardiff{\phi}{\phi_i} &= - \frac{1}{l}\phi \pardiff{\varsigmait}{f_{\text{base}}} N_i \\
+    \pardiff{\varsigmait}{f_{\text{base}}} &= \biggl(1 - \frac{f_{\text{base}}^2}{2\bigl(f_{\text{base}}^2 + k_{\text{res}}\bigr)}\biggr) \cdot \frac{1}{\sqrt[4]{f_{\text{base}}^2 + k_{\text{res}}}}\\
+    \pardiff[^2]{\varsigmait}{f_{\text{base}}^2} &= \biggl(\frac{5f_{\text{base}}^3}{\bigl(f_{\text{base}}^2 + k_{\text{res}}\bigr)} - 6 f_{\text{base}}\biggr) \cdot \frac{1}{4 {\sqrt[4]{f_{\text{base}}^2 + k_{\text{res}}}}^5}\\
+    \pardiff[^3]{\varsigmait}{f_{\text{base}}^3}&= \frac{3\left(-4k_{\text{res}}^{2}+12k_{\text{res}}f_{\text{base}}^{2}+f_{\text{base}}^{4}\right)}{2\left(f_{\text{base}}^{2}+k_{\text{res}}\right)^{2}}\cdot\frac{1}{4{\sqrt[4]{f_{\text{base}}^2 + k_{\text{res}}}}^5}\\
+    \pardiff[^2]{\phi}{\phi_i^2} &= \frac{1}{l^2} \biggl( \biggl(\pardiff{\varsigmait}{f_{\text{base}}}\biggr)^2 - \pardiff[^2]{\varsigmait}{f_{\text{base}}^2} \biggr) N_i \cdot N_i
+\end{align}
+
+
+
+\pagebreak
+
+\section{Simplex Integration in $n=2$}
+
+
+First start with definitions:
+
+\paragraph{Pure Integrator} is any quadrature formula of the simplex: \begin{equation}
+    I = \iint_{\simplex} f(\xi_1, \xi_2, \xi_3) \diff \simplex \approx \sum_{i} w_i f(\xi_{1,i}, \xi_{2,i}, \xi_{3,i})
+\end{equation} The Term \emph{pure} is used for telling them apart from subdivision integrators.
+
+\paragraph{Subdivision Integrators} are Integrators of the form: \begin{equation}
+    I = \iint_{\simplex} f(\xi_1, \xi_2, \xi_3) \diff \simplex = \sum_{i} \iint_{\simplex_i} f(\xi_1, \xi_2, \xi_3) \diff \simplex_i
+\end{equation} which then will be evaluated by pure Integrators.
+
+\subsection{Element Description}
 
 \begin{marginfigure}
     \centering
@@ -154,18 +181,6 @@ Es gilt: \begin{align}
         1\\
     \end{bmatrix}
 \end{align}
-
-\section{Simplex Integration in $n=2$}
-
-First start with definitions:
-
-\paragraph{Pure Integrator} is any quadrature formula of the simplex: \begin{equation}
-    I = \iint_{\simplex} f(\xi_1, \xi_2, \xi_3) \diff \simplex \approx \sum_{i} w_i f(\xi_{1,i}, \xi_{2,i}, \xi_{3,i})
-\end{equation} The Term \emph{pure} is used for telling them apart from subdivision integrators.
-
-\paragraph{Subdivision Integrators} are Integrators of the form: \begin{equation}
-    I = \iint_{\simplex} f(\xi_1, \xi_2, \xi_3) \diff \simplex = \sum_{i} \iint_{\simplex_i} f(\xi_1, \xi_2, \xi_3) \diff \simplex_i
-\end{equation} which then will be evaluated by pure Integrators.
 
 \subsection{Pure Integrators}
 
