@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::Write;
 
 use crate::{
-    integration_2d::{functions::Function2DHistory, integrators::quadrilaterial_integrator::*, *},
+    integration_2d::{functions::{Function2DHistory, Constant2DFunction}, integrators::{quadrilaterial_integrator::*, Hierarchic2DIntegratorData, Hierarchic2DIntegrator}, *},
     problems::PhaseField2DFunction,
 };
 
@@ -19,15 +19,14 @@ fn main() {
         &array![1.5, 1. + (3.0f64).sqrt() / 2.],
         &array![2., 1.],
     );
-    let inte = Quadrilateral2DIntegrator::new(1);
-    let inte = Hierarchic2DIntegrator {
-        base_integrator: inte,
-        consolidated: false,
-    };
+    let inte1 = Quadrilateral2DIntegrator::new(1);
+    let inte2 = Hierarchic2DIntegrator::new(inte1, false, 1e-10);
+    let inte1 = Quadrilateral2DIntegrator::new(1);
 
     let func = Box::new(Function2DHistory::new(PhaseField2DFunction {
         weights: [2.0, 2.0, 2.0, 2.0, -0., -0.],
     }));
+    //let func = Box::new(Function2DHistory::new(Constant2DFunction));
 
     let mut cache = Hierarchic2DIntegratorData::new_cache();
 
@@ -67,12 +66,13 @@ fn main() {
         }
         let inte = inte;
     */
-    let result = inte.integrate_simplex(&func, &sim, &mut cache);
-    println!("{}", result);
+    let result1 = inte1.integrate_simplex(&func, &sim, &mut IntegratorDummy::get());
+    let result2 = inte2.integrate_simplex(&func, &sim, &mut cache);
+    println!("{},{}", result1, result2);
 
     func.delete_history();
 
-    let result = inte.integrate_simplex(&func, &sim, &mut cache);
+    let result = inte2.integrate_simplex(&func, &sim, &mut cache);
 
     let hist = func.get_history();
 
