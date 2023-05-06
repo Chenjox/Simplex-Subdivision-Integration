@@ -1,5 +1,4 @@
 use ndarray::{array, Array1, Array2};
-use std::cell::RefCell;
 
 type Point2D = Array1<f64>;
 
@@ -56,52 +55,7 @@ pub trait Simplex2DIntegrator {
     ) -> f64;
 }
 
-/// A Dummy Struct implementing a Constant function for the given Simplex.
-pub struct Constant2DFunction;
 
-impl Simplex2DFunction for Constant2DFunction {
-    fn function(&self, _xi1: f64, _xi2: f64, _xi3: f64, _simplex: &Simplex2D) -> f64 {
-        1.0
-    }
-}
-
-pub type Constant2DFunctionHistory = Function2DHistory<Constant2DFunction>;
-
-impl Constant2DFunctionHistory {
-    pub fn new_constant() -> Self {
-        return Function2DHistory::new(Constant2DFunction {});
-    }
-}
-
-pub struct Function2DHistory<F: Simplex2DFunction> {
-    history: RefCell<Vec<Array1<f64>>>,
-    function: F,
-}
-
-impl<F: Simplex2DFunction> Function2DHistory<F> {
-    pub fn new(func: F) -> Self {
-        return Self {
-            history: RefCell::new(Vec::new()),
-            function: func,
-        };
-    }
-    pub fn get_history(self) -> Vec<Array1<f64>> {
-        return self.history.take();
-    }
-    pub fn delete_history(&self) {
-        self.history.borrow_mut().clear();
-    }
-}
-
-impl<F: Simplex2DFunction> Simplex2DFunction for Function2DHistory<F> {
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
-        {
-            let mut history = self.history.borrow_mut();
-            history.push(array![xi1, xi2, xi3]);
-        }
-        self.function.function(xi1, xi2, xi3, simplex)
-    }
-}
 
 //fn usage(sim: &Simplex2D, func: &Box<dyn Simplex2DFunction>, inte: &Box<dyn Simplex2DIntegrator>) {
 //    let val = inte.integrate(func, sim);
