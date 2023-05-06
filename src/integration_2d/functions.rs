@@ -23,7 +23,7 @@ impl Constant2DFunctionHistory {
 
 /// A struct which will record all function evaluations of the given [`Simplex2DFunction`]
 pub struct Function2DHistory<F: Simplex2DFunction> {
-    history: RefCell<Vec<Array1<f64>>>,
+    history: RefCell<Vec<(Array1<f64>, f64)>>,
     function: F,
 }
 
@@ -36,7 +36,7 @@ impl<F: Simplex2DFunction> Function2DHistory<F> {
     }
     /// A history of all function evaluations will be returned.
     /// Drops the struct upon after this function.
-    pub fn get_history(self) -> Vec<Array1<f64>> {
+    pub fn get_history(self) -> Vec<(Array1<f64>, f64)> {
         return self.history.take();
     }
     /// Deletes the history of the function evaluations.
@@ -47,10 +47,11 @@ impl<F: Simplex2DFunction> Function2DHistory<F> {
 
 impl<F: Simplex2DFunction> Simplex2DFunction for Function2DHistory<F> {
     fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
+        let result = self.function.function(xi1, xi2, xi3, simplex);
         {
             let mut history = self.history.borrow_mut();
-            history.push(array![xi1, xi2, xi3]);
+            history.push((array![xi1, xi2, xi3], result));
         }
-        self.function.function(xi1, xi2, xi3, simplex)
+        result
     }
 }

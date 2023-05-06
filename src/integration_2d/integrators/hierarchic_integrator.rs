@@ -163,7 +163,8 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIn
                             let mut child_vec = vec.clone();
                             // die temporäre transformationshierachie
                             child_vec.insert(0, i_1 as u8);
-                            let child_trans = Hierarchic2DIntegrator::<I>::get_transformation(&child_vec);
+                            let child_trans =
+                                Hierarchic2DIntegrator::<I>::get_transformation(&child_vec);
                             let child_transformation = transformation.dot(&child_trans);
                             child_result += self.base_integrator.integrate_over_domain(
                                 &child_transformation,

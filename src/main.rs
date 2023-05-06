@@ -5,7 +5,13 @@ use std::fs::File;
 use std::io::Write;
 
 use crate::{
-    integration_2d::{functions::{Function2DHistory, Constant2DFunction}, integrators::{quadrilaterial_integrator::*, Hierarchic2DIntegratorData, Hierarchic2DIntegrator}, *},
+    integration_2d::{
+        functions::{Constant2DFunction, Function2DHistory},
+        integrators::{
+            quadrilaterial_integrator::*, Hierarchic2DIntegrator, Hierarchic2DIntegratorData,
+        },
+        *,
+    },
     problems::PhaseField2DFunction,
 };
 
@@ -20,11 +26,11 @@ fn main() {
         &array![2., 1.],
     );
     let inte1 = Quadrilateral2DIntegrator::new(1);
-    let inte2 = Hierarchic2DIntegrator::new(inte1, false, 1e-10);
-    let inte1 = Quadrilateral2DIntegrator::new(1);
+    let inte2 = Hierarchic2DIntegrator::new(inte1, false, 1e-6);
+    let inte1 = Quadrilateral2DIntegrator::new(3);
 
     let func = Box::new(Function2DHistory::new(PhaseField2DFunction {
-        weights: [2.0, 2.0, 2.0, 2.0, -0., -0.],
+        weights: [10.0, 10.0, 10.0, 10.0, -0., -0.],
     }));
     //let func = Box::new(Function2DHistory::new(Constant2DFunction));
 
@@ -86,11 +92,11 @@ fn main() {
     let mut f = File::create("output.csv").expect("Unable to create file");
     let points = sim.get_points();
     for i in 0..3 {
-        writeln!(f, "{} {}", points[[0, i]], points[[1, i]]).expect("Unable to write!");
+        writeln!(f, "{} {} 0.0", points[[0, i]], points[[1, i]]).expect("Unable to write!");
     }
     for i in &hist {
-        let p = points.dot(i);
-        writeln!(f, "{} {}", p[0], p[1]).expect("Unable to write!");
+        let p = points.dot(&i.0);
+        writeln!(f, "{} {} {}", p[0], p[1], i.1).expect("Unable to write!");
     }
 
     /*
