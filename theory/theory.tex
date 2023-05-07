@@ -2,6 +2,7 @@
 % arara: clean: { files: [theory.log,theory.aux,theory.thm,theory.slnc] }
 % arara: pdflatex
 % arara: pdflatex
+% arara: biber
 % arara: pdflatex
 \documentclass{mitschrift}
 \usepackage[utf8]{inputenc}
@@ -12,11 +13,15 @@
 \usepackage{graphicx}
 \usepackage{tikz}
 
+\usepackage[style=numeric,sorting=none]{biblatex}
+
+\addbibresource{sources.bib}
+
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Bary}{\mathbb{B}}
 
 \doctitel{Simplex Integration}
-\docuntertitel{By Domain Subdivision}
+\docuntertitel{Trials and Errors for transcendental Integrals}
 
 \tikzset{
   engineering axonometry/.style={x={(222:0.5cm)}, y={(-7:1cm)}, z={(90:1cm)}}
@@ -122,11 +127,11 @@ efficiently and accurately
 
 First start with definitions:
 
-\paragraph{Pure Integrator} is any quadrature formula of the simplex: \begin{equation}
+\paragraph{Pure Integration Strategy} is any quadrature formula of the simplex: \begin{equation}
     I = \iint_{\simplex} f(\xi_1, \xi_2, \xi_3) \diff \simplex \approx \sum_{i} w_i f(\xi_{1,i}, \xi_{2,i}, \xi_{3,i})
 \end{equation} The Term \emph{pure} is used for telling them apart from subdivision integrators.
 
-\paragraph{Subdivision Integrators} are Integrators of the form: \begin{equation}
+\paragraph{Subdivision Integration Strategy} are Integrators of the form: \begin{equation}
     I = \iint_{\simplex} f(\xi_1, \xi_2, \xi_3) \diff \simplex = \sum_{i} \iint_{\simplex_i} f(\xi_1, \xi_2, \xi_3) \diff \simplex_i
 \end{equation} which then will be evaluated by pure Integrators.
 
@@ -182,7 +187,7 @@ Es gilt: \begin{align}
     \end{bmatrix}
 \end{align}
 
-\subsection{Pure Integrators}
+\subsection{Pure Integration Strategies}
 
 \subsubsection{Quadrilaterial Integrator}
 
@@ -572,7 +577,7 @@ With the Jacobi Matrix of any particular Domain being \begin{equation}
 
 \pagebreak
 
-\subsection{Subdivision Integrator}
+\subsection{Subdivision Integration Strategy}
 
 Because any triangle can be decomposed into 4 similar triangles, the subdivision algorithm turns out to be quite practical in implementation.
 
@@ -632,7 +637,7 @@ This can be done recursively, to get a desired accuracy.
 
 \subsection{Simplex Subdivision}
 
-A Criterion for adaptive integration \begin{align}
+A Criterion for adaptive integration from \cite{gonnetReviewErrorEstimation2012}\begin{align}
     Q &= \iint_{\simplex} F \diff \simplex \\
     \varepsilon &= \Bigl\vert Q - \iint_{\simplex_p} F \diff \simplex_p \Bigr\vert
 \end{align}
@@ -799,5 +804,9 @@ Coordinates of any Grandchild-Simplizes can be calculated by chaining $B_{\simpl
     \end{tikzpicture}
 \end{Figure}
 
+
+\pagebreak
+
+\printbibliography
 
 \end{document}
