@@ -104,7 +104,7 @@ pub mod shape_func {
 
 pub mod phase_field {
     pub fn phase_field_func(fbase: f64, kreg: f64, l: f64) -> f64 {
-        (-fbase / (fbase.powi(2) + kreg).powf(0.25) * 1.0 / l).exp()
+        (-(fbase / (fbase.powi(2) + kreg).powf(0.25)).abs() * 1.0 / l).exp()
     }
 }
 
@@ -115,6 +115,6 @@ pub struct PhaseField2DFunction {
 impl Simplex2DFunction for PhaseField2DFunction {
     fn function(&self, xi1: f64, xi2: f64, xi3: f64, _simplex: &crate::domain::Simplex2D) -> f64 {
         let f_base = approx_func(self.weights, xi1, xi2, xi3);
-        return phase_field_func(f_base, 1e-6, 1.0);
+        return phase_field_func(f_base, 0.000001, 1.0);
     }
 }

@@ -39,6 +39,11 @@ impl<F: Simplex2DFunction> Function2DHistory<F> {
     pub fn get_history(self) -> Vec<(Array1<f64>, f64)> {
         return self.history.take();
     }
+
+    pub fn function_evaluations(&self) -> usize {
+        return self.history.borrow().len();
+    }
+
     /// Deletes the history of the function evaluations.
     pub fn delete_history(&self) {
         self.history.borrow_mut().clear();
