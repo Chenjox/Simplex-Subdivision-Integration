@@ -804,6 +804,94 @@ Coordinates of any Grandchild-Simplizes can be calculated by chaining $B_{\simpl
     \end{tikzpicture}
 \end{Figure}
 
+\subsection{Space Definition}
+
+In a $\R^3$ Simplex, the barycentric coordinates $\Bary^4$ need to be used: \begin{align}
+    \Bary^4 &= \{ \xi_1,\,\xi_2,\,\xi_3,\,\xi_4 \in [0,1] | \xi_1 + \xi_2 + \xi_3 + \xi_4 = 1 \}
+\end{align} where each set of coordinates corresponds to a point inside the simplex, spanned by the Coordinates in $\R^3$
+\begin{align}
+    C_1 &= \begin{bmatrix}
+        x_1 \\
+        y_1 \\
+        z_1 \\
+    \end{bmatrix} & C_2 &= \begin{bmatrix}
+        x_2 \\
+        y_2 \\
+        z_2 \\
+    \end{bmatrix} & C_3 &= \begin{bmatrix}
+        x_3 \\
+        y_3 \\
+        z_3 \\
+    \end{bmatrix} & C_4 &= \begin{bmatrix}
+        x_4 \\
+        y_4 \\
+        z_4 \\
+    \end{bmatrix}
+\end{align}
+The points $C_i$ can be written in Matrix Form \begin{align}
+    \MatI{C} &= \begin{bmatrix}
+        C_1 & C_2 & C_3 & C_4 \\
+    \end{bmatrix} = \begin{bmatrix}
+        x_1 & x_2 & x_3 & x_4 \\
+        y_1 & y_2 & y_3 & y_4 \\
+        z_1 & z_2 & z_3 & z_4 \\
+    \end{bmatrix}
+\end{align}
+
+A mapping $M_B: \Bary^4 \abbild \R^3$ can be written as \begin{align}
+    C &= \MatI{C} \cdot \begin{bmatrix}
+        \xi_1 \\
+        \xi_2 \\
+        \xi_3 \\
+        \xi_4 \\
+    \end{bmatrix}
+\end{align}
+
+\subsection{Common Mappings}
+
+The Reference Element in Finite Element Analysis is often given in a $\xi,\, \eta,\, \zeta$ Coordinates. The set of coordinates
+spanning this \textbf{Reference Space} $\R^3_{r}$ can be mapped via $M_R: \R^3_{r} \abbild \Bary^4$ to barycentric coordinates \begin{align}
+    B &= \begin{bmatrix}
+        -1 & -1 & -1 & 1\\
+        1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 0 \\
+    \end{bmatrix} \cdot \begin{bmatrix}
+        \xi \\
+        \eta \\
+        \zeta \\
+        1 \\
+    \end{bmatrix} & R &= \begin{bmatrix}
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1 \\
+    \end{bmatrix} \cdot \begin{bmatrix}
+        \xi_1 \\
+        \xi_2 \\
+        \xi_3 \\
+        \xi_4 \\
+    \end{bmatrix}
+\end{align}
+
+A Transformation of the subspace $\Bary^4_{S}$-Space  with its supspace barycentric coordinates $\xi_{S,i}$ into its greater space $\Bary^4$ can be denoted by \begin{align}
+    B &= \begin{bmatrix}
+        B_1 & B_2 & B_3 & B_4
+    \end{bmatrix} \cdot \begin{bmatrix}
+        \xi_{S,1} \\
+        \xi_{S,2} \\
+        \xi_{S,3} \\
+        \xi_{S,4} \\   
+    \end{bmatrix}
+\end{align}
+
+\subsection{Pure Integration Strategy}
+
+\subsection{Subdivision Integration Strategy}
+
+\subsubsection{Edge Subdivision}
+
+
+
 
 \pagebreak
 

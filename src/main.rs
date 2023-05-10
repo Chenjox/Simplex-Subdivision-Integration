@@ -45,9 +45,8 @@ fn precision_test(precision: f64) {
     let result = inte2.integrate_simplex(&func, &sim, &mut cache);
 
     let hist = func.get_history();
-    let hist_size = mem::size_of_val(&*hist) as f64/(1024.0*1024.0);
 
-    println!("{},{},{},{},{} MB",  result,precision, evals_build, hist.len(),hist_size);
+    println!("{},{},{},{}",  result,precision, evals_build, hist.len());
 }
 
 fn main() {
