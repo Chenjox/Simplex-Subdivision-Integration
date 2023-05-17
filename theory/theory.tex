@@ -1182,6 +1182,70 @@ in such a way, that the minimal number of points required is used.
             \drawtriangle{o2}{o5}{o6}
             \drawtriangle{o4}{o3}{o6}
         \end{scope}
+        \begin{scope}[shift={(8,0)},engineering axonometry]
+            \draw[fill] (0,0,0) +(0,0,-1.4) node {Child tetrahedrons $\simplex_{O,i}$};
+            \begin{scope}[scale=5.0]
+                \coordinate (b1) at ({sqrt(8/9)},0,0);
+                \coordinate (b2) at ({-sqrt(2/9)},{sqrt(2/3)},0);
+                \coordinate (b3) at ({-sqrt(2/9)},{-sqrt(2/3)},0);
+                \coordinate (b4) at (0,0,4/3);
+            \end{scope}
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.50,b3=0.00,b4=0.00) coordinate (o1) circle (2pt);% node[below]       {$O_{1}$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.50,b4=0.00) coordinate (o2) circle (2pt);% node[right]   {$O_{2}$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.50,b4=0.00) coordinate (o3) circle (2pt);% node[below left]  {$O_{3}$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.00,b4=0.50) coordinate (o4) circle (2pt);% node[left]    {$O_{4}$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.00,b4=0.50) coordinate (o5) circle (2pt);% node[above right] {$O_{5}$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.00,b3=0.50,b4=0.50) coordinate (o6) circle (2pt);% node[above left]  {$O_{6}$};
+            %
+            \draw[fill] (barycentric cs:o1=0.5,o3=0.5) coordinate (o7) ; %circle (2pt) ;%node[above] {$O_{7}$};
+            \draw[fill] (barycentric cs:o3=0.5,o4=0.5) coordinate (o8) ; %circle (2pt) ;%node[right] {$O_{8}$};
+            \draw[fill] (barycentric cs:o1=0.5,o4=0.5) coordinate (o9) ; %circle (2pt) ;%node[left]  {$O_{9}$};
+            \draw[fill] (barycentric cs:o4=0.5,o5=0.5) coordinate (o10); %circle (2pt);% node[above] {$O_{10}$};
+            \draw[fill] (barycentric cs:o5=0.5,o1=0.5) coordinate (o11); %circle (2pt);% node[right] {$O_{11}$};
+            \draw[fill] (barycentric cs:o5=0.5,o2=0.5) coordinate (o12); %circle (2pt);% node[left] {$O_{12}$};
+            \draw[fill] (barycentric cs:o1=0.5,o2=0.5) coordinate (o13); %circle (2pt);% node[below left] {$O_{13}$};
+            \draw[fill] (barycentric cs:o3=0.5,o2=0.5) coordinate (o14); %circle (2pt);% node[above] {$O_{14}$};
+            \draw[fill] (barycentric cs:o3=0.5,o6=0.5) coordinate (o15); %circle (2pt);% node[above left] {$O_{15}$};
+            \draw[fill] (barycentric cs:o4=0.5,o6=0.5) coordinate (o16); %circle (2pt);% node[above right] {$O_{16}$};
+            \draw[fill] (barycentric cs:o5=0.5,o6=0.5) coordinate (o17); %circle (2pt);% node[above] {$O_{17}$};
+            \draw[fill] (barycentric cs:o1=0.5,o6=0.5) coordinate (o19); %circle (2pt);% node[right] {$O_{19}$};
+            \draw[fill] (barycentric cs:o2=0.5,o6=0.5) coordinate (o18); %circle (2pt);% node[right] {$O_{18}$};
+            \draw[fill] (barycentric cs:o1=0.5,o6=0.5) coordinate (o19); %circle (2pt);
+            \newcommand{\drawtriangle}[4][blue]{
+                \draw[semithick,#1,line join=round] (#2) -- (#3) -- (#4) -- cycle;
+            }
+            \newcommand{\drawsimplex}[5][blue]{
+                \draw[semithick,#1,line join=round] (#2) -- (#3);
+                \draw[semithick,#1,line join=round] (#2) -- (#4);
+                \draw[semithick,#1,line join=round] (#2) -- (#5);
+                \draw[semithick,#1,line join=round] (#3) -- (#4);
+                \draw[semithick,#1,line join=round] (#3) -- (#5);
+                \draw[semithick,#1,line join=round] (#4) -- (#5);
+            }
+            \newcommand{\transcoords}[2]{
+                \foreach \p in {#1} {
+                    \path (\p) +(#2) coordinate (t\p);
+                };
+            }
+            \draw (o19) -- +(1.0,0,0);
+            \draw (o19) -- +(0.0,1.0,0);
+            \draw (o19) -- +(0.0,0,1.0);
+            \transcoords{o7,o13,o14,o19}{0.0,0.0,-0.5}
+            \drawsimplex[blue]{to7}{to13}{to14}{to19}
+            \transcoords{o7,o8,o9,o19}{0.9428*0.5,0.0,-1/6}
+            \drawsimplex[blue]{to7}{to8}{to9}{to19}
+            \transcoords{o9,o10,o11,o19}{0.8165*0.5,0.4714*0.5,1/6}
+            \drawsimplex[vermillion]{to9}{to10}{to11}{to19}
+            \transcoords{o10,o16,o17,o19}{0.0,0.0,0.5}
+            \drawsimplex[vermillion]{to10}{to16}{to17}{to19}
+            \transcoords{o15,o16,o8,o19}{0.8165*0.5,-0.4714*0.5,1/6}
+            \drawsimplex[blueishGreen]{to15}{to16}{to8}{to19}
+            \transcoords{o14,o15,o18,o19}{-0.8165*0.5,-0.4714*0.5,-1/6}
+            \drawsimplex[blueishGreen]{to14}{to15}{to18}{to19}
+            \drawsimplex[purple]{o11}{o13}{o12}{o19}
+            \transcoords{o12,o17,o18,o19}{-0.9428*0.5,0.0,1/6}
+            \drawsimplex[purple]{to12}{to17}{to18}{to19}
+        \end{scope}
     \end{tikzpicture}
 \end{Figure}
 
