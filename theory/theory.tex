@@ -1225,7 +1225,7 @@ in such a way, that the minimal number of points required is used.
             }
             \newcommand{\transcoords}[3]{
                 \foreach \p in {#1} {
-                    \draw[vermillion] (#2) -- +($(\p)-(#3)$) coordinate (t\p);
+                    \path[vermillion] (#2) -- +($(\p)-(#3)$) coordinate (t\p);
                 };
             }
             \newcommand{\explodeview}[6][blue]{
@@ -1249,7 +1249,7 @@ in such a way, that the minimal number of points required is used.
             \explodeview{o12}{o17}{o18}{o19}{0.3}
         \end{scope}
         \begin{scope}[shift={(3,-6)},engineering axonometry]
-            \draw[fill] (0,0,0) +(0,0,-1.4) node {Child tetrahedrons $\simplex_{O,i}$};
+            \draw[fill] (0,0,0) +(0,0,-1.4) node {Child octahedrons $\mathbf{O}_{O,i}$};
             \begin{scope}[scale=5.0]
                 \coordinate (b1) at ({sqrt(8/9)},0,0);
                 \coordinate (b2) at ({-sqrt(2/9)},{sqrt(2/3)},0);
@@ -1280,38 +1280,41 @@ in such a way, that the minimal number of points required is used.
             \newcommand{\drawtriangle}[4][blue]{
                 \draw[semithick,#1,line join=round] (#2) -- (#3) -- (#4) -- cycle;
             }
-            \newcommand{\drawsimplex}[5][blue]{
-                \draw[semithick,#1,line join=round] (#2) -- (#3);
-                \draw[semithick,#1,line join=round] (#2) -- (#4);
-                \draw[semithick,#1,line join=round] (#2) -- (#5);
-                \draw[semithick,#1,line join=round] (#3) -- (#4);
-                \draw[semithick,#1,line join=round] (#3) -- (#5);
-                \draw[semithick,#1,line join=round] (#4) -- (#5);
+            \newcommand{\drawoctahedron}[7][blue]{
+                \draw[semithick,#1,line join=round] (#2) -- (#3) -- (#7) -- (#4) -- cycle;
+                \draw[semithick,#1,line join=round] (#2) -- (#5) -- (#7) -- (#6) -- cycle;
+
+                \draw[semithick,#1,line join=round] (#3) -- (#4) -- (#5) -- (#6) --cycle;
             }
             \newcommand{\transcoords}[3]{
                 \foreach \p in {#1} {
-                    \draw[vermillion] (#2) -- +($(\p)-(#3)$) coordinate (t\p);
+                    \path[vermillion] (#2) -- +($(\p)-(#3)$) coordinate (t\p);
                 };
             }
-            \newcommand{\explodeview}[6][blue]{
-                \path (#5) -- (barycentric cs:#2=0.5,#3=0.5,#4=0.5,#5=0.5) coordinate (t0) circle (1pt);
-                \path ($(#5)!#6!(t0)$) coordinate (t01);
-                \transcoords{#2,#3,#4,#5}{t01}{#5}
-                \drawsimplex[#1]{t#2}{t#3}{t#4}{t#5}
+            \newcommand{\explodeview}[8][blue]{
+                \path (#2) -- (barycentric cs:#2=0.5,#3=0.5,#4=0.5,#5=0.5,#6=0.5,#7=0.5) coordinate (t0) circle (1pt);
+                \path ($(#2)!#8!(t0)$) coordinate (t01);
+                \transcoords{#2,#3,#4,#5,#6,#7}{t01}{#2}
+                \drawoctahedron[#1]{t#2}{t#3}{t#4}{t#5}{t#6}{t#7}
             }
             \path (o19) -- +(1.0,0,0);
             \path (o19) -- +(0.0,1.0,0);
             \path (o19) -- +(0.0,0,1.0);
             %\explodeview{o7}{o13}{o14}{o19}{1ex}
             %\transcoords{o7,o13,o14,o19}{t0}
-            \explodeview{o7}{o13}{o14}{o19} {0.3}
-            \explodeview{o7}{o8}{o9}{o19}   {0.3}
-            \explodeview{o9}{o10}{o11}{o19} {0.3}
-            \explodeview{o10}{o16}{o17}{o19}{0.3}
-            \explodeview{o15}{o16}{o8}{o19} {0.3}
-            \explodeview{o14}{o15}{o18}{o19}{0.3}
-            \explodeview{o11}{o13}{o12}{o19}{0.3}
-            \explodeview{o12}{o17}{o18}{o19}{0.3}
+            \explodeview{o19}{o7}{o9}{o11}{o13}{o1}{0.3}
+            \explodeview{o19}{o12}{o13}{o14}{o18}{o2}{0.3}
+            \explodeview{o19}{o7} {o8} {o15}{o14}{o3}{0.3}
+            \explodeview{o19}{o8} {o9} {o10}{o16}{o4}{0.3}
+            \explodeview{o19}{o10}{o11}{o12}{o17}{o5}{0.3}
+            \explodeview{o19}{o15}{o16}{o17}{o18}{o6}{0.3}
+            %\explodeview{o7}{o8}{o9}{o19}   {0.3}
+            %\explodeview{o9}{o10}{o11}{o19} {0.3}
+            %\explodeview{o10}{o16}{o17}{o19}{0.3}
+            %\explodeview{o15}{o16}{o8}{o19} {0.3}
+            %\explodeview{o14}{o15}{o18}{o19}{0.3}
+            %\explodeview{o11}{o13}{o12}{o19}{0.3}
+            %\explodeview{o12}{o17}{o18}{o19}{0.3}
         \end{scope}
     \end{tikzpicture}
 \end{Figure}
