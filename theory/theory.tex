@@ -887,6 +887,138 @@ A Transformation of the subspace $\Bary^4_{S}$-Space  with its supspace barycent
 
 \subsection{Pure Integration Strategy}
 
+\subsubsection{Quadrilateral Integration}
+
+Similar to the 2D Case, Quadrilaterals can be identified inside the tetrahedron for which, normal gaussian quadrature rules can be applied.
+In this Integration Space $\R^3_{I}\coloneq [-1,1]\times[-1,1]\times[-1,1]$ a transformation must be formulated.
+
+For brevity, the interpolation functions $g_1,\, g_2$ will again be defined \begin{align}
+    g_1(a) &= \frac{1}{2} + \frac{a}{2} & g_2(a) &= \frac{1}{2} - \frac{a}{2} 
+\end{align}
+
+For which, the Interpolation functions for the points can be defined: \begin{align}
+    G_1(X,Y,Z) &= g_2(X)g_2(Y)g_2(Z) & G_2(X,Y,Z) &= g_1(X)g_2(Y)g_2(Z) \\
+    G_3(X,Y,Z) &= g_1(X)g_1(Y)g_2(Z) & G_4(X,Y,Z) &= g_2(X)g_1(Y)g_2(Z) \\
+    G_5(X,Y,Z) &= g_2(X)g_2(Y)g_1(Z) & G_6(X,Y,Z) &= g_1(X)g_2(Y)g_1(Z) \\
+    G_7(X,Y,Z) &= g_1(X)g_1(Y)g_1(Z) & G_8(X,Y,Z) &= g_2(X)g_1(Y)g_1(Z)
+\end{align}
+
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[engineering axonometry]
+            \draw[fill] (0,0,0) +(0,0,-1.4) node {Quadrilateral Domains};
+            \coordinate (shift) at (0,0,0.3);
+            \begin{scope}[shift={(shift)},scale=3.0]
+                \coordinate (b1) at ({sqrt(8/9)},0,0);
+                \coordinate (b2) at ({-sqrt(2/9)},{sqrt(2/3)},0);
+                \coordinate (b3) at ({-sqrt(2/9)},{-sqrt(2/3)},0);
+                \coordinate (b4) at (0,0,4/3);
+            \end{scope}
+            \draw (b1) -- (b2);
+            \draw (b2) -- (b3);
+            \draw (b3) -- (b1);
+            \draw (b1) -- (b4);
+            \draw (b2) -- (b4);
+            \draw (b3) -- (b4);
+            \node[below] at (b1) {$B_1$};
+            \node[right] at (b2) {$B_2$};
+            \node[left]  at (b3) {$B_3$};
+            \node[above] at (b4) {$B_4$};
+            %% Centroid
+            \draw[fill] (barycentric cs:b1=0.25,b2=0.25,b3=0.25,b4=0.25) coordinate (b15) circle (2pt) node[above] {$B_{15}$};
+            %% Center of Planes
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.33,b3=0.33,b4=0.33) coordinate (b11) circle (2pt) node[above] {$B_{11}$};
+            \draw[fill] (barycentric cs:b1=0.33,b2=0.00,b3=0.33,b4=0.33) coordinate (b12) circle (2pt) node[below] {$B_{12}$};
+            \draw[fill] (barycentric cs:b1=0.33,b2=0.33,b3=0.00,b4=0.33) coordinate (b13) circle (2pt) node[right] {$B_{13}$};
+            \draw[fill] (barycentric cs:b1=0.33,b2=0.33,b3=0.33,b4=0.00) coordinate (b14) circle (2pt) node[below] {$B_{14}$};
+            %% Center of Edges
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.50,b3=0.00,b4=0.00) coordinate (be5) circle (2pt) node[below] {$B_{5}$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.50,b4=0.00) coordinate (be6) circle (2pt) node[right=1em] {$B_{6}$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.50,b4=0.00) coordinate (be7) circle (2pt) node[below left] {$B_{7}$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.00,b4=0.50) coordinate (be8) circle (2pt) node[left] {$B_{8}$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.00,b4=0.50) coordinate (be9) circle (2pt) node[above right] {$B_{9}$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.00,b3=0.50,b4=0.50) coordinate (be10) circle (2pt) node[above left] {$B_{10}$};
+            \newcommand{\quadrilat}[8]{
+                \draw[blue] (#1) -- (#2) -- (#3) -- (#4) -- cycle;
+                \draw[blue] (#5) -- (#6) -- (#7) -- (#8) -- cycle;
+                \draw[blue] (#1) -- (#5);
+                \draw[blue] (#2) -- (#6);
+                \draw[blue] (#3) -- (#7);
+                \draw[blue] (#4) -- (#8);
+            }
+            \quadrilat{b1}{be5}{b14}{be7}{be8}{b13}{b15}{b12}
+            \quadrilat{b2}{be6}{b14}{be5}{be9}{b11}{b15}{b13}
+            \quadrilat{b3}{be7}{b14}{be6}{be10}{b12}{b15}{b11}
+            \quadrilat{b4}{be8}{b12}{be10}{be9}{b13}{b15}{b11}
+        \end{scope}
+        \begin{scope}[shift={(5.5,0)},engineering axonometry]
+            \draw[fill] (0,0,0) +(0,0,-1.4) node {Reference Quadrilateral};
+            \coordinate (shift) at (0,0,1);
+            \begin{scope}[shift={(shift)},scale=1.2]
+                \coordinate (q1) at (-1,-1,-1);
+                \coordinate (q2) at (1,-1 ,-1);
+                \coordinate (q3) at (1,1  ,-1);
+                \coordinate (q4) at (-1,1 ,-1);
+                \coordinate (q5) at (-1,-1,1);
+                \coordinate (q6) at (1,-1 ,1);
+                \coordinate (q7) at (1,1  ,1);
+                \coordinate (q8) at (-1,1 ,1);
+                \coordinate (q0) at (0,0,0);
+            \end{scope}
+            \draw[->] (q0) -- +(1,0,0) node[above] {$X$};
+            \draw[->] (q0) -- +(0,1,0) node[below] {$Y$};
+            \draw[->] (q0) -- +(0,0,1) node[above] {$Z$};
+            \draw[blue] (q1) -- (q2) -- (q3) -- (q4) -- cycle;
+            \draw[blue] (q5) -- (q6) -- (q7) -- (q8) -- cycle;
+            \draw[blue] (q1) -- (q5);
+            \draw[blue] (q2) -- (q6);
+            \draw[blue] (q3) -- (q7);
+            \draw[blue] (q4) -- (q8);
+            \draw[fill] (q1) circle (2pt) node[left] {$1$};
+            \draw[fill] (q2) circle (2pt) node[left] {$2$};
+            \draw[fill] (q3) circle (2pt) node[right] {$3$};
+            \draw[fill] (q4) circle (2pt) node[right] {$4$};
+            \draw[fill] (q5) circle (2pt) node[left] {$5$};
+            \draw[fill] (q6) circle (2pt) node[left] {$6$};
+            \draw[fill] (q7) circle (2pt) node[right] {$7$};
+            \draw[fill] (q8) circle (2pt) node[right] {$8$};
+            %% Centroid
+            %\draw[fill] (barycentric cs:b1=0.25,b2=0.25,b3=0.25,b4=0.25) coordinate (bc) circle (2pt) node[right] {$B_{15}$};
+            %% Center of Planes
+        \end{scope}
+    \end{tikzpicture}
+\end{Figure}
+
+\begin{equation}
+    \iiint_{\simplex} F \diff \simplex = \iiint_{D_1} F \diff D_1 + \iiint_{D_2} F \diff D_2 + \iiint_{D_3} F \diff D_3 + \iiint_{D_4} F \diff D_4
+\end{equation} with \begin{align}
+    B_{D_1}(X,Y,Z) &= \begin{bmatrix}
+        B_1 & B_5 & B_{14} & B_7 & B_8 & B_{13} & B_{15} & B_{12} \\
+    \end{bmatrix} \cdot G \\
+    B_{D_2}(X,Y,Z) &= \begin{bmatrix}
+        B_2 & B_5 & B_{14} & B_5 & B_9 & B_{11} & B_{15} & B_{13} \\
+    \end{bmatrix} \cdot G \\
+    B_{D_3}(X,Y,Z) &= \begin{bmatrix}
+        B_3 & B_7 & B_{14} & B_6 & B_{10} & B_{12} & B_{15} & B_{11} \\
+    \end{bmatrix} \cdot G \\
+    B_{D_4}(X,Y,Z) &= \begin{bmatrix}
+        B_4 & B_8 & B_{12} & B_{10} & B_9 & B_{13} & B_{15} & B_{11} \\
+    \end{bmatrix} \cdot G
+\end{align} and \begin{equation}
+    G(X,Y,Z) = \begin{bmatrix}
+        G_1 & G_2 & G_3 & G_4 & G_5 & G_6 & G_7 & G_8 \\
+    \end{bmatrix}^T
+\end{equation}
+
+The Jacobi-Determinant of any particular Domain being \begin{align}
+    J(B_{D_i}) &= B_i \begin{bmatrix}
+        \pardiff{G_1}{X} & \pardiff{G_2}{X} & \pardiff{G_3}{X} & \pardiff{G_4}{X} & \pardiff{G_5}{X} & \pardiff{G_6}{X} & \pardiff{G_7}{X} & \pardiff{G_8}{X} \\[1ex]
+        \pardiff{G_1}{Y} & \pardiff{G_2}{Y} & \pardiff{G_3}{Y} & \pardiff{G_4}{Y} & \pardiff{G_5}{Y} & \pardiff{G_6}{Y} & \pardiff{G_7}{Y} & \pardiff{G_8}{Y} \\[1ex]
+        \pardiff{G_1}{Z} & \pardiff{G_2}{Z} & \pardiff{G_3}{Z} & \pardiff{G_4}{Z} & \pardiff{G_5}{Z} & \pardiff{G_6}{Z} & \pardiff{G_7}{Z} & \pardiff{G_8}{Z} \\
+    \end{bmatrix}^T
+\end{align}
+
 \subsection{Subdivision Integration Strategy}
 
 \subsubsection{Edge Subdivision}
@@ -1016,7 +1148,7 @@ A Transformation of the subspace $\Bary^4_{S}$-Space  with its supspace barycent
 \end{Figure}
 
 The smooth subdivision scheme proposed in \cite{schaefer_smooth_2004} can be adapted to serve a uniform decomposition of a unit tetrahedron.
-This Approach circumvents numerical errors due to a directional bias in the subdivision scheme.
+This approach circumvents a directional bias in the subdivision scheme.
 
 The points being \begin{align}
     && B_1 &= \begin{bmatrix}
@@ -1072,9 +1204,9 @@ The points being \begin{align}
         \frac{1}{2} \\
     \end{bmatrix} \\
     && B_{11} &= \begin{bmatrix}
-        \frac{1}{3} \\
-        \frac{1}{3} \\
         0 \\
+        \frac{1}{3} \\
+        \frac{1}{3} \\
         \frac{1}{3} \\
     \end{bmatrix} & B_{12} &= \begin{bmatrix}
         \frac{1}{3} \\
@@ -1319,6 +1451,156 @@ in such a way, that the minimal number of points required is used.
     \end{tikzpicture}
 \end{Figure}
 
+\begin{align}
+    O_1 &= \begin{bmatrix}
+        1 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+    \end{bmatrix} & O_2 &= \begin{bmatrix}
+        0 \\
+        1 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+    \end{bmatrix} & O_3 &= \begin{bmatrix}
+        0 \\
+        0 \\
+        1 \\
+        0 \\
+        0 \\
+        0 \\
+    \end{bmatrix} & O_4 &= \begin{bmatrix}
+        0 \\
+        0 \\
+        0 \\
+        1 \\
+        0 \\
+        0 \\
+    \end{bmatrix} & O_5 &= \begin{bmatrix}
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+        1 \\
+        0 \\
+    \end{bmatrix} & O_6 &= \begin{bmatrix}
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+        1 \\
+    \end{bmatrix} \\
+    O_7 &= \begin{bmatrix}
+        0.5 \\
+        0 \\
+        0.5 \\
+        0 \\
+        0 \\
+        0 \\
+    \end{bmatrix} & 
+    O_8 &= \begin{bmatrix}
+        0 \\
+        0 \\
+        0.5 \\
+        0.5 \\
+        0 \\
+        0 \\
+    \end{bmatrix} & 
+    O_9 &= \begin{bmatrix}
+        0.5 \\
+        0 \\
+        0 \\
+        0.5 \\
+        0 \\
+        0 \\
+    \end{bmatrix} & 
+    O_{10} &= \begin{bmatrix}
+        0 \\
+        0 \\
+        0 \\
+        0.5 \\
+        0.5 \\
+        0 \\
+    \end{bmatrix} & 
+    O_{11} &= \begin{bmatrix}
+        0.5 \\
+        0 \\
+        0 \\
+        0 \\
+        0.5 \\
+        0 \\
+    \end{bmatrix} & 
+    O_{12} &= \begin{bmatrix}
+        0 \\
+        0.5 \\
+        0 \\
+        0 \\
+        0.5 \\
+        0 \\
+    \end{bmatrix} \\
+    O_{13} &= \begin{bmatrix}
+        0.5 \\
+        0.5 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+    \end{bmatrix} & 
+    O_{14} &= \begin{bmatrix}
+        0 \\
+        0.5 \\
+        0.5 \\
+        0 \\
+        0 \\
+        0 \\
+    \end{bmatrix} & 
+    O_{15} &= \begin{bmatrix}
+        0 \\
+        0 \\
+        0.5 \\
+        0 \\
+        0 \\
+        0.5 \\
+    \end{bmatrix} & 
+    O_{16} &= \begin{bmatrix}
+        0.5 \\
+        0 \\
+        0 \\
+        0 \\
+        0.5 \\
+        0 \\
+    \end{bmatrix} & 
+    O_{17} &= \begin{bmatrix}
+        0 \\
+        0 \\
+        0 \\
+        0.5 \\
+        0 \\
+        0.5 \\
+    \end{bmatrix} & 
+    O_{18} &= \begin{bmatrix}
+        0 \\
+        0.5 \\
+        0 \\
+        0 \\
+        0 \\
+        0.5 \\
+    \end{bmatrix} \\
+    O_{19} &= \begin{bmatrix}
+        0.5 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+        0.5 \\
+    \end{bmatrix}
+\end{align}
+
 The child octahedrons are \begin{align}
     \mathbf{O}_{O,1} &= \begin{bmatrix}
         O_1 & O_7 & O_{9} & O_{11} & O_{13} & O_{19} \\
@@ -1362,6 +1644,25 @@ The child simplizes are \begin{align}
         O_{12} & O_{17} & O_{18} & O_{19} \\
     \end{bmatrix}
 \end{align}
+
+\pagebreak
+
+\part{Implementation}
+
+\section{2D Case}
+
+Many formulas have been implemented 1-to-1 into code, shifting indizes as needed.
+
+For the hierarchic subdivision algorithm a tree data structure has been utilized.
+The depth of the tree corresponds to the number of subdivisions, while the tree nodes visited contain a number.
+Every node also contains the information, whether a refinement has been tested. That way, repeated function 
+evaluations are circumvented.
+
+The tree nodes are visited via a depth-first traversal. This choice is arbitrary.  Upon visiting a leaf node, it will be refined, if it hasn't been refined before.
+If the error of the unrefined leaf and the refined leaf is above the accepted threshold, the refined leaves will remain in the tree.
+This procedure will be done until, no leafs have been refined in an iteration.
+
+Therefore any tree encodes a specific subdivision for a simplex.
 
 \pagebreak
 

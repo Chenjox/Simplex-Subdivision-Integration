@@ -1,7 +1,5 @@
-use indextree::{Arena, NodeEdge, NodeId};
+
 use ndarray::prelude::*;
-use std::mem;
-use std::{fmt::write};
 use std::fs::File;
 use std::io::Write;
 
@@ -51,16 +49,40 @@ fn precision_test(precision: f64) {
 
 fn main() {
     // ASSERTION: The Simplex is always rightly oriented.
-    for i in 0..13 {
-        let prec = 1.0 / (10.0f64).powi(i);
-        precision_test(prec);
-    }
+    //for i in 0..13 {
+    //    let prec = 1.0 / (10.0f64).powi(i);
+    //    precision_test(prec);
+    //}
 
     //for el in &hist {
     //    //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
     //    println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
     //}
-    /*
+    let sim = Simplex2D::new_from_points(
+        &array![1., 1.],
+        &array![1.5, 1. + (3.0f64).sqrt() / 2.],
+        &array![2., 1.],
+    );
+    let precision = 1e-7;
+    let inte1 = Quadrilateral2DIntegrator::new(1);
+    let inte2 = Hierarchic2DIntegrator::new(inte1, false, precision);
+    let func = Box::new(Function2DHistory::new(PhaseField2DFunction {
+        weights: [10.0, 10.0, 10.0, 10.0, -0., -0.],
+    }));
+
+    let mut cache = Hierarchic2DIntegratorData::new_cache();
+
+    //let result1 = inte1.integrate_simplex(&func, &sim, &mut IntegratorDummy::get());
+    let result2 = inte2.integrate_simplex(&func, &sim, &mut cache);
+
+    let evals_build = func.function_evaluations();
+    func.delete_history();
+
+    let result = inte2.integrate_simplex(&func, &sim, &mut cache);
+
+    let hist = func.get_history();
+
+    
     let mut f = File::create("output.csv").expect("Unable to create file");
     let points = sim.get_points();
     for i in 0..3 {
@@ -69,6 +91,6 @@ fn main() {
     for i in &hist {
         let p = points.dot(&i.0);
         writeln!(f, "{} {} {}", p[0], p[1], i.1).expect("Unable to write!");
-    }*/
+    }
 
 }
