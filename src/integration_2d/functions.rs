@@ -2,6 +2,70 @@ use crate::integration_2d::domain::*;
 use ndarray::{array, Array1};
 use std::cell::RefCell;
 
+const TOLERANCE: f64 = 1e-10;
+
+pub struct PyramidFunction {
+    xi1p: f64,
+    xi2p: f64,
+    xi3p: f64,
+    height: f64
+}
+
+
+impl PyramidFunction {
+    pub fn new(xi1p: f64, xi2p: f64, xi3p: f64, height: f64) -> Self {
+        if (xi1p + xi2p + xi3p - 1.0).abs() >= TOLERANCE {
+            panic!(
+                "Illegal Barycentric Coordinates, {},{},{} = {} > 1.0!",
+                xi1p,
+                xi2p,
+                xi3p,
+                xi1p + xi2p + xi3p
+            );
+        };
+        PyramidFunction { xi1p, xi2p, xi3p, height }
+    }
+}
+
+impl Simplex2DFunction for PyramidFunction {
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
+        self.height*(xi1/self.xi1p).min(xi2/self.xi2p).min(xi3/self.xi3p)
+    }
+}
+
+
+pub struct RepeatedPyramidFunction {
+    pyramids: Vec<[f64; 4]>
+}
+impl RepeatedPyramidFunction {
+    pub fn new(pyramids: Vec<[f64; 4]>) -> Self {
+        /*if (xi1p + xi2p + xi3p - 1.0).abs() >= TOLERANCE {
+            panic!(
+                "Illegal Barycentric Coordinates, {},{},{} = {} > 1.0!",
+                xi1p,
+                xi2p,
+                xi3p,
+                xi1p + xi2p + xi3p
+            );
+        };*/
+        Self { pyramids }
+    }
+    fn get_pyramid_value(xi1: f64, xi2: f64, xi3: f64, a: &[f64;4]) -> f64 {
+        a[3]*(xi1/a[0]).min(xi2/a[1]).min(xi3/a[2])
+    } 
+}
+impl Simplex2DFunction for RepeatedPyramidFunction {
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
+        let mut sum = 0.0;
+        for i in 0..self.pyramids.len() {
+            let a = &self.pyramids[i];
+            sum += Self::get_pyramid_value(xi1, xi2, xi3, &a)
+        }
+        return sum;
+    }
+}
+
+
 /// A Dummy Struct implementing a Constant function for the given Simplex.
 pub struct Constant2DFunction;
 

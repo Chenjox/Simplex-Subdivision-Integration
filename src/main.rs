@@ -1,11 +1,12 @@
 
+use integration_2d::functions::RepeatedPyramidFunction;
 use ndarray::prelude::*;
 use std::fs::File;
 use std::io::Write;
 
 use crate::{
     integration_2d::{
-        functions::{Constant2DFunction, Function2DHistory},
+        functions::{Constant2DFunction, Function2DHistory, PyramidFunction},
         integrators::{
             quadrilaterial_integrator::*, Hierarchic2DIntegrator, Hierarchic2DIntegratorData,
         },
@@ -69,6 +70,7 @@ fn main() {
     let func = Box::new(Function2DHistory::new(PhaseField2DFunction {
         weights: [10.0, 10.0, 10.0, 10.0, -0., -0.],
     }));
+    let func2 = Box::new(Function2DHistory::new(RepeatedPyramidFunction::new(vec![[0.2,0.3,0.5,3.0],[0.5,0.3,0.2,3.0]])));
 
     let mut cache = Hierarchic2DIntegratorData::new_cache();
 
@@ -78,9 +80,11 @@ fn main() {
     let evals_build = func.function_evaluations();
     func.delete_history();
 
-    let result = inte2.integrate_simplex(&func, &sim, &mut cache);
+    let result = inte2.integrate_simplex(&func2, &sim, &mut cache);
 
-    let hist = func.get_history();
+    
+
+    let hist = func2.get_history();
 
     
     let mut f = File::create("output.csv").expect("Unable to create file");
