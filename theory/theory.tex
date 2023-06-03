@@ -997,7 +997,7 @@ For which, the Interpolation functions for the points can be defined: \begin{ali
         B_1 & B_5 & B_{14} & B_7 & B_8 & B_{13} & B_{15} & B_{12} \\
     \end{bmatrix} \cdot G \\
     B_{D_2}(X,Y,Z) &= \begin{bmatrix}
-        B_2 & B_5 & B_{14} & B_5 & B_9 & B_{11} & B_{15} & B_{13} \\
+        B_2 & B_6 & B_{14} & B_5 & B_9 & B_{11} & B_{15} & B_{13} \\
     \end{bmatrix} \cdot G \\
     B_{D_3}(X,Y,Z) &= \begin{bmatrix}
         B_3 & B_7 & B_{14} & B_6 & B_{10} & B_{12} & B_{15} & B_{11} \\
@@ -1018,6 +1018,83 @@ The Jacobi-Determinant of any particular Domain being \begin{align}
         \pardiff{G_1}{Z} & \pardiff{G_2}{Z} & \pardiff{G_3}{Z} & \pardiff{G_4}{Z} & \pardiff{G_5}{Z} & \pardiff{G_6}{Z} & \pardiff{G_7}{Z} & \pardiff{G_8}{Z} \\
     \end{bmatrix}^T
 \end{align}
+
+With the added benefit, that the integration points and their weights can be precomputed.
+
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[engineering axonometry]
+            \draw[fill] (0,0,0) +(0,0,-1.4) node {Gauss Points $n=1$};
+            \coordinate (shift) at (0,0,0.3);
+            \begin{scope}[shift={(shift)},scale=3.0]
+                \coordinate (b1) at ({sqrt(8/9)},0,0);
+                \coordinate (b2) at ({-sqrt(2/9)},{sqrt(2/3)},0);
+                \coordinate (b3) at ({-sqrt(2/9)},{-sqrt(2/3)},0);
+                \coordinate (b4) at (0,0,4/3);
+            \end{scope}
+            \draw (b1) -- (b2);
+            \draw (b2) -- (b3);
+            \draw (b3) -- (b1);
+            \draw (b1) -- (b4);
+            \draw (b2) -- (b4);
+            \draw (b3) -- (b4);
+            \draw[fill,red] (barycentric cs:b1=0.469,b2=0.177,b3=0.177,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.469,b3=0.177,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.177,b3=0.469,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.177,b3=0.177,b4=0.469) circle (2pt);
+        \end{scope}
+        \begin{scope}[shift={(6.0,0)},engineering axonometry]
+            \draw[fill] (0,0,0) +(0,0,-1.4) node {Gauss Points $n=2$};
+            \coordinate (shift) at (0,0,0.3);
+            \begin{scope}[shift={(shift)},scale=3.0]
+                \coordinate (b1) at ({sqrt(8/9)},0,0);
+                \coordinate (b2) at ({-sqrt(2/9)},{sqrt(2/3)},0);
+                \coordinate (b3) at ({-sqrt(2/9)},{-sqrt(2/3)},0);
+                \coordinate (b4) at (0,0,4/3);
+            \end{scope}
+            \draw (b1) -- (b2);
+            \draw (b2) -- (b3);
+            \draw (b3) -- (b1);
+            \draw (b1) -- (b4);
+            \draw (b2) -- (b4);
+            \draw (b3) -- (b4);
+            \draw[fill,blueishGreen] (barycentric cs:b1=0.092,b2=0.725,b3=0.092,b4=0.092) circle (2pt);
+            \draw[fill,blueishGreen] (barycentric cs:b1=0.073,b2=0.512,b3=0.073,b4=0.342) circle (2pt);
+            \draw[fill,blueishGreen] (barycentric cs:b1=0.342,b2=0.512,b3=0.073,b4=0.073) circle (2pt);
+            \draw[fill,blueishGreen] (barycentric cs:b1=0.274,b2=0.391,b3=0.061,b4=0.274) circle (2pt);
+            \draw[fill,blueishGreen] (barycentric cs:b1=0.073,b2=0.512,b3=0.342,b4=0.073) circle (2pt);
+            \draw[fill,blueishGreen] (barycentric cs:b1=0.061,b2=0.391,b3=0.274,b4=0.274) circle (2pt);
+            \draw[fill,blueishGreen] (barycentric cs:b1=0.274,b2=0.391,b3=0.274,b4=0.061) circle (2pt);
+            \draw[fill,blueishGreen] (barycentric cs:b1=0.228,b2=0.316,b3=0.228,b4=0.228) circle (2pt);
+            \draw[fill,reddishPurple] (barycentric cs:b1=0.092,b2=0.092,b3=0.725,b4=0.092) circle (2pt);
+            \draw[fill,reddishPurple] (barycentric cs:b1=0.073,b2=0.073,b3=0.512,b4=0.342) circle (2pt);
+            \draw[fill,reddishPurple] (barycentric cs:b1=0.073,b2=0.342,b3=0.512,b4=0.073) circle (2pt);
+            \draw[fill,reddishPurple] (barycentric cs:b1=0.061,b2=0.274,b3=0.391,b4=0.274) circle (2pt);
+            \draw[fill,reddishPurple] (barycentric cs:b1=0.342,b2=0.073,b3=0.512,b4=0.073) circle (2pt);
+            \draw[fill,reddishPurple] (barycentric cs:b1=0.274,b2=0.061,b3=0.391,b4=0.274) circle (2pt);
+            \draw[fill,reddishPurple] (barycentric cs:b1=0.274,b2=0.274,b3=0.391,b4=0.061) circle (2pt);
+            \draw[fill,reddishPurple] (barycentric cs:b1=0.228,b2=0.228,b3=0.316,b4=0.228) circle (2pt);
+            \draw[fill,skyBlue] (barycentric cs:b1=0.092,b2=0.092,b3=0.092,b4=0.725) circle (2pt);
+            \draw[fill,skyBlue] (barycentric cs:b1=0.073,b2=0.342,b3=0.073,b4=0.512) circle (2pt);
+            \draw[fill,skyBlue] (barycentric cs:b1=0.073,b2=0.073,b3=0.342,b4=0.512) circle (2pt);
+            \draw[fill,skyBlue] (barycentric cs:b1=0.061,b2=0.274,b3=0.274,b4=0.391) circle (2pt);
+            \draw[fill,skyBlue] (barycentric cs:b1=0.342,b2=0.073,b3=0.073,b4=0.512) circle (2pt);
+            \draw[fill,skyBlue] (barycentric cs:b1=0.274,b2=0.274,b3=0.061,b4=0.391) circle (2pt);
+            \draw[fill,skyBlue] (barycentric cs:b1=0.274,b2=0.061,b3=0.274,b4=0.391) circle (2pt);
+            \draw[fill,skyBlue] (barycentric cs:b1=0.228,b2=0.228,b3=0.228,b4=0.316) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.725,b2=0.092,b3=0.092,b4=0.092) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.512,b2=0.073,b3=0.073,b4=0.342) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.512,b2=0.073,b3=0.342,b4=0.073) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.391,b2=0.061,b3=0.274,b4=0.274) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.512,b2=0.342,b3=0.073,b4=0.073) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.391,b2=0.274,b3=0.061,b4=0.274) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.391,b2=0.274,b3=0.274,b4=0.061) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.316,b2=0.228,b3=0.228,b4=0.228) circle (2pt);
+        \end{scope}
+    \end{tikzpicture}
+\end{Figure} % https://www.desmos.com/geometry-beta/4ozdl0idri
+
 
 \subsection{Subdivision Integration Strategy}
 
@@ -1249,23 +1326,6 @@ Whereas the vertices of the octahedral domain are expressable as \begin{align}
     \end{bmatrix}
 \end{align}
 This map implies a order of the octahedrons vertices, which is now necessarily a condition to uphold.
-
-\paragraph{octahedron integration}
-
-The standard integration will subdivide the octahedron along its diagonal creating $4$ deformed tetrahedrons.
-These deformed tetrahedrons are defined by following points: TODO Update Numbering to coincide with numbering of the mapping\begin{align}
-    \simplex_{O,1} &= \begin{bmatrix}
-        B_5 & B_7 & B_9 & B_8 \\
-    \end{bmatrix} & \simplex_{O,2} &= \begin{bmatrix}
-        B_8 & B_7 & B_9 & B_{10} \\
-    \end{bmatrix} \\
-    \simplex_{O,3} &= \begin{bmatrix}
-        B_{10} & B_7 & B_9 & B_6 \\
-    \end{bmatrix} & \simplex_{O,4} &= \begin{bmatrix}
-        B_6 & B_7 & B_9 & B_5 \\
-    \end{bmatrix}
-\end{align}
-The domains $\simplex_{O,i}$ can the be integrated with a pure simplex integrator. This results in $4$ tetrahedrons of equal volume.
 
 \paragraph{octahedron subdivision}
 
@@ -1644,6 +1704,23 @@ The child simplizes are \begin{align}
         O_{12} & O_{17} & O_{18} & O_{19} \\
     \end{bmatrix}
 \end{align}
+
+\paragraph{octahedron integration}
+
+The standard integration will subdivide the octahedron along its diagonal creating $4$ deformed tetrahedrons.
+These deformed tetrahedrons are defined by following points: \begin{align}
+    \simplex_{O,1} &= \begin{bmatrix}
+        O_3 & O_4 & O_1 & O_5 \\
+    \end{bmatrix} & \simplex_{O,2} &= \begin{bmatrix}
+        O_3 & O_1 & O_2 & O_5 \\
+    \end{bmatrix} \\
+    \simplex_{O,3} &= \begin{bmatrix}
+        O_3 & O_2 & O_6 & O_5 \\
+    \end{bmatrix} & \simplex_{O,4} &= \begin{bmatrix}
+        O_3 & O_6 & O_4 & O_5 \\
+    \end{bmatrix}
+\end{align}
+The domains $\simplex_{O,i}$ can the be integrated with a pure simplex integrator. This results in $4$ tetrahedrons of equal volume.
 
 \pagebreak
 

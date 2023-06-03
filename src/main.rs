@@ -1,5 +1,6 @@
 
 use integration_2d::functions::RepeatedPyramidFunction;
+use integration_3d::{Simplex3D, functions::{Function3DHistory, Constant3DFunction}, integrators::Quadrilateral3DIntegrator, Simplex3DIntegrator};
 use ndarray::prelude::*;
 use std::fs::File;
 use std::io::Write;
@@ -16,6 +17,7 @@ use crate::{
 };
 
 mod integration_2d;
+mod integration_3d;
 mod problems;
 
 fn precision_test(precision: f64) {
@@ -48,17 +50,7 @@ fn precision_test(precision: f64) {
     println!("{},{},{},{}",  result,precision, evals_build, hist.len());
 }
 
-fn main() {
-    // ASSERTION: The Simplex is always rightly oriented.
-    //for i in 0..13 {
-    //    let prec = 1.0 / (10.0f64).powi(i);
-    //    precision_test(prec);
-    //}
-
-    //for el in &hist {
-    //    //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
-    //    println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
-    //}
+fn integration_test() {
     let sim = Simplex2D::new_from_points(
         &array![1., 1.],
         &array![1.5, 1. + (3.0f64).sqrt() / 2.],
@@ -96,5 +88,40 @@ fn main() {
         let p = points.dot(&i.0);
         writeln!(f, "{} {} {}", p[0], p[1], i.1).expect("Unable to write!");
     }
+}
+
+fn main() {
+    // ASSERTION: The Simplex is always rightly oriented.
+    //for i in 0..13 {
+    //    let prec = 1.0 / (10.0f64).powi(i);
+    //    precision_test(prec);
+    //}
+
+    //for el in &hist {
+    //    //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
+    //    println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
+    //}
+    let sim = Simplex3D::new_from_points(
+        &array![(8.0f64/9.0).sqrt(), 0., -1.0/3.0],
+        &array![-(2.0f64/9.0).sqrt(), (2.0f64/3.0).sqrt(), - 1.0/3.0],
+        &array![-(2.0f64/9.0).sqrt(), -(2.0f64/3.0).sqrt(), - 1.0/3.0],
+        &array![0.0,0.0,1.0]
+    );
+
+    let func = Box::new(Function3DHistory::new(Constant3DFunction{}));
+
+    let inte = Quadrilateral3DIntegrator::new(1);
+
+    let result = inte.integrate_simplex(&func, &sim, &mut IntegratorDummy);
+
+    let hist = func.get_history();
+
+    println!("{}",hist.len());
+    for el in &hist {
+        //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
+        let el = &el.0;
+        println!("\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",el[0],el[1],el[2],el[3]);
+    };
+    println!("{}",result);
 
 }

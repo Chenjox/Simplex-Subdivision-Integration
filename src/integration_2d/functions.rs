@@ -8,9 +8,8 @@ pub struct PyramidFunction {
     xi1p: f64,
     xi2p: f64,
     xi3p: f64,
-    height: f64
+    height: f64,
 }
-
 
 impl PyramidFunction {
     pub fn new(xi1p: f64, xi2p: f64, xi3p: f64, height: f64) -> Self {
@@ -23,19 +22,23 @@ impl PyramidFunction {
                 xi1p + xi2p + xi3p
             );
         };
-        PyramidFunction { xi1p, xi2p, xi3p, height }
+        PyramidFunction {
+            xi1p,
+            xi2p,
+            xi3p,
+            height,
+        }
     }
 }
 
 impl Simplex2DFunction for PyramidFunction {
     fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
-        self.height*(xi1/self.xi1p).min(xi2/self.xi2p).min(xi3/self.xi3p)
+        self.height * (xi1 / self.xi1p).min(xi2 / self.xi2p).min(xi3 / self.xi3p)
     }
 }
 
-
 pub struct RepeatedPyramidFunction {
-    pyramids: Vec<[f64; 4]>
+    pyramids: Vec<[f64; 4]>,
 }
 impl RepeatedPyramidFunction {
     pub fn new(pyramids: Vec<[f64; 4]>) -> Self {
@@ -50,9 +53,9 @@ impl RepeatedPyramidFunction {
         };*/
         Self { pyramids }
     }
-    fn get_pyramid_value(xi1: f64, xi2: f64, xi3: f64, a: &[f64;4]) -> f64 {
-        a[3]*(xi1/a[0]).min(xi2/a[1]).min(xi3/a[2])
-    } 
+    fn get_pyramid_value(xi1: f64, xi2: f64, xi3: f64, a: &[f64; 4]) -> f64 {
+        a[3] * (xi1 / a[0]).min(xi2 / a[1]).min(xi3 / a[2])
+    }
 }
 impl Simplex2DFunction for RepeatedPyramidFunction {
     fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
@@ -64,7 +67,6 @@ impl Simplex2DFunction for RepeatedPyramidFunction {
         return sum;
     }
 }
-
 
 /// A Dummy Struct implementing a Constant function for the given Simplex.
 pub struct Constant2DFunction;

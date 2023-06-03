@@ -2,7 +2,15 @@ use crate::integration_3d::domain::*;
 use ndarray::{array, Array1};
 use std::cell::RefCell;
 
-/// A struct which will record all function evaluations of the given [`Simplex2DFunction`]
+pub struct Constant3DFunction;
+
+impl Simplex3DFunction for Constant3DFunction {
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, xi4: f64, simplex: &Simplex3D) -> f64 {
+        1.0
+    }
+}
+
+/// A struct which will record all function evaluations of the given [`Simplex3DFunction`]
 pub struct Function3DHistory<F: Simplex3DFunction> {
     history: RefCell<Vec<(Array1<f64>, f64)>>,
     function: F,

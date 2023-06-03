@@ -38,46 +38,61 @@ fn g2(coord: f64) -> f64 {
     -coord / 2.0 + 0.5
 }
 
+#[allow(non_snake_case)]
 fn G1(x1: f64, x2: f64) -> f64 {
     g1(x1) * g1(x2)
 }
 
+#[allow(non_snake_case)]
 fn G1_diff_x1(x1: f64, x2: f64) -> f64 {
     0.5 * g1(x2)
 }
+#[allow(non_snake_case)]
 fn G1_diff_x2(x1: f64, x2: f64) -> f64 {
     g1(x1) * 0.5
 }
 
+#[allow(non_snake_case)]
 fn G2(x1: f64, x2: f64) -> f64 {
     g1(x1) * g2(x2)
 }
 
+#[allow(non_snake_case)]
 fn G2_diff_x1(x1: f64, x2: f64) -> f64 {
     0.5 * g2(x2)
 }
+
+#[allow(non_snake_case)]
 fn G2_diff_x2(x1: f64, x2: f64) -> f64 {
     g1(x1) * -0.5
 }
 
+#[allow(non_snake_case)]
 fn G3(x1: f64, x2: f64) -> f64 {
     g2(x1) * g1(x2)
 }
 
+#[allow(non_snake_case)]
 fn G3_diff_x1(x1: f64, x2: f64) -> f64 {
     -0.5 * g1(x2)
 }
+
+#[allow(non_snake_case)]
 fn G3_diff_x2(x1: f64, x2: f64) -> f64 {
     g2(x1) * 0.5
 }
 
+#[allow(non_snake_case)]
 fn G4(x1: f64, x2: f64) -> f64 {
     g2(x1) * g2(x2)
 }
 
+#[allow(non_snake_case)]
 fn G4_diff_x1(x1: f64, x2: f64) -> f64 {
     -0.5 * g2(x2)
 }
+
+#[allow(non_snake_case)]
 fn G4_diff_x2(x1: f64, x2: f64) -> f64 {
     g2(x1) * -0.5
 }

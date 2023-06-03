@@ -1,13 +1,19 @@
 use ndarray::{array, Array1, Array2};
 
 pub struct Simplex3D {
-    points: Array2<f64>
+    points: Array2<f64>,
 }
 
+type Point3D = Array1<f64>;
+
 impl Simplex3D {
-    pub fn new_from_points(p1: &Point2D, p2: &Point2D, p3: &Point2D, p4: &Point2D) -> Self {
+    pub fn new_from_points(p1: &Point3D, p2: &Point3D, p3: &Point3D, p4: &Point3D) -> Self {
         Self {
-            points: array![[p1[0], p2[0], p3[0], p4[0]], [p1[1], p2[1], p3[1], p4[1]], [p1[2], p2[2], p3[2], p4[2]]],
+            points: array![
+                [p1[0], p2[0], p3[0], p4[0]],
+                [p1[1], p2[1], p3[1], p4[1]],
+                [p1[2], p2[2], p3[2], p4[2]]
+            ],
         }
     }
 
@@ -24,10 +30,10 @@ impl Simplex3D {
 /// Inputs must be expressed in barycentric coordinates.
 pub trait Simplex3DFunction {
     /// The function over the Simplex.
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, xi4: f64, simplex: &Simplex2D) -> f64;
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, xi4: f64, simplex: &Simplex3D) -> f64;
 
-    fn function_vec(&self, xi: &Array1<f64>, simplex: &Simplex2D) -> f64 {
-        self.function(xi[0], xi[1], xi[2], xi[4], simplex)
+    fn function_vec(&self, xi: &Array1<f64>, simplex: &Simplex3D) -> f64 {
+        self.function(xi[0], xi[1], xi[2], xi[3], simplex)
     }
 }
 
@@ -42,7 +48,12 @@ pub trait Simplex3DIntegrator<D> {
         cache_data: &mut D,
     ) -> f64 {
         self.integrate_over_domain(
-            &array![[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]],
+            &array![
+                [1.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ],
             func,
             simplex,
             cache_data,
