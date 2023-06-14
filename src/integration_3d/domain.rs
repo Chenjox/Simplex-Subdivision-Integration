@@ -70,6 +70,14 @@ pub trait Simplex3DIntegrator<D> {
     ) -> f64;
 }
 
+pub struct IntegratorDummy;
+
+impl IntegratorDummy {
+    pub fn get() -> Self {
+        Self {}
+    }
+}
+
 //fn usage(sim: &Simplex2D, func: &Box<dyn Simplex2DFunction>, inte: &Box<dyn Simplex2DIntegrator>) {
 //    let val = inte.integrate(func, sim);
 //}

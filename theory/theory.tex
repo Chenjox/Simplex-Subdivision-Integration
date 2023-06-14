@@ -579,7 +579,7 @@ With the Jacobi Matrix of any particular Domain being \begin{equation}
 \pagebreak
 
 \subsection{Subdivision Integration Strategy}
-
+\label{sec:subdivision2D}
 Because any triangle can be decomposed into 4 similar triangles, the subdivision algorithm turns out to be quite practical in implementation.
 
 The Integral over a parent Simplex $\boldsymbol{\Delta}_p$, can be expressed as an Integral over 4 Child Simpleces $\boldsymbol{\Delta}_i$: 
@@ -1095,10 +1095,12 @@ With the added benefit, that the integration points and their weights can be pre
     \end{tikzpicture}
 \end{Figure} % https://www.desmos.com/geometry-beta/4ozdl0idri
 
+%\subsubsection{Integration Strategy by }
 
 \subsection{Subdivision Integration Strategy}
 
 \subsubsection{Edge Subdivision}
+\label{sec:subdivision3Dedge}
 
 \begin{Figure}
     \centering
@@ -1740,6 +1742,33 @@ If the error of the unrefined leaf and the refined leaf is above the accepted th
 This procedure will be done until, no leafs have been refined in an iteration.
 
 Therefore any tree encodes a specific subdivision for a simplex.
+
+\subsection{Magic Numbers and other arbitrary decisions}
+
+In the 2D Simplex, the subdomains are indexed as introduced in \ref{sec:subdivision2D}.
+
+With a list of indeces the subdomain transformation can be derived.
+
+\section{3D Case}
+
+\subsection{Magic Numbers and other arbitrary decisions}
+
+In the 3D Simplex, the subdivision scheme needs to index every domain.
+As there are two types of domains, a distiction must be made.
+
+The Domains listed in \ref{sec:subdivision3Dedge} will be indexed in the following way: \begin{align*}
+    &\begin{array}{@{}*{13}{c}@{}}
+        0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+         & \simplex_1 & \simplex_2 & \simplex_3 & \simplex_4 
+        & \simplex_{O,1} & \simplex_{O,2} & \simplex_{O,3} & \simplex_{O,4} & \simplex_{O,5} & \simplex_{O,6}
+        & \simplex_{O,7} & \simplex_{O,8} \\
+    \end{array} \\
+    &\begin{array}{@{}*{7}{c}@{}}
+        13 & 14 & 15 & 16 & 17 & 18 & 19 \\
+        \mathbf{O}_5 & \mathbf{O}_{O,1} & \mathbf{O}_{O,2} & \mathbf{O}_{O,3} 
+        & \mathbf{O}_{O,4} & \mathbf{O}_{O,5} & \mathbf{O}_{O,6}\\
+    \end{array} 
+\end{align*}
 
 \pagebreak
 
