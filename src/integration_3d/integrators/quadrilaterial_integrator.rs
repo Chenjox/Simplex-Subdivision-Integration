@@ -395,8 +395,15 @@ impl<IntegratorDummy> Simplex3DIntegrator<IntegratorDummy> for Quadrilateral3DIn
         transformation: &Array2<f64>,
         func: &Box<T>,
         simplex: &Simplex3D,
-        cached_data: &mut IntegratorDummy,
+        _cached_data: &mut IntegratorDummy,
     ) -> f64 {
+        if !(transformation.shape()[0] == 4 && transformation.shape()[1] == 4) {
+            panic!(
+                "Die Transformationsmatrix ist nicht der Dimension {} x {}",
+                transformation.shape()[0],
+                transformation.shape()[1]
+            )
+        }
         let mut sum = 0.;
         for i in 1..=4 {
             let d1 = Quadrilateral3DIntegrator::get_quadrilateral(i);

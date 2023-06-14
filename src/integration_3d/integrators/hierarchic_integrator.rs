@@ -178,6 +178,47 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
     ]
 }
 
+fn octahedron_subdivisions() -> [Array2<f64>; 4] {
+    [
+        array![
+            // O 1
+            [0., 0., 1., 0.],
+            [0., 0., 0., 0.],
+            [1., 0., 0., 0.],
+            [0., 1., 0., 0.],
+            [0., 0., 0., 1.],
+            [0., 0., 0., 0.],
+        ],
+        array![
+            // O 2
+            [0., 1., 0., 0.],
+            [0., 0., 1., 0.],
+            [1., 0., 0., 0.],
+            [0., 0., 0., 0.],
+            [0., 0., 0., 1.],
+            [0., 0., 0., 0.],
+        ],
+        array![
+            // O 3
+            [0., 0., 0., 0.],
+            [0., 1., 0., 0.],
+            [1., 0., 0., 0.],
+            [0., 0., 0., 0.],
+            [0., 0., 0., 1.],
+            [0., 0., 1., 0.],
+        ],
+        array![
+            // O 4
+            [0., 0., 0., 0.],
+            [0., 0., 0., 0.],
+            [1., 0., 0., 0.],
+            [0., 0., 1., 0.],
+            [0., 0., 0., 1.],
+            [0., 1., 0., 0.],
+        ],
+    ]
+}
+
 impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
     pub fn new(base_integrator: I, consolidated: bool, precision: f64) -> Self {
         Self {
@@ -189,7 +230,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
 
     fn get_transformation(parent_vector: &Vec<u8>) -> Array2<f64> {
         // Der höchste Index ist 18
-        let transformations = subdivision_transformations();
+        let subdivision_transformations = &subdivision_transformations();
         let mut result = array![
             [1.0, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0],
@@ -199,7 +240,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
         for i in 0..parent_vector.len() - 1 {
             let current = parent_vector[i];
             // Die Zahlen gehen bis 4, 0 ist besonders.
-            let current_transformation = &transformations[(current - 1) as usize];
+            let current_transformation = &subdivision_transformations[(current - 1) as usize];
             result = current_transformation.dot(&result);
         }
         return result;
@@ -210,8 +251,47 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
         transformation: &Array2<f64>,
         func: &Box<T>,
         simplex: &Simplex3D,
-    ) -> Array2<f64> {
-        todo!()
+    ) -> f64 {
+        if !(transformation.shape()[0] == 4 && transformation.shape()[1] == 4) {
+            panic!(
+                "Die Transformationsmatrix ist nicht der Dimension 4 x 4, sondern {} x {}",
+                transformation.shape()[0],
+                transformation.shape()[1]
+            )
+        }
+        self.base_integrator.integrate_over_domain(
+            transformation,
+            func,
+            simplex,
+            &mut IntegratorDummy::get(),
+        )
+    }
+
+    fn integrate_octahedron<T: Simplex3DFunction>(
+        &self,
+        transformation: &Array2<f64>,
+        func: &Box<T>,
+        simplex: &Simplex3D,
+    ) -> f64 {
+        if !(transformation.shape()[0] == 4 && transformation.shape()[1] == 6) {
+            panic!(
+                "Die Transformationsmatrix ist nicht der Dimension 4 x 6 sondern {} x {}",
+                transformation.shape()[0],
+                transformation.shape()[1]
+            )
+        }
+        let octahedron_subdivisions = &octahedron_subdivisions();
+        let mut result = 0.0;
+        for i in 0..4 {
+            let trans = &octahedron_subdivisions[i].dot(transformation);
+            result += self.base_integrator.integrate_over_domain(
+                trans,
+                func,
+                simplex,
+                &mut IntegratorDummy::get(),
+            )
+        }
+        result
     }
 }
 
@@ -318,15 +398,11 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                     let child_transform = transformation.dot(&trans);
 
                     // Fallunterscheidung: Ist es ein Oktaeder oder ein Tetraeder?
-                    if tree[current_id].get().is_simplex_subdomain() {
+                    let mut current_result = if tree[current_id].get().is_simplex_subdomain() {
+                        self.integrate_tetrahedron(transformation, func, simplex)
                     } else {
-                    }
-                    let mut current_result = self.base_integrator.integrate_over_domain(
-                        &child_transform,
-                        func,
-                        simplex,
-                        &mut IntegratorDummy::get(),
-                    );
+                        self.integrate_octahedron(transformation, func, simplex)
+                    };
 
                     // Wenn das Blatt noch nicht überprüft worden ist und noch nicht consolidiert ist.
                     if !tree[current_id].get().checked && !self.consolidated {
