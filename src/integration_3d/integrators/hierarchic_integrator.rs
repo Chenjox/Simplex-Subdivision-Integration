@@ -300,23 +300,33 @@ struct NodeData {
     number: u8,
 }
 
+/// See Theory PDF under Arbitrary decisions.
+/// All Magic numbers are checked here and only here.
+fn is_tetrahedron_domain_number(num: u8) -> bool {
+    if num > 19 {
+        panic!("Illegal Magic number for subdomain! {}", num)
+    }
+    num > 0 && num < 13
+}
+
+/// see [`is_tetrahedron_domain_number()`]
+fn is_octahedron_domain_number(num: u8) -> bool {
+    !is_tetrahedron_domain_number(num)
+}
+
 impl NodeData {
     fn new(checked: bool, number: u8) -> Self {
         return Self { checked, number };
     }
 
-    /// Watch out! Magic Numbers!
-    /// Whether it is a tetrahedral or octahedral domain.
-    ///
+    /// see [`is_tetrahedron_domain_number()`]
     fn is_simplex_subdomain(&self) -> bool {
-        if self.number > 19 {
-            panic!("Illegal Magic number for subdomain! {}", self.number)
-        }
-        self.number > 0 && self.number < 13
+        is_tetrahedron_domain_number(self.number)
     }
 
+    /// see [`is_octahedron_domain_number()`]
     fn is_octahedral_subdomain(&self) -> bool {
-        !self.is_octahedral_subdomain()
+        is_octahedron_domain_number(self.number)
     }
 }
 
@@ -399,14 +409,15 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
 
                     // Fallunterscheidung: Ist es ein Oktaeder oder ein Tetraeder?
                     let mut current_result = if tree[current_id].get().is_simplex_subdomain() {
-                        self.integrate_tetrahedron(transformation, func, simplex)
+                        self.integrate_tetrahedron(&child_transform, func, simplex)
                     } else {
-                        self.integrate_octahedron(transformation, func, simplex)
+                        self.integrate_octahedron(&child_transform, func, simplex)
                     };
 
                     // Wenn das Blatt noch nicht überprüft worden ist und noch nicht consolidiert ist.
                     if !tree[current_id].get().checked && !self.consolidated {
                         // Dann wird eine Verfeinerungsstufe mehr eingebaut.
+                        todo!("AB hier wirds kritisch, verfeinerung muss zwischen oktaeder und tetraeder unterscheiden!");
                         let mut child_result = 0.;
                         for i in 0..4 {
                             let i_1 = i + 1;
