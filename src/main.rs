@@ -1,6 +1,9 @@
-
 use integration_2d::functions::RepeatedPyramidFunction;
-use integration_3d::{Simplex3D, functions::{Function3DHistory, Constant3DFunction}, integrators::Quadrilateral3DIntegrator, Simplex3DIntegrator};
+use integration_3d::{
+    functions::{Constant3DFunction, Function3DHistory},
+    integrators::Quadrilateral3DIntegrator,
+    Simplex3D, Simplex3DIntegrator,
+};
 use ndarray::prelude::*;
 use std::fs::File;
 use std::io::Write;
@@ -47,7 +50,7 @@ fn precision_test(precision: f64) {
 
     let hist = func.get_history();
 
-    println!("{},{},{},{}",  result,precision, evals_build, hist.len());
+    println!("{},{},{},{}", result, precision, evals_build, hist.len());
 }
 
 fn integration_test() {
@@ -62,7 +65,10 @@ fn integration_test() {
     let func = Box::new(Function2DHistory::new(PhaseField2DFunction {
         weights: [10.0, 10.0, 10.0, 10.0, -0., -0.],
     }));
-    let func2 = Box::new(Function2DHistory::new(RepeatedPyramidFunction::new(vec![[0.2,0.3,0.5,3.0],[0.5,0.3,0.2,3.0]])));
+    let func2 = Box::new(Function2DHistory::new(RepeatedPyramidFunction::new(vec![
+        [0.2, 0.3, 0.5, 3.0],
+        [0.5, 0.3, 0.2, 3.0],
+    ])));
 
     let mut cache = Hierarchic2DIntegratorData::new_cache();
 
@@ -74,11 +80,8 @@ fn integration_test() {
 
     let result = inte2.integrate_simplex(&func2, &sim, &mut cache);
 
-    
-
     let hist = func2.get_history();
 
-    
     let mut f = File::create("output.csv").expect("Unable to create file");
     let points = sim.get_points();
     for i in 0..3 {
@@ -102,13 +105,13 @@ fn main() {
     //    println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
     //}
     let sim = Simplex3D::new_from_points(
-        &array![(8.0f64/9.0).sqrt(), 0., -1.0/3.0],
-        &array![-(2.0f64/9.0).sqrt(), (2.0f64/3.0).sqrt(), - 1.0/3.0],
-        &array![-(2.0f64/9.0).sqrt(), -(2.0f64/3.0).sqrt(), - 1.0/3.0],
-        &array![0.0,0.0,1.0]
+        &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), -(2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+        &array![0.0, 0.0, 1.0],
     );
 
-    let func = Box::new(Function3DHistory::new(Constant3DFunction{}));
+    let func = Box::new(Function3DHistory::new(Constant3DFunction {}));
 
     let inte = Quadrilateral3DIntegrator::new(1);
 
@@ -116,12 +119,14 @@ fn main() {
 
     let hist = func.get_history();
 
-    println!("{}",hist.len());
+    println!("{}", hist.len());
     for el in &hist {
         //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
         let el = &el.0;
-        println!("\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",el[0],el[1],el[2],el[3]);
-    };
-    println!("{}",result);
-
+        println!(
+            "\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",
+            el[0], el[1], el[2], el[3]
+        );
+    }
+    println!("{}", result);
 }

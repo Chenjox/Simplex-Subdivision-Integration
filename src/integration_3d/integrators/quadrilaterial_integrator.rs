@@ -41,49 +41,49 @@ fn g2(coord: f64) -> f64 {
 /// Interpolation Function G1
 #[allow(non_snake_case)]
 fn G1(x: f64, y: f64, z: f64) -> f64 {
-    g2(x)*g2(y)*g2(z)
+    g2(x) * g2(y) * g2(z)
 }
 
 /// Interpolation Function G2
 #[allow(non_snake_case)]
 fn G2(x: f64, y: f64, z: f64) -> f64 {
-    g1(x)*g2(y)*g2(z)
+    g1(x) * g2(y) * g2(z)
 }
 
 /// Interpolation Function G3
 #[allow(non_snake_case)]
 fn G3(x: f64, y: f64, z: f64) -> f64 {
-    g1(x)*g1(y)*g2(z)
+    g1(x) * g1(y) * g2(z)
 }
 
 /// Interpolation Function G4
 #[allow(non_snake_case)]
 fn G4(x: f64, y: f64, z: f64) -> f64 {
-    g2(x)*g1(y)*g2(z)
+    g2(x) * g1(y) * g2(z)
 }
 
 /// Interpolation Function G5
 #[allow(non_snake_case)]
 fn G5(x: f64, y: f64, z: f64) -> f64 {
-    g2(x)*g2(y)*g1(z)
+    g2(x) * g2(y) * g1(z)
 }
 
 /// Interpolation Function G6
 #[allow(non_snake_case)]
 fn G6(x: f64, y: f64, z: f64) -> f64 {
-    g1(x)*g2(y)*g1(z)
+    g1(x) * g2(y) * g1(z)
 }
 
 /// Interpolation Function G7
 #[allow(non_snake_case)]
 fn G7(x: f64, y: f64, z: f64) -> f64 {
-    g1(x)*g1(y)*g1(z)
+    g1(x) * g1(y) * g1(z)
 }
 
 /// Interpolation Function G8
 #[allow(non_snake_case)]
 fn G8(x: f64, y: f64, z: f64) -> f64 {
-    g2(x)*g1(y)*g1(z)
+    g2(x) * g1(y) * g1(z)
 }
 
 // Help me...
@@ -91,145 +91,145 @@ fn G8(x: f64, y: f64, z: f64) -> f64 {
 /// Partial Derivative of G1 in X
 #[allow(non_snake_case)]
 fn G1_diff_x(_x: f64, y: f64, z: f64) -> f64 {
-    -0.5*g2(y)*g2(z)
+    -0.5 * g2(y) * g2(z)
 }
 
 /// Partial Derivative of G1 in Y
 #[allow(non_snake_case)]
 fn G1_diff_y(x: f64, _y: f64, z: f64) -> f64 {
-    g2(x)*(-0.5)*g2(z)
+    g2(x) * (-0.5) * g2(z)
 }
 
 /// Partial Derivative of G1 in Z
 #[allow(non_snake_case)]
 fn G1_diff_z(x: f64, y: f64, _z: f64) -> f64 {
-    g2(x)*g2(y)*(-0.5)
+    g2(x) * g2(y) * (-0.5)
 }
 
 /// Partial Derivative of G2 in X
 #[allow(non_snake_case)]
 fn G2_diff_x(_x: f64, y: f64, z: f64) -> f64 {
-    0.5*g2(y)*g2(z)
+    0.5 * g2(y) * g2(z)
 }
 
 /// Partial Derivative of G2 in Y
 #[allow(non_snake_case)]
 fn G2_diff_y(x: f64, _y: f64, z: f64) -> f64 {
-    g1(x)*(-0.5)*g2(z)
+    g1(x) * (-0.5) * g2(z)
 }
 
 /// Partial Derivative of G2 in Z
 #[allow(non_snake_case)]
 fn G2_diff_z(x: f64, y: f64, _z: f64) -> f64 {
-    g1(x)*g2(y)*(-0.5)
+    g1(x) * g2(y) * (-0.5)
 }
 
 /// Partial Derivative of G3 in X
 #[allow(non_snake_case)]
 fn G3_diff_x(_x: f64, y: f64, z: f64) -> f64 {
-    0.5*g1(y)*g2(z)
+    0.5 * g1(y) * g2(z)
 }
 
 /// Partial Derivative of G3 in Y
 #[allow(non_snake_case)]
 fn G3_diff_y(x: f64, _y: f64, z: f64) -> f64 {
-    g1(x)*0.5*g2(z)
+    g1(x) * 0.5 * g2(z)
 }
 
 /// Partial Derivative of G3 in Z
 #[allow(non_snake_case)]
 fn G3_diff_z(x: f64, y: f64, _z: f64) -> f64 {
-    g1(x)*g1(y)*(-0.5)
+    g1(x) * g1(y) * (-0.5)
 }
 
 /// Partial Derivative of G4 in X
 #[allow(non_snake_case)]
 fn G4_diff_x(_x: f64, y: f64, z: f64) -> f64 {
-    (-0.5)*g1(y)*g2(z)
+    (-0.5) * g1(y) * g2(z)
 }
 
 /// Partial Derivative of G4 in Y
 #[allow(non_snake_case)]
 fn G4_diff_y(x: f64, _y: f64, z: f64) -> f64 {
-    g2(x)*0.5*g2(z)
+    g2(x) * 0.5 * g2(z)
 }
 
 /// Partial Derivative of G4 in Z
 #[allow(non_snake_case)]
 fn G4_diff_z(x: f64, y: f64, _z: f64) -> f64 {
-    g2(x)*g1(y)*(-0.5)
+    g2(x) * g1(y) * (-0.5)
 }
 
 /// Partial Derivative of G5 in X
 #[allow(non_snake_case)]
 fn G5_diff_x(_x: f64, y: f64, z: f64) -> f64 {
-    (-0.5)*g2(y)*g1(z)
+    (-0.5) * g2(y) * g1(z)
 }
 
 /// Partial Derivative of G5 in Y
 #[allow(non_snake_case)]
 fn G5_diff_y(x: f64, _y: f64, z: f64) -> f64 {
-    g2(x)*(-0.5)*g1(z)
+    g2(x) * (-0.5) * g1(z)
 }
 
 /// Partial Derivative of G5 in Z
 #[allow(non_snake_case)]
 fn G5_diff_z(x: f64, y: f64, _z: f64) -> f64 {
-    g2(x)*g2(y)*(0.5)
+    g2(x) * g2(y) * (0.5)
 }
 
 /// Partial Derivative of [`G6()`] in X
 #[allow(non_snake_case)]
 fn G6_diff_x(_x: f64, y: f64, z: f64) -> f64 {
-    0.5*g2(y)*g1(z)
+    0.5 * g2(y) * g1(z)
 }
 
 /// Partial Derivative of [`G6()`] in Y
 #[allow(non_snake_case)]
 fn G6_diff_y(x: f64, _y: f64, z: f64) -> f64 {
-    g1(x)*(-0.5)*g1(z)
+    g1(x) * (-0.5) * g1(z)
 }
 
 /// Partial Derivative of [`G6()`] in Z
 #[allow(non_snake_case)]
 fn G6_diff_z(x: f64, y: f64, _z: f64) -> f64 {
-    g1(x)*g2(y)*0.5
+    g1(x) * g2(y) * 0.5
 }
 
 /// Partial Derivative of [`G7()`] in X
 #[allow(non_snake_case)]
 fn G7_diff_x(_x: f64, y: f64, z: f64) -> f64 {
-    0.5*g1(y)*g1(z)
+    0.5 * g1(y) * g1(z)
 }
 
 /// Partial Derivative of [`G7()`] in Y
 #[allow(non_snake_case)]
 fn G7_diff_y(x: f64, _y: f64, z: f64) -> f64 {
-    g1(x)*0.5*g1(z)
+    g1(x) * 0.5 * g1(z)
 }
 
 /// Partial Derivative of [`G7()`] in Z
 #[allow(non_snake_case)]
 fn G7_diff_z(x: f64, y: f64, _z: f64) -> f64 {
-    g1(x)*g1(y)*0.5
+    g1(x) * g1(y) * 0.5
 }
 
 /// Partial Derivative of [`G8()`] in X
 #[allow(non_snake_case)]
 fn G8_diff_x(_x: f64, y: f64, z: f64) -> f64 {
-    (-0.5)*g1(y)*g1(z)
+    (-0.5) * g1(y) * g1(z)
 }
 
 /// Partial Derivative of [`G8()`] in Y
 #[allow(non_snake_case)]
 fn G8_diff_y(x: f64, _y: f64, z: f64) -> f64 {
-    g2(x)*0.5*g1(z)
+    g2(x) * 0.5 * g1(z)
 }
 
 /// Partial Derivative of [`G8()`] in Z
 #[allow(non_snake_case)]
 fn G8_diff_z(x: f64, y: f64, _z: f64) -> f64 {
-    g2(x)*g1(y)*0.5
+    g2(x) * g1(y) * 0.5
 }
 
 /// Linear Interpolation function from [-1,1] to [p1,p2]
@@ -237,7 +237,16 @@ fn interpolation_function_vector(xyz1: Point3D) -> Array1<f64> {
     let x = xyz1[0];
     let y = xyz1[1];
     let z = xyz1[2];
-    return array![G1(x, y, z), G2(x, y, z), G3(x, y, z), G4(x, y, z), G5(x, y, z), G6(x, y, z), G7(x, y, z), G8(x, y, z)];
+    return array![
+        G1(x, y, z),
+        G2(x, y, z),
+        G3(x, y, z),
+        G4(x, y, z),
+        G5(x, y, z),
+        G6(x, y, z),
+        G7(x, y, z),
+        G8(x, y, z)
+    ];
 }
 
 /// Linear Interpolation function derivates from [-1,1] to [p1,p2]
@@ -300,31 +309,41 @@ impl Quadrilateral3DIntegrator {
     }
     fn get_quadrilateral(index: usize) -> Array2<f64> {
         match index {
-            1 => {array![
-                [1., 0.5, 1./3., 0.5, 0.5, 1./3., 0.25, 1./3.],
-                [0., 0.5, 1./3., 0. , 0. , 1./3., 0.25, 0.   ],
-                [0., 0. , 1./3., 0.5, 0. , 0.   , 0.25, 1./3.],
-                [0., 0. , 0.   , 0. , 0.5, 1./3., 0.25, 1./3.]
-            ]},
-            2 => {array![
-                [0., 0. , 1./3., 0.5, 0. , 0.   , 0.25, 1./3.],
-                [1., 0.5, 1./3., 0.5, 0.5, 1./3., 0.25, 1./3.],
-                [0., 0.5, 1./3., 0. , 0. , 1./3., 0.25, 0.   ],
-                [0., 0. , 0.   , 0. , 0.5, 1./3., 0.25, 1./3.]
-            ]},
-            3 => {array![
-                [0., 0.5, 1./3., 0. , 0. , 1./3., 0.25, 0.   ],
-                [0., 0. , 1./3., 0.5, 0. , 0.   , 0.25, 1./3.],
-                [1., 0.5, 1./3., 0.5, 0.5, 1./3., 0.25, 1./3.],
-                [0., 0. , 0.   , 0. , 0.5, 1./3., 0.25, 1./3.]
-            ]},
-            4 => {array![
-                [0., 0.5, 1./3., 0. , 0. , 1./3., 0.25, 0.   ],
-                [0., 0. , 0.   , 0. , 0.5, 1./3., 0.25, 1./3.],
-                [0., 0. , 1./3., 0.5, 0. , 0.   , 0.25, 1./3.],
-                [1., 0.5, 1./3., 0.5, 0.5, 1./3., 0.25, 1./3.]
-            ]},
-            _ => {panic!("Illegal Domain chosen!")}
+            1 => {
+                array![
+                    [1., 0.5, 1. / 3., 0.5, 0.5, 1. / 3., 0.25, 1. / 3.],
+                    [0., 0.5, 1. / 3., 0., 0., 1. / 3., 0.25, 0.],
+                    [0., 0., 1. / 3., 0.5, 0., 0., 0.25, 1. / 3.],
+                    [0., 0., 0., 0., 0.5, 1. / 3., 0.25, 1. / 3.]
+                ]
+            }
+            2 => {
+                array![
+                    [0., 0., 1. / 3., 0.5, 0., 0., 0.25, 1. / 3.],
+                    [1., 0.5, 1. / 3., 0.5, 0.5, 1. / 3., 0.25, 1. / 3.],
+                    [0., 0.5, 1. / 3., 0., 0., 1. / 3., 0.25, 0.],
+                    [0., 0., 0., 0., 0.5, 1. / 3., 0.25, 1. / 3.]
+                ]
+            }
+            3 => {
+                array![
+                    [0., 0.5, 1. / 3., 0., 0., 1. / 3., 0.25, 0.],
+                    [0., 0., 1. / 3., 0.5, 0., 0., 0.25, 1. / 3.],
+                    [1., 0.5, 1. / 3., 0.5, 0.5, 1. / 3., 0.25, 1. / 3.],
+                    [0., 0., 0., 0., 0.5, 1. / 3., 0.25, 1. / 3.]
+                ]
+            }
+            4 => {
+                array![
+                    [0., 0.5, 1. / 3., 0., 0., 1. / 3., 0.25, 0.],
+                    [0., 0., 0., 0., 0.5, 1. / 3., 0.25, 1. / 3.],
+                    [0., 0., 1. / 3., 0.5, 0., 0., 0.25, 1. / 3.],
+                    [1., 0.5, 1. / 3., 0.5, 0.5, 1. / 3., 0.25, 1. / 3.]
+                ]
+            }
+            _ => {
+                panic!("Illegal Domain chosen!")
+            }
         }
     }
 
@@ -340,26 +359,28 @@ impl Quadrilateral3DIntegrator {
         for i in 0..self.gauss_degree {
             for j in 0..self.gauss_degree {
                 for k in 0..self.gauss_degree {
-                
-                let X = gauss_points[i];
-                let Y = gauss_points[j];
-                let Z = gauss_points[k];
-                let inte_space_interpolation = interpolation_function_vector(array![X, Y, Z]);
-                let inte_space_jacobi = interpolation_function_derivatives_vector(array![X, Y, Z]);
+                    let X = gauss_points[i];
+                    let Y = gauss_points[j];
+                    let Z = gauss_points[k];
+                    let inte_space_interpolation = interpolation_function_vector(array![X, Y, Z]);
+                    let inte_space_jacobi =
+                        interpolation_function_derivatives_vector(array![X, Y, Z]);
 
-                let barycentric_coords = barycentric_domain.dot(&inte_space_interpolation);
-                let barycentric_jacobi = barycentric_domain.dot(&inte_space_jacobi);
+                    let barycentric_coords = barycentric_domain.dot(&inte_space_interpolation);
+                    let barycentric_jacobi = barycentric_domain.dot(&inte_space_jacobi);
 
-                let real_jacobi = simplex.get_points().dot(&barycentric_jacobi);
-                let determinant = det3x3(&real_jacobi);
+                    let real_jacobi = simplex.get_points().dot(&barycentric_jacobi);
+                    let determinant = det3x3(&real_jacobi);
 
-                let func_result = func.function_vec(&barycentric_coords, simplex);
+                    let func_result = func.function_vec(&barycentric_coords, simplex);
 
-                let integral_result =
-                    determinant * func_result * gauss_weights[i] * gauss_weights[j] * gauss_weights[k];
+                    let integral_result = determinant
+                        * func_result
+                        * gauss_weights[i]
+                        * gauss_weights[j]
+                        * gauss_weights[k];
 
-                sum += integral_result;
-                
+                    sum += integral_result;
                 }
             }
         }
