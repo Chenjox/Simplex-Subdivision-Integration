@@ -9,6 +9,153 @@ pub struct Hierarchic3DIntegrator<I: Simplex3DIntegrator<IntegratorDummy>> {
     precision: f64,
 }
 
+fn subdivision_transformations() -> [Array2<f64>; 19] {
+    [
+        array![ // Simplex 1
+            [1. , 0.5, 0.5, 0.5],
+            [0.0, 0.5, 0., 0.],
+            [0., 0., 0.5, 0.],
+            [0., 0., 0. , 0.5]
+        ],
+        array![ // Simplex 2
+            [0.5,0.,0.,0.],
+            [0.5,1.,0.5,0.5],
+            [0. ,0.,0.5,0.],
+            [0. ,0.,0.,0.5]
+        ],
+        array![ // Simplex 3
+            [0.5,0.5,0. ,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0.5,0. ,1. ,0.5 ],
+            [0. ,0.5,0. ,0.5 ]
+        ],
+        array![ // Simplex 4
+            [0.5,0.0,0. ,0.  ],
+            [0. ,0.5,0. ,0.  ],
+            [0.0,0. ,0.5 ,0.  ],
+            [0.5,0.5,0.5 ,1.  ]
+        ],
+        array![ //Simplex O,1
+            [0.5,0.5,0. ,0.5 ],
+            [0. ,0.5,0.5,0.  ],
+            [0.5,0. ,0.5,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0. ,0. ,0. ,0.5 ]
+        ],
+        array![//Simplex O,2
+            [0.5,0. ,0.5,0.5 ],
+            [0. ,0. ,0. ,0.  ],
+            [0.5,0.5,0. ,0.  ],
+            [0. ,0.5,0.5,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0. ,0. ,0. ,0.5 ]
+        ],
+        array![ //Simplex O,3
+            [0.5,0. ,0.5,0.5 ],
+            [0. ,0. ,0. ,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0.5,0.5,0. ,0.  ],
+            [0. ,0.5,0.5,0.  ],
+            [0. ,0. ,0. ,0.5 ]
+        ],
+        array![ //Simplex O,4
+            [0. ,0.5,0. ,0.5 ],
+            [0. ,0. ,0. ,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0.5,0. ,0.5,0.  ],
+            [0.5,0.5,0. ,0.  ],
+            [0. ,0. ,0.5,0.5 ]
+        ],
+        array![ //Simplex O,5
+            [0. ,0.5,0. ,0.5 ],
+            [0. ,0. ,0. ,0.  ],
+            [0.5,0. ,0.5,0.  ],
+            [0. ,0. ,0.5,0.  ],
+            [0. ,0.5,0. ,0.  ],
+            [0.5,0. ,0. ,0.5 ]
+        ],
+        array![ //Simplex O,6
+            [0. ,0. ,0. ,0.5 ],
+            [0.5,0. ,0.5,0.  ],
+            [0.5,0.5,0. ,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0. ,0.5,0.5,0.5 ]
+        ],
+        array![ //Simplex O,7
+            [0. ,0.5,0. ,0.5 ],
+            [0.5,0.5,0.5,0.  ],
+            [0.5,0. ,0. ,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0. ,0. ,0.5,0.  ],
+            [0. ,0. ,0. ,0.5 ]
+        ],
+        array![ //Simplex O,8
+            [0. ,0. ,0. ,0.5 ],
+            [0.5,0. ,0.5,0.  ],
+            [0. ,0. ,0. ,0.  ],
+            [0. ,0.5,0. ,0.  ],
+            [0.5,0. ,0. ,0.  ],
+            [0. ,0.5,0.5,0.5 ]
+        ],
+        array![ // O 5
+            [0.5,0. ,0.5,0.5, 0. , 0. ],
+            [0.5,0.5,0. ,0. , 0.5, 0. ],
+            [0. ,0.5,0.5,0. , 0. , 0.5],
+            [0. ,0. ,0. ,0.5, 0.5, 0.5],
+        ],
+        array![ // O O,1
+            [1. ,0.5,0.5,0.5, 0.5, 0.5],
+            [0. ,0. ,0. ,0. , 0.5, 0. ],
+            [0. ,0.5,0. ,0. , 0. , 0. ],
+            [0. ,0. ,0.5,0. , 0. , 0. ],
+            [0. ,0. ,0. ,0.5, 0. , 0. ],
+            [0. ,0. ,0. ,0. , 0. , 0.5],
+        ],
+        array![ // O O,2
+            [0. ,0. ,0.5,0. , 0. , 0.5],
+            [1. ,0.5,0.5,0.5, 0.5, 0. ],
+            [0. ,0. ,0. ,0.5, 0. , 0. ],
+            [0. ,0. ,0. ,0. , 0. , 0. ],
+            [0. ,0.5,0. ,0. , 0. , 0. ],
+            [0. ,0. ,0. ,0. , 0.5, 0.5],
+        ],
+        array![ // O O,3
+            [0. ,0.5,0. ,0. , 0. , 0.5],
+            [0. ,0. ,0. ,0. , 0.5, 0. ],
+            [1. ,0.5,0.5,0.5, 0.5, 0. ],
+            [0. ,0. ,0.5,0. , 0. , 0. ],
+            [0. ,0. ,0. ,0. , 0. , 0. ],
+            [0. ,0. ,0. ,0.5, 0. , 0.5],
+        ],
+        array![ // O O,4
+            [0. ,0. ,0.5,0. , 0.5, 0.5],
+            [0. ,0. ,0. ,0. , 0. , 0. ],
+            [0. ,0.5,0. ,0. , 0. , 0. ],
+            [1. ,0.5,0.5,0.5, 0. , 0. ],
+            [0. ,0. ,0. ,0.5, 0.5, 0. ],
+            [0. ,0. ,0. ,0. , 0. , 0.5],
+        ],
+        array![ // O O,5
+            [0. ,0. ,0.5,0. , 0. , 0.5],
+            [0. ,0. ,0. ,0.5, 0. , 0. ],
+            [0. ,0. ,0. ,0. , 0. , 0. ],
+            [0. ,0.5,0. ,0. , 0.5, 0. ],
+            [1. ,0.5,0.5,0.5, 0. , 0. ],
+            [0. ,0. ,0. ,0. , 0.5, 0.5],
+        ],
+        array![ // O O,6
+            [0. ,0. ,0.5,0. , 0. , 0.5],
+            [0. ,0. ,0. ,0. , 0.5, 0. ],
+            [0. ,0.5,0. ,0. , 0. , 0. ],
+            [0. ,0. ,0. ,0.5, 0. , 0. ],
+            [0. ,0. ,0.5,0. , 0. , 0. ],
+            [1. ,0.5,0. ,0.5, 0.5, 0.5],
+        ]
+    ]
+}
+
 impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
     pub fn new(base_integrator: I, consolidated: bool, precision: f64) -> Self {
         Self {
@@ -17,12 +164,19 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
             precision,
         }
     }
-    fn subdivision_transformations() -> [Array2<f64>; 4] {
-        todo!("Implementent Subdivision transformations")
-    }
+    
 
     fn get_transformation(parent_vector: &Vec<u8>) -> Array2<f64> {
-        todo!("Implement transformations!");
+        // Der höchste Index ist 3
+        let transformations = subdivision_transformations();
+        let mut result = array![[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]];
+        for i in 0..parent_vector.len() - 1 {
+            let current = parent_vector[i];
+            // Die Zahlen gehen bis 4, 0 ist besonders.
+            let current_transformation = &transformations[(current - 1) as usize];
+            result = current_transformation.dot(&result);
+        }
+        return result;
     }
 }
 
@@ -41,13 +195,11 @@ impl NodeData {
     /// 
     fn is_simplex_subdomain(&self) -> bool {
         if self.number > 19 {
-            panic!("Illegal Magic number! {}",self.number)
+            panic!("Illegal Magic number for subdomain! {}",self.number)
         }
         self.number > 0 && self.number < 13
     }
 
-    /// Watch out! Magic Numbers!
-    /// First will be the octahedrons
     fn is_octahedral_subdomain(&self) -> bool {
         !self.is_octahedral_subdomain()
     }
