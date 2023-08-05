@@ -241,6 +241,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
             let current = parent_vector[i];
             // Die Zahlen gehen bis 4, 0 ist besonders.
             let current_transformation = &subdivision_transformations[(current - 1) as usize];
+            println!("{}\n{}",current,current_transformation);
             result = result.dot(current_transformation);
         }
         return result;
@@ -254,7 +255,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
     ) -> f64 {
         if !(transformation.shape()[0] == 4 && transformation.shape()[1] == 4) {
             panic!(
-                "Die Transformationsmatrix ist nicht der Dimension 4 x 4, sondern {} x {}",
+                "T: Die Transformationsmatrix ist nicht der Dimension 4 x 4, sondern {} x {}",
                 transformation.shape()[0],
                 transformation.shape()[1]
             )
@@ -275,7 +276,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
     ) -> f64 {
         if !(transformation.shape()[0] == 4 && transformation.shape()[1] == 6) {
             panic!(
-                "Die Transformationsmatrix ist nicht der Dimension 4 x 6, sondern {} x {}",
+                "O: Die Transformationsmatrix ist nicht der Dimension 4 x 6, sondern {} x {}",
                 transformation.shape()[0],
                 transformation.shape()[1]
             )
@@ -283,7 +284,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
         let octahedron_subdivisions = &octahedron_subdivisions();
         let mut result = 0.0;
         for i in 0..4 {
-            let trans = &octahedron_subdivisions[i].dot(transformation);
+            let trans = &transformation.dot(&octahedron_subdivisions[i]);
             result += self.base_integrator.integrate_over_domain(
                 &trans,
                 func,
