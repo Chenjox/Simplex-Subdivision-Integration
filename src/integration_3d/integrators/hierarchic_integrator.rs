@@ -418,43 +418,128 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                     if !tree[current_id].get().checked && !self.consolidated {
                         // Dann wird eine Verfeinerungsstufe mehr eingebaut.
                         todo!("AB hier wirds kritisch, verfeinerung muss zwischen oktaeder und tetraeder unterscheiden!");
+
                         let mut child_result = 0.;
-                        for i in 0..4 {
-                            let i_1 = i + 1;
-                            let mut child_vec = vec.clone();
-                            // die temporäre transformationshierachie
-                            child_vec.insert(0, i_1 as u8);
-                            let child_trans =
-                                Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
-                            let child_transformation = transformation.dot(&child_trans);
-                            child_result += self.base_integrator.integrate_over_domain(
-                                &child_transformation,
-                                func,
-                                simplex,
-                                &mut IntegratorDummy::get(),
-                            );
+                        // Wenn die kleinste subdomain ein Simplex ist:
+                        if tree[current_id].get().is_simplex_subdomain() {
+                            {
+                                // Dann gibt es 4 (Index 1 bis 4) Kindtetraeder
+                                for i in 0..4 {
+                                    let i_1 = i + 1;
+                                    let mut child_vec = vec.clone();
+                                    // die temporäre transformationshierachie
+                                    child_vec.insert(0, i_1 as u8);
+                                    let child_trans =
+                                        Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
+                                    let child_transformation = transformation.dot(&child_trans);
+                                    child_result += self.integrate_tetrahedron(
+                                        &child_transformation,
+                                        func,
+                                        simplex,
+                                    );
+                                }
+                                // und 1 Kindoktaeder (Index 13)
+                                {
+                                    let i_1 = 13;
+                                    let mut child_vec = vec.clone();
+
+                                    child_vec.insert(0, i_1 as u8);
+                                    let child_trans =
+                                        Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
+                                    let child_transformation = transformation.dot(&child_trans);
+                                    child_result += self.integrate_octahedron(
+                                        &child_transformation,
+                                        func,
+                                        simplex,
+                                    );
+                                }
+                            }
+                        } else {
+                            // Wenn ein Oktaeder Verfeinert werden muss:
+                            {
+                                // Dann gibt es 8 (Index 5 bis 12) Kindtetraeder
+                                for i in 0..8 {
+                                    let i_1 = i + 5;
+                                    let mut child_vec = vec.clone();
+                                    // die temporäre transformationshierachie
+                                    child_vec.insert(0, i_1 as u8);
+                                    let child_trans =
+                                        Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
+                                    let child_transformation = transformation.dot(&child_trans);
+                                    child_result += self.integrate_tetrahedron(
+                                        &child_transformation,
+                                        func,
+                                        simplex,
+                                    );
+                                }
+                                // und 6 Kindoktaeder (Index 14 bis 19)
+                                for i in 0..6 {
+                                    let i_1 = i + 14;
+                                    let mut child_vec = vec.clone();
+                                    // die temporäre transformationshierachie
+                                    child_vec.insert(0, i_1 as u8);
+                                    let child_trans =
+                                        Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
+                                    let child_transformation = transformation.dot(&child_trans);
+                                    child_result += self.integrate_octahedron(
+                                        &child_transformation,
+                                        func,
+                                        simplex,
+                                    );
+                                }
+                            }
                         }
+
                         // Wenn die Verfeinerung "genauer" ist, dann wird der Baum angepasst.
+                        // Und das Element wurde überprüft.
+                        tree[current_id].get_mut().checked = true;
                         if (current_result - child_result).abs() > precision_threshold {
-                            // Dieses Element wurde geprüft
-                            tree[current_id].get_mut().checked = true;
-                            // dem Element fügen wir die Kinder hinzu
-                            for i in 0..4 {
-                                let i = i + 1;
+                            if tree[current_id].get().is_simplex_subdomain() {
+                                for i in 0..4 {
+                                    let i = i + 1;
+                                    current_id.append(
+                                        tree.new_node(NodeData {
+                                            checked: false,
+                                            number: i,
+                                        }),
+                                        tree,
+                                    );
+                                }
                                 current_id.append(
                                     tree.new_node(NodeData {
                                         checked: false,
-                                        number: i,
+                                        number: 13,
                                     }),
                                     tree,
-                                );
+                                )
+                            } else {
+                                for i in 0..8 {
+                                    let i = i + 5;
+                                    current_id.append(
+                                        tree.new_node(NodeData {
+                                            checked: false,
+                                            number: i,
+                                        }),
+                                        tree,
+                                    );
+                                }
+                                for i in 0..6 {
+                                    let i = i + 14;
+                                    current_id.append(
+                                        tree.new_node(NodeData {
+                                            checked: false,
+                                            number: i,
+                                        }),
+                                        tree,
+                                    );
+                                }
                             }
+                            // dem Element fügen wir die Kinder hinzu
+
                             // Der Baum hat sich geändert!
                             state_changed = true;
                             // Das Resultat ist das genauere resultat
                             current_result = child_result;
-                        } else {
-                            tree[current_id].get_mut().checked = true;
                         }
                     }
                     result += current_result;
