@@ -362,13 +362,18 @@ impl Quadrilateral3DIntegrator {
                     let X = gauss_points[i];
                     let Y = gauss_points[j];
                     let Z = gauss_points[k];
+                    // M(8,1)
                     let inte_space_interpolation = interpolation_function_vector(array![X, Y, Z]);
+                    // M(8,3)
                     let inte_space_jacobi =
                         interpolation_function_derivatives_vector(array![X, Y, Z]);
 
+                    // M(4,1) = M(4,8) x M(8,1)
                     let barycentric_coords = barycentric_domain.dot(&inte_space_interpolation);
+                    // M(4,3) = M(4,8) x M(8,3)
                     let barycentric_jacobi = barycentric_domain.dot(&inte_space_jacobi);
 
+                    // M(3,3) = M(3,4) x M(4,3)
                     let real_jacobi = simplex.get_points().dot(&barycentric_jacobi);
                     let determinant = det3x3(&real_jacobi);
 
@@ -406,7 +411,9 @@ impl<IntegratorDummy> Simplex3DIntegrator<IntegratorDummy> for Quadrilateral3DIn
         }
         let mut sum = 0.;
         for i in 1..=4 {
+            // M(4,8)
             let d1 = Quadrilateral3DIntegrator::get_quadrilateral(i);
+            // M(4,8) = M(4,4) x M(4,8)
             let d1 = transformation.dot(&d1);
             sum += self.integrate_quadrilateral(&d1, func, simplex);
         }

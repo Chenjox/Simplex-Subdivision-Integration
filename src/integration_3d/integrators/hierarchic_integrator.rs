@@ -275,7 +275,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
     ) -> f64 {
         if !(transformation.shape()[0] == 4 && transformation.shape()[1] == 6) {
             panic!(
-                "Die Transformationsmatrix ist nicht der Dimension 4 x 6 sondern {} x {}",
+                "Die Transformationsmatrix ist nicht der Dimension 4 x 6, sondern {} x {}",
                 transformation.shape()[0],
                 transformation.shape()[1]
             )
@@ -283,7 +283,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
         let octahedron_subdivisions = &octahedron_subdivisions();
         let mut result = 0.0;
         for i in 0..4 {
-            let trans = transformation.dot(&octahedron_subdivisions[i]);
+            let trans = &octahedron_subdivisions[i].dot(transformation);
             result += self.base_integrator.integrate_over_domain(
                 &trans,
                 func,
@@ -431,7 +431,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     child_vec.insert(0, i_1 as u8);
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
-                                    let child_transformation = &child_trans.dot(transformation);
+                                    let child_transformation = transformation.dot(&child_trans);
                                     child_result += self.integrate_tetrahedron(
                                         &child_transformation,
                                         func,
@@ -446,7 +446,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     child_vec.insert(0, i_1 as u8);
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
-                                    let child_transformation = &child_trans.dot(transformation);
+                                    let child_transformation = transformation.dot(&child_trans);
                                     child_result += self.integrate_octahedron(
                                         &child_transformation,
                                         func,
@@ -465,7 +465,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     child_vec.insert(0, i_1 as u8);
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
-                                    let child_transformation = &child_trans.dot(transformation);
+                                    let child_transformation = transformation.dot(&child_trans);
                                     child_result += self.integrate_tetrahedron(
                                         &child_transformation,
                                         func,
@@ -480,7 +480,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     child_vec.insert(0, i_1 as u8);
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
-                                    let child_transformation = &child_trans.dot(transformation);
+                                    let child_transformation = transformation.dot(&child_trans);
                                     child_result += self.integrate_octahedron(
                                         &child_transformation,
                                         func,
