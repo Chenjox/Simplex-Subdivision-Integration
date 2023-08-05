@@ -241,7 +241,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
             let current = parent_vector[i];
             // Die Zahlen gehen bis 4, 0 ist besonders.
             let current_transformation = &subdivision_transformations[(current - 1) as usize];
-            result = current_transformation.dot(&result);
+            result = result.dot(current_transformation);
         }
         return result;
     }
@@ -283,9 +283,9 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
         let octahedron_subdivisions = &octahedron_subdivisions();
         let mut result = 0.0;
         for i in 0..4 {
-            let trans = &octahedron_subdivisions[i].dot(transformation);
+            let trans = transformation.dot(&octahedron_subdivisions[i]);
             result += self.base_integrator.integrate_over_domain(
-                trans,
+                &trans,
                 func,
                 simplex,
                 &mut IntegratorDummy::get(),
@@ -306,7 +306,7 @@ fn is_tetrahedron_domain_number(num: u8) -> bool {
     if num > 19 {
         panic!("Illegal Magic number for subdomain! {}", num)
     }
-    num > 0 && num < 13
+    num < 13
 }
 
 /// see [`is_tetrahedron_domain_number()`]
@@ -417,7 +417,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                     // Wenn das Blatt noch nicht überprüft worden ist und noch nicht consolidiert ist.
                     if !tree[current_id].get().checked && !self.consolidated {
                         // Dann wird eine Verfeinerungsstufe mehr eingebaut.
-                        todo!("AB hier wirds kritisch, verfeinerung muss zwischen oktaeder und tetraeder unterscheiden!");
+                        //todo!("AB hier wirds kritisch, verfeinerung muss zwischen oktaeder und tetraeder unterscheiden!");
 
                         let mut child_result = 0.;
                         // Wenn die kleinste subdomain ein Simplex ist:
@@ -431,7 +431,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     child_vec.insert(0, i_1 as u8);
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
-                                    let child_transformation = transformation.dot(&child_trans);
+                                    let child_transformation = &child_trans.dot(transformation);
                                     child_result += self.integrate_tetrahedron(
                                         &child_transformation,
                                         func,
@@ -446,7 +446,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     child_vec.insert(0, i_1 as u8);
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
-                                    let child_transformation = transformation.dot(&child_trans);
+                                    let child_transformation = &child_trans.dot(transformation);
                                     child_result += self.integrate_octahedron(
                                         &child_transformation,
                                         func,
@@ -465,7 +465,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     child_vec.insert(0, i_1 as u8);
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
-                                    let child_transformation = transformation.dot(&child_trans);
+                                    let child_transformation = &child_trans.dot(transformation);
                                     child_result += self.integrate_tetrahedron(
                                         &child_transformation,
                                         func,
@@ -480,7 +480,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     child_vec.insert(0, i_1 as u8);
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
-                                    let child_transformation = transformation.dot(&child_trans);
+                                    let child_transformation = &child_trans.dot(transformation);
                                     child_result += self.integrate_octahedron(
                                         &child_transformation,
                                         func,

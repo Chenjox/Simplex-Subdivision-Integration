@@ -399,7 +399,7 @@ impl<IntegratorDummy> Simplex3DIntegrator<IntegratorDummy> for Quadrilateral3DIn
     ) -> f64 {
         if !(transformation.shape()[0] == 4 && transformation.shape()[1] == 4) {
             panic!(
-                "Die Transformationsmatrix ist nicht der Dimension {} x {}",
+                "Die Transformationsmatrix ist nicht der Dimension 4 x 4, sondern {} x {}",
                 transformation.shape()[0],
                 transformation.shape()[1]
             )
