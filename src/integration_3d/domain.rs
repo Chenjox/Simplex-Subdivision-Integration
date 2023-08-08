@@ -1,7 +1,33 @@
-use ndarray::{array, Array1, Array2};
-
+use ndarray::{array, Array1, Array2, concatenate};
+use num_dual::DualNum;
+use ndarray::Axis;
 pub struct Simplex3D {
     points: Array2<f64>,
+}
+
+fn det3x3(mat3x3: &Array2<f64>) -> f64 {
+    let mut sum = 0.0;
+    for j in 0..3 {
+        let mut prod = 1.0;
+        for i in 0..3 {
+            prod = prod * mat3x3[[i, (i + j) % 3]]
+        }
+        sum = sum + prod;
+        let mut prod = -1.0;
+        for i in 0..3 {
+            prod = prod * mat3x3[[(2 - i), (i + j) % 3]]
+        }
+        sum = sum + prod;
+    }
+    return sum;
+}
+
+fn det4x4(mat4x4: &Array2<f64>) -> f64 {
+    let mut sum = 0.0;
+    for j in 0..4 {
+        
+    }
+    return sum;
 }
 
 type Point3D = Array1<f64>;
@@ -23,6 +49,16 @@ impl Simplex3D {
 
     pub fn get_points(&self) -> Array2<f64> {
         return self.points.clone();
+    }
+
+    pub fn get_volume(&self) -> f64 {
+        let po = self.points.t();
+        let trick = array![ [1.0_f64, 1.0, 1.0, 1.0 ]];
+        let trick = trick.t();
+        let po = concatenate![Axis(1), po, trick];
+
+        println!("{}",po);
+        return todo!();
     }
 }
 

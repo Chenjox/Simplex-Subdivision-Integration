@@ -99,7 +99,6 @@ fn main() {
     //    let prec = 1.0 / (10.0f64).powi(i);
     //    precision_test(prec);
     //}
-
     //for el in &hist {
     //    //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
     //    println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
@@ -111,10 +110,12 @@ fn main() {
         &array![0.0, 0.0, 1.0],
     );
 
+    println!("{}",sim.get_volume());
+
     let func = Box::new(Function3DHistory::new(Constant3DFunction {}));
 
     let inte = Quadrilateral3DIntegrator::new(1);
-    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, false, 1e-6);
+    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, false, 1e-3);
     let inte = hierarchic_inte;
 
     let result = inte.integrate_simplex(&func, &sim, &mut Hierarchic3DIntegratorData::new_cache());

@@ -230,19 +230,31 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
 
     fn get_transformation(parent_vector: &Vec<u8>) -> Array2<f64> {
         // Der höchste Index ist 18
+        //println!("{:?}",parent_vector);
         let subdivision_transformations = &subdivision_transformations();
-        let mut result = array![
+        // Transformation ist ein Standardfall abhängig von dem ersten Kind
+        
+        let mut result = if is_tetrahedron_domain_number(parent_vector[0]) { array![
             [1.0, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0],
             [0.0, 0.0, 1.0, 0.0],
             [0.0, 0.0, 0.0, 1.0]
-        ];
+        ] } else {
+            array![
+            [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+        ]
+        };
         for i in 0..parent_vector.len() - 1 {
             let current = parent_vector[i];
             // Die Zahlen gehen bis 4, 0 ist besonders.
             let current_transformation = &subdivision_transformations[(current - 1) as usize];
-            println!("{}\n{}",current,current_transformation);
-            result = result.dot(current_transformation);
+            //println!("{}\n{}",current,current_transformation);
+            result = current_transformation.dot(&result);
         }
         return result;
     }

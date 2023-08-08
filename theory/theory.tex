@@ -1724,6 +1724,63 @@ These deformed tetrahedrons are defined by following points: \begin{align}
 \end{align}
 The domains $\simplex_{O,i}$ can the be integrated with a pure simplex integrator. This results in $4$ tetrahedrons of equal volume.
 
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[shift={(0,0)},engineering axonometry]
+            \draw[fill] (0,0,0) +(0,0,-1.4) node {Octahedron $\mathbf{O}$};
+            \begin{scope}[scale=5.0]
+                \coordinate (b1) at ({sqrt(8/9)},0,0);
+                \coordinate (b2) at ({-sqrt(2/9)},{sqrt(2/3)},0);
+                \coordinate (b3) at ({-sqrt(2/9)},{-sqrt(2/3)},0);
+                \coordinate (b4) at (0,0,4/3);
+            \end{scope}
+            \draw (b1) -- (b2);
+            \draw (b2) -- (b3);
+            \draw (b3) -- (b1);
+            \draw (b1) -- (b4);
+            \draw (b2) -- (b4);
+            \draw (b3) -- (b4);
+            \draw[fill,red] (barycentric cs:b1=0.469,b2=0.177,b3=0.177,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.469,b3=0.177,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.177,b3=0.469,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.177,b3=0.177,b4=0.469) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.734,b2=0.089,b3=0.089,b4=0.089) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.589,b2=0.234,b3=0.089,b4=0.089) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.589,b2=0.089,b3=0.234,b4=0.089) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.589,b2=0.089,b3=0.089,b4=0.234) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.234,b2=0.589,b3=0.089,b4=0.089) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.089,b2=0.734,b3=0.089,b4=0.089) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.089,b2=0.589,b3=0.234,b4=0.089) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.089,b2=0.589,b3=0.089,b4=0.234) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.323,b2=0.000,b3=0.500,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.323,b2=0.000,b3=0.354,b4=0.323) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.000,b3=0.646,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.000,b3=0.500,b4=0.323) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.234,b2=0.089,b3=0.089,b4=0.589) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.089,b2=0.234,b3=0.089,b4=0.589) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.089,b2=0.089,b3=0.234,b4=0.589) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.089,b2=0.089,b3=0.089,b4=0.734) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.411,b2=0.177,b3=0.234,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.411,b2=0.177,b3=0.089,b4=0.323) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.411,b2=0.323,b3=0.089,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.266,b2=0.323,b3=0.089,b4=0.323) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.323,b2=0.266,b3=0.323,b4=0.089) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.323,b2=0.411,b3=0.177,b4=0.089) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.411,b3=0.323,b4=0.089) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.411,b3=0.177,b4=0.234) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.234,b2=0.177,b3=0.411,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.089,b2=0.323,b3=0.411,b4=0.177) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.089,b2=0.177,b3=0.411,b4=0.323) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.089,b2=0.323,b3=0.266,b4=0.323) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.323,b2=0.089,b3=0.323,b4=0.266) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.089,b3=0.323,b4=0.411) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.323,b2=0.089,b3=0.177,b4=0.411) circle (2pt);
+            \draw[fill,red] (barycentric cs:b1=0.177,b2=0.234,b3=0.177,b4=0.411) circle (2pt);
+        \end{scope}
+    \end{tikzpicture}
+\end{Figure}
+
 \pagebreak
 
 \part{Implementation}
