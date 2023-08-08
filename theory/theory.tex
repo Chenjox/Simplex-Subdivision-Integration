@@ -13,7 +13,7 @@
 \usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{calc}
-
+\usetikzlibrary{decorations.markings}
 \usepackage[style=numeric,sorting=none]{biblatex}
 
 \addbibresource{sources.bib}
@@ -27,6 +27,12 @@
 \tikzset{
   engineering axonometry/.style={x={(222:0.5cm)}, y={(-7:1cm)}, z={(90:1cm)}}
 }
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}},
+  ->-/.default=0.5
+}
+
 \newcommand{\simplex}{\boldsymbol{\Delta}}
 
 \begin{document}
@@ -1324,9 +1330,9 @@ The tetrahedral integration Domains can be expressed as \begin{align}
 \end{align}
 Whereas the vertices of the octahedral domain are expressable as \begin{align}
     \mathbf{O}_5 &= \begin{bmatrix}
-        B_5 & B_6 & B_7 & B_{8} & B_9 & B_{10} \\
+        B_{10} & B_6 & B_7 & B_{8} & B_9 & B_{5} \\
     \end{bmatrix}
-\end{align}
+\end{align}\marginnote{The order of $B_5$ and $B_{10}$ had to be swapped, because else the resulting matrix would flip its sign.}
 This map implies a order of the octahedrons vertices, which is now necessarily a condition to uphold.
 
 \paragraph{octahedron subdivision}
@@ -1663,24 +1669,57 @@ in such a way, that the minimal number of points required is used.
     \end{bmatrix}
 \end{align}
 
+\begin{marginfigure}
+    %\newcommand{\drawtriangle}[3]{\draw[semithick,blue,line join=round] (#1) -- (#2) -- (#3) -- cycle;}%
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[engineering axonometry]
+            \begin{scope}[scale=1.7]
+                \coordinate (b1) at ({sqrt(8/9)},0,0);
+                \coordinate (b2) at ({-sqrt(2/9)},{sqrt(2/3)},0);
+                \coordinate (b3) at ({-sqrt(2/9)},{-sqrt(2/3)},0);
+                \coordinate (b4) at (0,0,4/3);
+            \end{scope}
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.50,b3=0.00,b4=0.00) coordinate (be5) circle (2pt) node[below] {$1$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.50,b4=0.00) coordinate (be6) circle (2pt) node[right=1em] {$2$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.50,b4=0.00) coordinate (be7) circle (2pt) node[below left] {$3$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.00,b4=0.50) coordinate (be8) circle (2pt) node[left=1em] {$4$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.00,b4=0.50) coordinate (be9) circle (2pt) node[above right] {$5$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.00,b3=0.50,b4=0.50) coordinate (be10) circle (2pt) node[above left] {$6$};
+            %
+            \draw[semithick,blue,line join=round] (be5) -- (be9) -- (be8) -- cycle;
+            \draw[semithick,blue,line join=round] (be5) -- (be7) -- (be6) -- cycle;
+            \draw[semithick,blue,line join=round] (be6) -- (be9) -- (be10) -- cycle;
+            \draw[semithick,blue,line join=round] (be8) -- (be7) -- (be10) -- cycle;
+            %
+            \draw[semithick,red,line join=round,->-] (be5) -- (be10);
+            \draw[semithick,red,line join=round,->-] (be6) -- (be7);
+            \draw[semithick,red,line join=round,->-] (be7) -- (be8);
+            \draw[semithick,red,line join=round,->-] (be8) -- (be9);
+            \draw[semithick,red,line join=round,->-] (be9) -- (be6);
+        \end{scope}
+    \end{tikzpicture}
+    \caption{Orientation of Points}
+\end{marginfigure}
+
 The child octahedrons are \begin{align}
     \mathbf{O}_{O,1} &= \begin{bmatrix}
         O_1 & O_7 & O_{9} & O_{11} & O_{13} & O_{19} \\
     \end{bmatrix} \\
     \mathbf{O}_{O,2} &= \begin{bmatrix}
-        O_2 & O_{12} & O_{13} & O_{14}& O_{18} & O_{19} \\
+        O_{13} & O_{2} & O_{14} & O_{19}& O_{12} & O_{18} \\
     \end{bmatrix} \\
     \mathbf{O}_{O,3} &= \begin{bmatrix}
-        O_3 & O_{7} & O_{8} & O_{15}& O_{14} & O_{19} \\
+        O_{7} & O_{3} & O_{8} & O_{19}& O_{14} & O_{15} \\
     \end{bmatrix} \\
     \mathbf{O}_{O,4} &= \begin{bmatrix}
-        O_4 & O_{8} & O_{9} & O_{10}& O_{16} & O_{19} \\
+        O_9 & O_{4} & O_{10} & O_{19}& O_{8} & O_{16} \\
     \end{bmatrix} \\
     \mathbf{O}_{O,5} &= \begin{bmatrix}
-        O_5 & O_{10} & O_{11} & O_{12}& O_{17} & O_{19} \\
+        O_{11} & O_{5} & O_{12} & O_{19}& O_{10} & O_{17} \\
     \end{bmatrix} \\
     \mathbf{O}_{O,6} &= \begin{bmatrix}
-        O_6 & O_{15} & O_{16} & O_{17}& O_{18} & O_{19} \\
+        O_{19} & O_{15} & O_{16} & O_{17}& O_{18} & O_{6} \\
     \end{bmatrix}
 \end{align}
 
