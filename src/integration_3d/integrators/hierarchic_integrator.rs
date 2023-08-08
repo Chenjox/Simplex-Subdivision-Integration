@@ -15,31 +15,31 @@ pub struct Hierarchic3DIntegrator<I: Simplex3DIntegrator<IntegratorDummy>> {
 fn subdivision_transformations() -> [Array2<f64>; 19] {
     [
         array![
-            // Simplex 1
-            [1., 0.5, 0.5, 0.5],
-            [0.0, 0.5, 0., 0.],
-            [0., 0., 0.5, 0.],
-            [0., 0., 0., 0.5]
+            // Simplex 1 (1 5 7 8)
+            [1. , 0.5, 0.5, 0.5],
+            [0.0, 0.5, 0. , 0. ],
+            [0. , 0. , 0.5, 0. ],
+            [0. , 0. , 0. , 0.5]
         ],
         array![
-            // Simplex 2
+            // Simplex 2 (5 2 6 9)
             [0.5, 0., 0., 0.],
             [0.5, 1., 0.5, 0.5],
             [0., 0., 0.5, 0.],
             [0., 0., 0., 0.5]
         ],
         array![
-            // Simplex 3
-            [0.5, 0.5, 0., 0.],
-            [0., 0., 0., 0.],
-            [0.5, 0., 1., 0.5],
-            [0., 0.5, 0., 0.5]
+            // Simplex 3 (7 6 3 10)
+            [0.5, 0. , 0., 0. ],
+            [0. , 0.5, 0., 0. ],
+            [0.5, 0.5, 1., 0.5],
+            [0. , 0. , 0., 0.5]
         ],
         array![
-            // Simplex 4
-            [0.5, 0.0, 0., 0.],
-            [0., 0.5, 0., 0.],
-            [0.0, 0., 0.5, 0.],
+            // Simplex 4 (8 9 10 4)
+            [0.5, 0.0, 0. , 0.],
+            [0. , 0.5, 0. , 0.],
+            [0.0, 0. , 0.5, 0.],
             [0.5, 0.5, 0.5, 1.]
         ],
         array![
@@ -115,7 +115,7 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
             [0., 0.5, 0.5, 0.5]
         ],
         array![
-            // O 5
+            // O 5 FIXME: Eventuell ersten und letzten Eintrag tauschen
             [0.5, 0., 0.5, 0.5, 0., 0.],
             [0.5, 0.5, 0., 0., 0.5, 0.],
             [0., 0.5, 0.5, 0., 0., 0.5],
@@ -131,49 +131,49 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
             [0., 0., 0., 0., 0., 0.5],
         ],
         array![
-            // O O,2
-            [0., 0., 0.5, 0., 0., 0.5],
-            [1., 0.5, 0.5, 0.5, 0.5, 0.],
-            [0., 0., 0., 0.5, 0., 0.],
-            [0., 0., 0., 0., 0., 0.],
-            [0., 0.5, 0., 0., 0., 0.],
-            [0., 0., 0., 0., 0.5, 0.5],
+            // O O,2 (12 2 14 19 12 18)
+            [0. , 0. , 0. , 0.5, 0. , 0. ],
+            [0.5, 1. , 0.5, 0. , 0.5, 0.5],
+            [0. , 0. , 0.5, 0. , 0. , 0. ],
+            [0. , 0. , 0. , 0. , 0. , 0. ],
+            [0.5, 0. , 0. , 0. , 0.5, 0. ],
+            [0. , 0. , 0. , 0.5, 0. , 0.5],
         ],
         array![
-            // O O,3
-            [0., 0.5, 0., 0., 0., 0.5],
-            [0., 0., 0., 0., 0.5, 0.],
-            [1., 0.5, 0.5, 0.5, 0.5, 0.],
-            [0., 0., 0.5, 0., 0., 0.],
-            [0., 0., 0., 0., 0., 0.],
-            [0., 0., 0., 0.5, 0., 0.5],
+            // O O,3 (7 3 8 19 14 15)
+            [0.5, 0. , 0. , 0.5, 0. , 0. ],
+            [0. , 0. , 0. , 0. , 0.5, 0. ],
+            [0.5, 1. , 0.5, 0. , 0.5, 0.5],
+            [0. , 0. , 0.5, 0. , 0. , 0. ],
+            [0. , 0. , 0. , 0. , 0. , 0. ],
+            [0. , 0. , 0. , 0.5, 0. , 0.5],
         ],
         array![
-            // O O,4
-            [0., 0., 0.5, 0., 0.5, 0.5],
-            [0., 0., 0., 0., 0., 0.],
-            [0., 0.5, 0., 0., 0., 0.],
-            [1., 0.5, 0.5, 0.5, 0., 0.],
-            [0., 0., 0., 0.5, 0.5, 0.],
-            [0., 0., 0., 0., 0., 0.5],
+            // O O,4 (9 4 10 19 8 16)
+            [0.5, 0. , 0. , 0.5, 0. , 0.5],
+            [0. , 0. , 0. , 0. , 0. , 0. ],
+            [0. , 0. , 0. , 0. , 0.5, 0. ],
+            [0.5, 1. , 0.5, 0. , 0.5, 0. ],
+            [0. , 0. , 0.5, 0. , 0. , 0.5],
+            [0. , 0. , 0. , 0.5, 0. , 0. ],
         ],
         array![
-            // O O,5
-            [0., 0., 0.5, 0., 0., 0.5],
-            [0., 0., 0., 0.5, 0., 0.],
-            [0., 0., 0., 0., 0., 0.],
-            [0., 0.5, 0., 0., 0.5, 0.],
-            [1., 0.5, 0.5, 0.5, 0., 0.],
-            [0., 0., 0., 0., 0.5, 0.5],
+            // O O,5 (11 5 12 19 10 17)
+            [0.5, 0. , 0. , 0.5, 0. , 0. ],
+            [0. , 0. , 0.5, 0. , 0. , 0. ],
+            [0. , 0. , 0. , 0. , 0. , 0. ],
+            [0. , 0. , 0. , 0. , 0.5, 0.5],
+            [0.5, 1. , 0.5, 0. , 0.5, 0. ],
+            [0. , 0. , 0. , 0.5, 0. , 0.5],
         ],
         array![
-            // O O,6
-            [0., 0., 0.5, 0., 0., 0.5],
-            [0., 0., 0., 0., 0.5, 0.],
-            [0., 0.5, 0., 0., 0., 0.],
-            [0., 0., 0., 0.5, 0., 0.],
-            [0., 0., 0.5, 0., 0., 0.],
-            [1., 0.5, 0., 0.5, 0.5, 0.5],
+            // O O,6 (19 15 16 17 18 6)
+            [0.5, 0. , 0.5, 0. , 0. , 0. ],
+            [0. , 0. , 0. , 0. , 0.5, 0. ],
+            [0. , 0.5, 0. , 0. , 0. , 0. ],
+            [0. , 0. , 0. , 0.5, 0. , 0. ],
+            [0. , 0. , 0.5, 0. , 0. , 0. ],
+            [0.5, 0.5, 0. , 0.5, 0.5, 1. ],
         ],
     ]
 }
@@ -272,12 +272,14 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
                 transformation.shape()[1]
             )
         }
-        self.base_integrator.integrate_over_domain(
+        let result = self.base_integrator.integrate_over_domain(
             transformation,
             func,
             simplex,
             &mut IntegratorDummy::get(),
-        )
+        );
+        println!("{}", result);
+        result
     }
 
     fn integrate_octahedron<T: Simplex3DFunction>(
@@ -297,12 +299,14 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
         let mut result = 0.0;
         for i in 0..4 {
             let trans = &transformation.dot(&octahedron_subdivisions[i]);
-            result += self.base_integrator.integrate_over_domain(
+            let temp_result = self.base_integrator.integrate_over_domain(
                 &trans,
                 func,
                 simplex,
                 &mut IntegratorDummy::get(),
-            )
+            );
+            result += temp_result;
+            println!("{},{}", i,temp_result);
         }
         result
     }
@@ -422,10 +426,15 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
 
                     // Fallunterscheidung: Ist es ein Oktaeder oder ein Tetraeder?
                     let mut current_result = if tree[current_id].get().is_simplex_subdomain() {
+                        println!("------ Simplex");
                         self.integrate_tetrahedron(&child_transform, func, simplex)
                     } else {
-                        self.integrate_octahedron(&child_transform, func, simplex)
+                        println!("------ {:?}",vec);
+                        let temp = self.integrate_octahedron(&child_transform, func, simplex);
+                        println!("------");
+                        temp
                     };
+                    //if tree[current_id].get().is_octahedral_subdomain() && current_result > 0.0 { println!("{},{:?}",current_result,vec); }
 
                     // Wenn das Blatt noch nicht überprüft worden ist und noch nicht consolidiert ist.
                     if !tree[current_id].get().checked && !self.consolidated {
@@ -555,6 +564,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                             current_result = child_result;
                         }
                     }
+                    //println!("{},{}",result,current_result);
                     result += current_result;
                 }
 

@@ -17,6 +17,6 @@ set arrow 3 from 2,1 to 1.5,(1+sqrt(3)/2) nohead front lt -1 lw 1
 #set pm3d
 #set pm3d map
 
-splot 'output.csv' with points ls 1
+splot 'out.csv' with points ls 1
 
 pause -1

@@ -110,12 +110,16 @@ fn main() {
         &array![0.0, 0.0, 1.0],
     );
 
-    println!("{}",sim.get_volume());
+    let sim = Simplex3D::new_from_points(
+        &array![0.,0.,0.], 
+        &array![1.,0.,0.],
+        &array![0.,1.,0.],
+        &array![0.,0.,1.],);
 
     let func = Box::new(Function3DHistory::new(Constant3DFunction {}));
 
-    let inte = Quadrilateral3DIntegrator::new(1);
-    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, false, 1e-3);
+    let inte = Quadrilateral3DIntegrator::new(2);
+    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, false, 1e-5);
     let inte = hierarchic_inte;
 
     let result = inte.integrate_simplex(&func, &sim, &mut Hierarchic3DIntegratorData::new_cache());
@@ -123,13 +127,17 @@ fn main() {
     let hist = func.get_history();
 
     println!("{}", hist.len());
+    let mut file = File::create(&"out.csv").unwrap();
     for el in &hist {
         //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
+        let sim_points = sim.get_points();
         let el = &el.0;
-        println!(
-            "\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",
-            el[0], el[1], el[2], el[3]
-        );
+        let point = sim_points.dot(el);
+        write!(file, "{} {} {}\n",point[0], point[1], point[2]).unwrap();
+        //println!(
+        //    "\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",
+        //    el[0], el[1], el[2], el[3]
+        //);
     }
-    println!("{}", result);
+    println!("{},{}", result, sim.get_volume());
 }
