@@ -141,6 +141,7 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIn
                     }
                     // Alle Elternknoten wurden ermittelt.
                     // `vec` soll nicht mehr bearbeitet werden
+                    // Vec fängt beim Kind an, hört bei root auf
                     let vec = vec;
                     //println!("{:?}", vec);
 
