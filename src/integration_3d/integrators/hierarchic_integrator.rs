@@ -164,8 +164,8 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
             [0.5, 0. , 0. , 0.5, 0. , 0. ],
             [0. , 0. , 0.5, 0. , 0. , 0. ],
             [0. , 0. , 0. , 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0.5, 0.5],
-            [0.5, 1. , 0.5, 0. , 0.5, 0. ],
+            [0. , 0. , 0. , 0. , 0.5, 0. ],
+            [0.5, 1. , 0.5, 0. , 0.5, 0.5],
             [0. , 0. , 0. , 0.5, 0. , 0.5],
         ],
         array![
@@ -280,7 +280,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
             simplex,
             &mut IntegratorDummy::get(),
         );
-        println!("{}", result);
+        //println!("{}", result);
         result
     }
 
@@ -308,7 +308,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
                 &mut IntegratorDummy::get(),
             );
             result += temp_result;
-            println!("{},{}", i,temp_result);
+            //println!("{},{}", i,temp_result);
         }
         result
     }
@@ -498,7 +498,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                     let child_transform = transformation.dot(&trans);
 
                     // Fallunterscheidung: Ist es ein Oktaeder oder ein Tetraeder?
-                    println!("-- {:?}",vec);
+                    //println!("-- {:?}",vec);
                     let mut current_result = if tree[current_id].get().is_simplex_subdomain() {
                         self.integrate_tetrahedron(&child_transform, func, simplex)
                     } else {
@@ -506,8 +506,10 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                     };
                     //if tree[current_id].get().is_octahedral_subdomain() && current_result > 0.0 { println!("{},{:?}",current_result,vec); }
 
+                    
                     // Wenn das Blatt noch nicht überprüft worden ist und noch nicht consolidiert ist.
                     if !tree[current_id].get().checked && !self.consolidated {
+                        //println!("-- Verfeinerung");
                         // Dann wird eine Verfeinerungsstufe mehr eingebaut.
                         //todo!("AB hier wirds kritisch, verfeinerung muss zwischen oktaeder und tetraeder unterscheiden!");
 
