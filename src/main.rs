@@ -16,7 +16,7 @@ use crate::{
         },
         *,
     },
-    problems::PhaseField2DFunction, integration_3d::integrators::{Hierarchic3DIntegrator, Hierarchic3DIntegratorData},
+    problems::PhaseField2DFunction, integration_3d::{integrators::{Hierarchic3DIntegrator, Hierarchic3DIntegratorData}, functions::Multiplicative3DFunction},
 };
 
 mod integration_2d;
@@ -158,10 +158,10 @@ fn main() {
         &array![0.,1.,0.],
         &array![0.,0.,1.],);
 
-    let func = Box::new(Function3DHistory::new(Constant3DFunction {}));
+    let func = Box::new(Function3DHistory::new(Multiplicative3DFunction {}));
 
-    let inte = Quadrilateral3DIntegrator::new(1);
-    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, true, 1e-4);
+    let inte = Quadrilateral3DIntegrator::new(2);
+    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, false, 1e-5);
     let inte = hierarchic_inte;
 
     let mut cache = Hierarchic3DIntegratorData::new_cache();

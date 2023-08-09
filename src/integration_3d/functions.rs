@@ -5,8 +5,16 @@ use std::cell::RefCell;
 pub struct Constant3DFunction;
 
 impl Simplex3DFunction for Constant3DFunction {
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, xi4: f64, simplex: &Simplex3D) -> f64 {
+    fn function(&self, _xi1: f64, _xi2: f64, _xi3: f64, _xi4: f64, _simplex: &Simplex3D) -> f64 {
         1.0
+    }
+}
+
+pub struct Multiplicative3DFunction;
+
+impl Simplex3DFunction for Multiplicative3DFunction {
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, xi4: f64, _simplex: &Simplex3D) -> f64 {
+        return ((0.5-4.*xi1*xi2*xi3*xi4).abs()).exp();
     }
 }
 
