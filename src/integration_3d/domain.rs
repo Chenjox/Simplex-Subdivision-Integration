@@ -84,7 +84,7 @@ impl Simplex3D {
         }
         
 
-        println!("{}",po);
+        //println!("{}",po);
         return 1./6. * det3x3(&po);
     }
 }

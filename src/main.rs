@@ -143,8 +143,8 @@ fn main() {
     //    //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
     //    println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
     //}
-    integration_testing();
-    /*
+    //integration_testing();
+    
     let sim = Simplex3D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
         &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
@@ -160,12 +160,12 @@ fn main() {
 
     let func = Box::new(Function3DHistory::new(Constant3DFunction {}));
 
-    let inte = Quadrilateral3DIntegrator::new(2);
-    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, false, 1e-3);
+    let inte = Quadrilateral3DIntegrator::new(1);
+    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, true, 1e-4);
     let inte = hierarchic_inte;
 
-    //let mut cache = Hierarchic3DIntegratorData::new_cache();
-    let result = inte.integrate_simplex(&func, &sim, &mut Hierarchic3DIntegratorData::new_cache());
+    let mut cache = Hierarchic3DIntegratorData::new_cache();
+    let result = inte.integrate_simplex(&func, &sim, &mut cache);
 
     let hist = func.get_history();
 
@@ -183,5 +183,5 @@ fn main() {
         //);
     }
     println!("{},{}", result, sim.get_volume());
-    */
+    
 }
