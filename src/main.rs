@@ -93,6 +93,46 @@ fn integration_test() {
     }
 }
 
+fn integration_testing() {
+    let sim = Simplex3D::new_from_points(
+        &array![0.,0.,0.], 
+        &array![1.,0.,0.],
+        &array![0.,1.,0.],
+        &array![0.,0.,1.],);
+
+    let func = Box::new(Function3DHistory::new(Constant3DFunction {}));
+
+    let inte = Quadrilateral3DIntegrator::new(2);
+    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, true, 1e-5);
+    let inte = hierarchic_inte;
+
+    //let hierarchy = vec![0, 20, 1, 20,1,2,3,4,13,21, 2, 3, 4, 13,21];
+    let hierarchy = vec![0, 20, 1, 2, 3, 4, 13,20,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,21];
+    let mut cache = Hierarchic3DIntegratorData::new_cache_from_vec_tree(&hierarchy);
+
+
+    let result = inte.integrate_simplex(&func, &sim, &mut cache);
+
+    let hist = func.get_history();
+
+    println!("{}", hist.len());
+    let mut file = File::create(&"out.csv").unwrap();
+    for el in &hist {
+        //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
+        let sim_points = sim.get_points();
+        let el = &el.0;
+        let point = sim_points.dot(el);
+        write!(file, "{} {} {}\n",point[0], point[1], point[2]).unwrap();
+        //println!(
+        //    "\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",
+        //    el[0], el[1], el[2], el[3]
+        //);
+    }
+
+    println!("{}",result);
+
+}
+
 fn main() {
     // ASSERTION: The Simplex is always rightly oriented.
     //for i in 0..13 {
@@ -103,6 +143,8 @@ fn main() {
     //    //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
     //    println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
     //}
+    integration_testing();
+    /*
     let sim = Simplex3D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
         &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
@@ -119,9 +161,10 @@ fn main() {
     let func = Box::new(Function3DHistory::new(Constant3DFunction {}));
 
     let inte = Quadrilateral3DIntegrator::new(2);
-    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, false, 1e-5);
+    let hierarchic_inte = Hierarchic3DIntegrator::new(inte, false, 1e-3);
     let inte = hierarchic_inte;
 
+    //let mut cache = Hierarchic3DIntegratorData::new_cache();
     let result = inte.integrate_simplex(&func, &sim, &mut Hierarchic3DIntegratorData::new_cache());
 
     let hist = func.get_history();
@@ -140,4 +183,5 @@ fn main() {
         //);
     }
     println!("{},{}", result, sim.get_volume());
+    */
 }

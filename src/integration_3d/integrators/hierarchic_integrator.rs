@@ -1,3 +1,5 @@
+use std::mem;
+
 use indextree::{Arena, NodeEdge, NodeId};
 use ndarray::prelude::*;
 
@@ -70,7 +72,7 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
             [0., 0., 0., 0.5]
         ],
         array![
-            //Simplex O,4
+            //Simplex O,4 (10 16 17 19)
             [0., 0.5, 0., 0.5],
             [0., 0., 0., 0.],
             [0., 0., 0., 0.],
@@ -79,7 +81,7 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
             [0., 0., 0.5, 0.5]
         ],
         array![
-            //Simplex O,5
+            //Simplex O,5 (15 16 8 19)
             [0., 0.5, 0., 0.5],
             [0., 0., 0., 0.],
             [0.5, 0., 0.5, 0.],
@@ -312,6 +314,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
     }
 }
 
+#[derive(Debug)]
 struct NodeData {
     checked: bool,
     number: u8,
@@ -347,6 +350,7 @@ impl NodeData {
     }
 }
 
+#[derive(Debug)]
 pub struct Hierarchic3DIntegratorData {
     cached: bool,
     root_node_id: NodeId,
@@ -362,6 +366,76 @@ impl Hierarchic3DIntegratorData {
             arena: arena,
             root_node_id: root,
         }
+    }
+
+    /// MagicNumberMadness
+    /// 20 is opening, 21 is closing
+    pub fn new_cache_from_vec_tree(vec_tree: &Vec<u8>) -> Self {
+        let arena = &mut Arena::new();
+        
+        // Zeiger
+        let mut index = 0;
+        // Stackw
+        let mut stack = Vec::new();
+        let mut root_node_id = None;
+        loop {
+            let element = vec_tree[index];
+            match element {
+                0 => { // Ist es Null, dann ist das der erste Knoten
+                    let node_id = arena.new_node(NodeData::new(false, element));
+                    root_node_id = Some(node_id);
+                    stack.push(node_id);
+                    // FIXME: hier fehlt sehr viel Error checking
+                }
+                1..=19 => {
+                    // Wir stellen fest, das muss ein Knoten des Baums sein (Index 1 .. 19)
+                    let node_id = arena.new_node(NodeData::new(false, element));
+
+                    // Dieser muss einen Elternknoten haben, welcher auf dem Stack ist.
+                    let parent : &NodeId = stack.last().unwrap();
+                    parent.append(node_id, arena);
+
+                    // ist der nächste 
+                    if let Some(next_id) = vec_tree.get(index+1) {
+                        if *next_id == 20_u8 {
+                            stack.push(node_id);
+                        }
+                    } 
+                    
+                }
+                20 => {}
+                21 => {
+                    stack.pop();
+                }
+                _ => {
+                    panic!()
+                }
+            }
+            
+            if stack.is_empty() {
+                break;
+            }
+            index +=1;
+        }
+        // Die Arena ist fertig, aber sie wird formal noch geteilt
+        // Um Eigentümer davon zu werden, muss ich mir das Eigentum nehmen. (take ownership)
+        let arena = mem::take(arena);
+        match root_node_id {
+            None => {
+                panic!("No Root Node found!")
+            }
+            Some(root) => {
+
+                println!("{:?}",root.debug_pretty_print(&arena));
+                let arena = arena;
+                return Self {
+                    cached: true,
+                    arena: arena,
+                    root_node_id: root
+                };
+            }
+        }
+        
     }
 }
 
@@ -418,21 +492,17 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                     // Alle Elternknoten wurden ermittelt.
                     // `vec` soll nicht mehr bearbeitet werden
                     let vec = vec;
-                    //println!("{:?}", vec);
 
                     // Jetzt wird das Integral des Blatts bestimmt.
                     let trans = Hierarchic3DIntegrator::<I>::get_transformation(&vec);
                     let child_transform = transformation.dot(&trans);
 
                     // Fallunterscheidung: Ist es ein Oktaeder oder ein Tetraeder?
+                    println!("-- {:?}",vec);
                     let mut current_result = if tree[current_id].get().is_simplex_subdomain() {
-                        println!("------ Simplex");
                         self.integrate_tetrahedron(&child_transform, func, simplex)
                     } else {
-                        println!("------ {:?}",vec);
-                        let temp = self.integrate_octahedron(&child_transform, func, simplex);
-                        println!("------");
-                        temp
+                        self.integrate_octahedron(&child_transform, func, simplex)
                     };
                     //if tree[current_id].get().is_octahedral_subdomain() && current_result > 0.0 { println!("{},{:?}",current_result,vec); }
 

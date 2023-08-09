@@ -1680,23 +1680,39 @@ in such a way, that the minimal number of points required is used.
                 \coordinate (b3) at ({-sqrt(2/9)},{-sqrt(2/3)},0);
                 \coordinate (b4) at (0,0,4/3);
             \end{scope}
-            \draw[fill] (barycentric cs:b1=0.50,b2=0.50,b3=0.00,b4=0.00) coordinate (be5) circle (2pt) node[below] {$1$};
-            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.50,b4=0.00) coordinate (be6) circle (2pt) node[right=1em] {$2$};
-            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.50,b4=0.00) coordinate (be7) circle (2pt) node[below left] {$3$};
-            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.00,b4=0.50) coordinate (be8) circle (2pt) node[left=1em] {$4$};
-            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.00,b4=0.50) coordinate (be9) circle (2pt) node[above right] {$5$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.50,b3=0.00,b4=0.00) coordinate (be5)  circle (2pt) node[below] {$1$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.50,b4=0.00) coordinate (be6)  circle (2pt) node[right=1em] {$2$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.50,b4=0.00) coordinate (be7)  circle (2pt) node[below left] {$3$};
+            \draw[fill] (barycentric cs:b1=0.50,b2=0.00,b3=0.00,b4=0.50) coordinate (be8)  circle (2pt) node[left=1em] {$4$};
+            \draw[fill] (barycentric cs:b1=0.00,b2=0.50,b3=0.00,b4=0.50) coordinate (be9)  circle (2pt) node[above right] {$5$};
             \draw[fill] (barycentric cs:b1=0.00,b2=0.00,b3=0.50,b4=0.50) coordinate (be10) circle (2pt) node[above left] {$6$};
+            % 1 -- 2, 2 -- 6, 2 -- 3, 5 -- 2
+            % be5 -- be6, be6 -- be10, be6 -- be7, be9 -- be6
+            \draw[semithick,blue,line join=round,dashed] (be5) -- (be6);
+            \draw[semithick,blue,line join=round] (be5) -- (be7);
+            \draw[semithick,blue,line join=round] (be5) -- (be8);
+            \draw[semithick,blue,line join=round] (be5) -- (be9);
+            %\draw[semithick,blue,line join=round] (be6) -- (be7);
+            %\draw[semithick,blue,line join=round] (be7) -- (be8);
+            %\draw[semithick,blue,line join=round] (be8) -- (be9);
+            %\draw[semithick,blue,line join=round] (be9) -- (be6);
+            \draw[semithick,blue,line join=round,dashed] (be10) -- (be6);
+            \draw[semithick,blue,line join=round] (be10) -- (be7);
+            \draw[semithick,blue,line join=round] (be10) -- (be8);
+            \draw[semithick,blue,line join=round] (be10) -- (be9);
             %
-            \draw[semithick,blue,line join=round] (be5) -- (be9) -- (be8) -- cycle;
-            \draw[semithick,blue,line join=round] (be5) -- (be7) -- (be6) -- cycle;
-            \draw[semithick,blue,line join=round] (be6) -- (be9) -- (be10) -- cycle;
-            \draw[semithick,blue,line join=round] (be8) -- (be7) -- (be10) -- cycle;
-            %
-            \draw[semithick,red,line join=round,->-] (be5) -- (be10);
-            \draw[semithick,red,line join=round,->-] (be6) -- (be7);
+            \draw[semithick,dashed,red,line join=round,->-] (be5) -- (be10);
+            \draw[semithick,dashed,red,line join=round,->-] (be6) -- (be7);
             \draw[semithick,red,line join=round,->-] (be7) -- (be8);
             \draw[semithick,red,line join=round,->-] (be8) -- (be9);
-            \draw[semithick,red,line join=round,->-] (be9) -- (be6);
+            \draw[semithick,dashed,red,line join=round,->-] (be9) -- (be6);
+            %
+            \fill (be5)  circle (2pt);            
+            \fill (be6)  circle (2pt);
+            \fill (be7)  circle (2pt);
+            \fill (be8)  circle (2pt);
+            \fill (be9)  circle (2pt);
+            \fill (be10) circle (2pt);
         \end{scope}
     \end{tikzpicture}
     \caption{Orientation of Points}
