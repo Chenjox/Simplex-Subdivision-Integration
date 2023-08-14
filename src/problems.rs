@@ -149,7 +149,7 @@ pub mod problem_definition {
         use ndarray::Array1;
 
         fn lagrange_1_function(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
-            if index > 4 {
+            if index > 3 {
                 panic!("Illegal Index given");
             };
             return barycentric_coordinates[index];
@@ -157,7 +157,7 @@ pub mod problem_definition {
 
         // Knoten 1 - 4 [Index 0 - 3]
         fn lagrange_2_order_nodal(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
-            if index > 4 {
+            if index > 3 {
                 panic!("Illegal Index given");
             }
             return lagrange_1_function(barycentric_coordinates, index)
@@ -177,7 +177,7 @@ pub mod problem_definition {
                     * lagrange_1_function(barycentric_coordinates, 3 - index);
             } else {
                 // 7,8,9
-                let index = index - 4;
+                let index = index - 7;
                 return 4.
                     * lagrange_1_function(barycentric_coordinates, index)
                     * lagrange_1_function(barycentric_coordinates, 3);
@@ -188,6 +188,9 @@ pub mod problem_definition {
             barycentric_coordinates: &Array1<f64>,
             index: usize,
         ) -> f64 {
+            if index > 9 {
+                panic!("Illegal Index encountered")
+            }
             if index < 4 {
                 return lagrange_2_order_nodal(barycentric_coordinates, index);
             } else {
@@ -246,7 +249,7 @@ pub mod problem_definition {
     }
 
     impl PhaseFieldFuncDiff23D {
-        fn new(
+        pub fn new(
             nodal_values: Array1<f64>,
             kreg: f64,
             l: f64,

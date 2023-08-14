@@ -5,8 +5,9 @@ use integration_3d::{
     Simplex3D, Simplex3DIntegrator,
 };
 use ndarray::prelude::*;
-use std::fs::File;
+use problems::problem_definition::PhaseFieldFuncDiff23D;
 use std::io::Write;
+use std::{fs::File, time::Instant};
 
 use crate::{
     integration_2d::{
@@ -138,25 +139,7 @@ fn integration_testing() {
     println!("{}", result);
 }
 
-fn main() {
-    // ASSERTION: The Simplex is always rightly oriented.
-    //for i in 0..13 {
-    //    let prec = 1.0 / (10.0f64).powi(i);
-    //    precision_test(prec);
-    //}
-    //for el in &hist {
-    //    //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
-    //    println!("\\draw[fill,red] (barycentric cs:ca={:.3},cb={:.3},cc={:.3}) coordinate (cb1) circle (2pt);",el[0],el[1],el[2]);
-    //}
-    //integration_testing();
-
-    let sim = Simplex3D::new_from_points(
-        &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
-        &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
-        &array![-(2.0f64 / 9.0).sqrt(), -(2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
-        &array![0.0, 0.0, 1.0],
-    );
-
+fn integration_3d_testing() {
     let sim = Simplex3D::new_from_points(
         &array![0., 0., 0.],
         &array![1., 0., 0.],
@@ -193,4 +176,84 @@ fn main() {
     //    //);
     //}
     //println!("{},{}", result, sim.get_volume());
+}
+
+fn get_diagonal_order(highest_index: usize) -> Vec<(usize,usize,usize)> {
+    let mut res_vec = Vec::new();
+    {
+        let col = highest_index;
+        let mut start = 0;
+        let mut offset = 0;
+        let mut switcher = false;
+        let mut counter = 0;
+        loop {
+            if switcher {
+                res_vec.push((counter, start, start - offset));
+            } else {
+                res_vec.push((counter, start - offset, start));
+            }
+            counter += 1;
+            start += 1;
+            if start > col {
+                if switcher || offset == 0 {
+                    offset += 1;
+                    switcher = false;
+                } else {
+                    switcher = true;
+                }
+                start = offset;
+            }
+            if offset > col {
+                break;
+            }
+        }
+    }
+    return res_vec;
+}
+
+fn main() {
+    let sim = Simplex3D::new_from_points(
+        &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), -(2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+        &array![0.0, 0.0, 1.0],
+    );
+
+    let mut res = Array2::<f64>::zeros([10, 10]);
+    let nodal_values = array![1.0, 1.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+
+    let basic_integrator = Quadrilateral3DIntegrator::new(3);
+    let hierarchic_inte = Hierarchic3DIntegrator::new(basic_integrator, false, 1e-3);
+
+    let mut cache = Hierarchic3DIntegratorData::new_cache();
+
+    // Zuerst die Hauptdiagonale, dann die Nebendiagonalen
+    let res_vec = get_diagonal_order(9);
+    //println!("{:?}",res_vec);
+
+    for (count, i, j) in res_vec {
+        let func = Box::new(PhaseFieldFuncDiff23D::new(
+            nodal_values.clone(),
+            1e-6,
+            1.,
+            i,
+            j,
+        ));
+        let now = Instant::now();
+        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache);
+        let elapsed_time = now.elapsed();
+        if count < 10 + 2 * 9 {
+            // Wenn Diagonale und erste nebendiagonale durch sind
+            cache.make_leafs_unchecked();
+        }
+        println!(
+            "Running [{},{}] took {} milliseconds. Tree size is: {}",
+            i,
+            j,
+            elapsed_time.as_millis(),
+            cache.tree_size()
+        );
+    }
+
+    println!("{}", res);
 }

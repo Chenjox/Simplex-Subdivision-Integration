@@ -370,6 +370,29 @@ impl Hierarchic3DIntegratorData {
         }
     }
 
+    pub fn make_leafs_unchecked(&mut self) {
+        let tree = &mut self.arena;
+        let root_node_id = self.root_node_id;
+
+        let mut next_edge = Some(NodeEdge::Start(root_node_id));
+        while let Some(current_edge) = next_edge {
+            next_edge = current_edge.next_traverse(&tree);
+            let current_id = match current_edge {
+                NodeEdge::Start(_) => continue,
+                NodeEdge::End(id) => id,
+            };
+
+            // Wenn der mometane Knoten ein Blattknoten ist, dann....
+            if tree[current_id].first_child().is_none() {
+                tree[current_id].get_mut().checked = false;
+            }
+        }
+    }
+
+    pub fn tree_size(&self) -> usize {
+        return self.arena.count();
+    }
+
     /// MagicNumberMadness
     /// 20 is opening, 21 is closing
     pub fn new_cache_from_vec_tree(vec_tree: &Vec<u8>) -> Self {
