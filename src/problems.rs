@@ -1,6 +1,6 @@
 use crate::domain::Simplex2DFunction;
 
-use self::{phase_field::phase_field_func, shape_func::approx_func};
+use self::{problem_definition::phase_field::phase_field_func, shape_func::approx_func};
 
 const TOLERANCE: f64 = 1e-10;
 
@@ -102,9 +102,186 @@ pub mod shape_func {
     }
 }
 
-pub mod phase_field {
-    pub fn phase_field_func(fbase: f64, kreg: f64, l: f64) -> f64 {
-        (-(fbase / (fbase.powi(2) + kreg).powf(0.25)).abs() * 1.0 / l).exp()
+pub mod problem_definition {
+    use ndarray::{array, Array1};
+
+    use crate::integration_3d::Simplex3DFunction;
+
+    use self::{
+        phase_field::{phase_field_func, varsigma_func_diff1, varsigma_func_diff2},
+        shape_func_3d::{ansatz_function, dyadic_product_component},
+    };
+
+    pub mod phase_field {
+
+        // exponent of phase field
+        pub fn varsigma_func(f_base: f64, kreg: f64) -> f64 {
+            f_base / (f_base.powi(2) + kreg).powf(0.25)
+        }
+
+        pub fn varsigma_func_diff1(f_base: f64, kreg: f64) -> f64 {
+            (1. - f_base.powi(2) / (2. * (f_base.powi(2) + kreg))) * 1.
+                / (f_base.powi(2) + kreg).powf(0.25)
+        }
+
+        pub fn varsigma_func_diff2(f_base: f64, kreg: f64) -> f64 {
+            ((5. * f_base.powi(3)) / (f_base.powi(2) + kreg) - 6. * f_base) * 1.
+                / (4. * (f_base.powi(2) + kreg).powf(1.25))
+        }
+
+        pub fn varsigma_func_diff3(f_base: f64, kreg: f64) -> f64 {
+            ((3. * (-4. * kreg.powi(2) + 12. * kreg * f_base.powi(2) + f_base.powi(4)))
+                / (2. * (f_base.powi(2) + kreg).powi(2)))
+                * 1.
+                / (4. * (f_base.powi(2) + kreg).powf(1.25))
+        }
+
+        pub fn phase_field_func(f_base: f64, kreg: f64, l: f64) -> f64 {
+            (-(varsigma_func(f_base, kreg)).abs() * 1.0 / l).exp()
+        }
+
+        //pub fn phase_field_func_diff2(f_base: f64, kreg: f64, l: f64, row_index: usize, column_index: usize) -> f64 {
+        //    phase_field_func(f_base, kreg, l) * ( varsigma_func_diff1(f_base, kreg).powi(2) - varsigma_func_diff2(f_base, kreg) )
+        //}
+    }
+
+    mod shape_func_3d {
+        use ndarray::Array1;
+
+        fn lagrange_1_function(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
+            if index > 4 {
+                panic!("Illegal Index given");
+            };
+            return barycentric_coordinates[index];
+        }
+
+        // Knoten 1 - 4 [Index 0 - 3]
+        fn lagrange_2_order_nodal(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
+            if index > 4 {
+                panic!("Illegal Index given");
+            }
+            return lagrange_1_function(barycentric_coordinates, index)
+                * (2. * lagrange_1_function(barycentric_coordinates, index) - 1.);
+        }
+
+        // Knoten 5 - 10 [Index 4 - 9]
+        fn lagrange_2_order_edge(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
+            if index < 4 {
+                panic!("Illegal Index given");
+            }
+            if index < 7 {
+                // 4,5,6
+                let index = index - 4;
+                return 4.
+                    * lagrange_1_function(barycentric_coordinates, index)
+                    * lagrange_1_function(barycentric_coordinates, 3 - index);
+            } else {
+                // 7,8,9
+                let index = index - 4;
+                return 4.
+                    * lagrange_1_function(barycentric_coordinates, index)
+                    * lagrange_1_function(barycentric_coordinates, 3);
+            }
+        }
+
+        pub fn shape_function_from_index(
+            barycentric_coordinates: &Array1<f64>,
+            index: usize,
+        ) -> f64 {
+            if index < 4 {
+                return lagrange_2_order_nodal(barycentric_coordinates, index);
+            } else {
+                return lagrange_2_order_edge(barycentric_coordinates, index);
+            }
+        }
+
+        pub fn all_shape_functions(barycentric_coordinates: &Array1<f64>) -> Array1<f64> {
+            let mut res = Array1::<f64>::zeros([10]);
+            for i in 0..10 {
+                res[i] = shape_function_from_index(barycentric_coordinates, i);
+            }
+            return res;
+        }
+
+        // [N \otimes N]_{ij}
+        pub fn dyadic_product_component(
+            barycentric_coordinates: &Array1<f64>,
+            row_index: usize,
+            column_index: usize,
+        ) -> f64 {
+            return shape_function_from_index(barycentric_coordinates, row_index)
+                * shape_function_from_index(barycentric_coordinates, column_index);
+        }
+
+        // also called f_base
+        pub fn ansatz_function(
+            nodal_values: &Array1<f64>,
+            barycentric_coordinates: &Array1<f64>,
+        ) -> f64 {
+            return nodal_values.dot(&all_shape_functions(barycentric_coordinates));
+        }
+    }
+
+    // jetzt die Einzelintegranden
+    pub fn phase_field_func_diff2(
+        nodal_values: &Array1<f64>,
+        kreg: f64,
+        l: f64,
+        row_index: usize,
+        column_index: usize,
+        barycentric_coordinates: &Array1<f64>,
+    ) -> f64 {
+        let f_base = ansatz_function(nodal_values, barycentric_coordinates);
+        phase_field_func(f_base, kreg, l)
+            * (varsigma_func_diff1(f_base, kreg).powi(2) - varsigma_func_diff2(f_base, kreg))
+            * dyadic_product_component(barycentric_coordinates, row_index, column_index)
+    }
+
+    pub struct PhaseFieldFuncDiff23D {
+        nodal_values: Array1<f64>,
+        kreg: f64,
+        l: f64,
+        column_index: usize,
+        row_index: usize,
+    }
+
+    impl PhaseFieldFuncDiff23D {
+        fn new(
+            nodal_values: Array1<f64>,
+            kreg: f64,
+            l: f64,
+            column_index: usize,
+            row_index: usize,
+        ) -> Self {
+            return Self {
+                nodal_values,
+                kreg,
+                l,
+                column_index,
+                row_index,
+            };
+        }
+    }
+
+    impl Simplex3DFunction for PhaseFieldFuncDiff23D {
+        fn function(
+            &self,
+            xi1: f64,
+            xi2: f64,
+            xi3: f64,
+            xi4: f64,
+            simplex: &crate::integration_3d::Simplex3D,
+        ) -> f64 {
+            let barycentric = array![xi1, xi2, xi3, xi4];
+            return phase_field_func_diff2(
+                &self.nodal_values,
+                self.kreg,
+                self.l,
+                self.row_index,
+                self.column_index,
+                &barycentric,
+            );
+        }
     }
 }
 
