@@ -112,20 +112,37 @@ efficiently and accurately
 \begin{align}
     \Delta_{\phi_j} \vdiff_{\phi_i} \Pi &= \phi_j \int_\Omega 2\left(\pardiff{\phi}{\phi_i}\right)^2 \psi(u) \diff \Omega \vdiff \phi_i 
     + \phi_j \int_\Omega 2(\phi -1 )\pardiff[^2]{\phi}{\phi_i^2} \psi(u) \diff \Omega \vdiff \phi_i \\
-&\phantom{={}} +\phi_j \frac{G_c}{l} \int_\Omega \pardiff{\phi}{\phi_i} + \pardiff[^2]{\phi}{\phi_i} + l^2 \pardiff{\nabla \phi}{\phi_j} \cdot \pardiff{\nabla \phi}{\phi_i} + l^2 \nabla \phi \cdot \pardiff[^2]{\nabla \phi}{\phi_i^2} \diff \Omega \vdiff \phi_i
+&\phantom{={}} +\phi_j \frac{G_c}{l} \int_\Omega \pardiff{\phi}{\phi_i} + \pardiff[^2]{\phi}{\phi_i^2} + l^2 \pardiff{\nabla \phi}{\phi_j} \cdot \pardiff{\nabla \phi}{\phi_i} + l^2 \nabla \phi \cdot \pardiff[^2]{\nabla \phi}{\phi_i^2} \diff \Omega \vdiff \phi_i
 \end{align}
 
 \subsection{Numerical Work}
 
 \begin{align} % https://www.desmos.com/calculator/rcnkmh4bgf
-    \pardiff{\phi}{\phi_i} &= - \frac{1}{l}\phi \pardiff{\varsigmait}{f_{\text{base}}} N_i \\
     \pardiff{\varsigmait}{f_{\text{base}}} &= \biggl(1 - \frac{f_{\text{base}}^2}{2\bigl(f_{\text{base}}^2 + k_{\text{res}}\bigr)}\biggr) \cdot \frac{1}{\sqrt[4]{f_{\text{base}}^2 + k_{\text{res}}}}\\
     \pardiff[^2]{\varsigmait}{f_{\text{base}}^2} &= \biggl(\frac{5f_{\text{base}}^3}{\bigl(f_{\text{base}}^2 + k_{\text{res}}\bigr)} - 6 f_{\text{base}}\biggr) \cdot \frac{1}{4 {\sqrt[4]{f_{\text{base}}^2 + k_{\text{res}}}}^5}\\
-    \pardiff[^3]{\varsigmait}{f_{\text{base}}^3}&= \frac{3\left(-4k_{\text{res}}^{2}+12k_{\text{res}}f_{\text{base}}^{2}+f_{\text{base}}^{4}\right)}{2\left(f_{\text{base}}^{2}+k_{\text{res}}\right)^{2}}\cdot\frac{1}{4{\sqrt[4]{f_{\text{base}}^2 + k_{\text{res}}}}^5}\\
-    \pardiff[^2]{\phi}{\phi_i^2} &= \frac{1}{l^2} \biggl( \biggl(\pardiff{\varsigmait}{f_{\text{base}}}\biggr)^2 - \pardiff[^2]{\varsigmait}{f_{\text{base}}^2} \biggr) N_i \cdot N_i
+    \pardiff[^3]{\varsigmait}{f_{\text{base}}^3}&= \frac{3\left(-4k_{\text{res}}^{2}+12k_{\text{res}}f_{\text{base}}^{2}+f_{\text{base}}^{4}\right)}{2\left(f_{\text{base}}^{2}+k_{\text{res}}\right)^{2}}\cdot\frac{1}{4{\sqrt[4]{f_{\text{base}}^2 + k_{\text{res}}}}^5}
 \end{align}
 
+\subsection{Setting up the Integrals in Question}
 
+The Vectors in Question are:
+\begin{align}
+    \boldsymbol{N} &= \\
+    \boldsymbol{B} &= 
+\end{align}
+
+\begin{align}
+    \pardiff{\phi}{\phi_i} &= \pardiff{\phi}{\varsigmait} \cdot \pardiff{\varsigmait}{f_{\text{base}}} \cdot \frac{f_{\text{base}}}{\phi_i} \\
+    &= -\frac{1}{l} \cdot \phi \cdot \pardiff{\varsigmait}{f_{\text{base}}} \cdot N_i \\
+    \pardiff[^2]{\phi}{\phi_i^2} &= \pardiff{}{\phi_i} \Bigl(  -\frac{1}{l} \cdot \phi \cdot \pardiff{\varsigmait}{f_{\text{base}}} \cdot N_i  \Bigr)\\
+    &= -\frac{1}{l} \pardiff{}{\phi_i} \Bigl( \phi \cdot \pardiff{\varsigmait}{f_{\text{base}}} \Bigr)\cdot N_i \\
+    &= -\frac{1}{l} \Bigl( \pardiff{\phi}{\phi_i} \cdot \pardiff{\varsigmait}{f_{\text{base}}} + \phi \cdot \pardiff{\varsigmait}{f_{\text{base}} \pdiff \phi} \Bigr)\cdot N_i \\
+    &= -\frac{1}{l} \Bigl( \pardiff{\phi}{\phi_i} \cdot \pardiff{\varsigmait}{f_{\text{base}}} + \phi \cdot \pardiff{\varsigmait}{f_{\text{base}} \pdiff \phi} \Bigr)\cdot N_i \\
+    &= -\frac{1}{l} \Bigl( \pardiff{\phi}{\phi_i} \cdot \pardiff{\varsigmait}{f_{\text{base}}} + \phi \cdot \pardiff[^2]{\varsigmait}{f_{\text{base}}^2} \pardiff{f_{\text{base}}}{\phi} \Bigr)\cdot N_i \\
+    &= -\frac{1}{l} \Bigl( -\frac{1}{l} \cdot \phi \cdot \Bigl(\pardiff{\varsigmait}{f_{\text{base}}}\Bigr)^2 \cdot N_i + \phi \cdot \pardiff[^2]{\varsigmait}{f_{\text{base}}^2} N_i \Bigr)\cdot N_i \\
+    &= \frac{1}{l^2}\phi \Bigl( \Bigl(\pardiff{\varsigmait}{f_{\text{base}}}\Bigr)^2 - l \cdot \pardiff[^2]{\varsigmait}{f_{\text{base}}^2} \Bigr)\cdot N_i^2 \\
+    \pardiff[^2]{\phi}{\phi_i^2} &= \frac{1}{l^2} \biggl( \biggl(\pardiff{\varsigmait}{f_{\text{base}}}\biggr)^2 - \pardiff[^2]{\varsigmait}{f_{\text{base}}^2} \biggr) N_i \cdot N_j \\
+\end{align}
 
 \pagebreak
 
