@@ -18,10 +18,10 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
     [
         array![
             // Simplex 1 (1 5 7 8)
-            [1. , 0.5, 0.5, 0.5],
-            [0.0, 0.5, 0. , 0. ],
-            [0. , 0. , 0.5, 0. ],
-            [0. , 0. , 0. , 0.5]
+            [1., 0.5, 0.5, 0.5],
+            [0.0, 0.5, 0., 0.],
+            [0., 0., 0.5, 0.],
+            [0., 0., 0., 0.5]
         ],
         array![
             // Simplex 2 (5 2 6 9)
@@ -32,16 +32,16 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
         ],
         array![
             // Simplex 3 (7 6 3 10)
-            [0.5, 0. , 0., 0. ],
-            [0. , 0.5, 0., 0. ],
+            [0.5, 0., 0., 0.],
+            [0., 0.5, 0., 0.],
             [0.5, 0.5, 1., 0.5],
-            [0. , 0. , 0., 0.5]
+            [0., 0., 0., 0.5]
         ],
         array![
             // Simplex 4 (8 9 10 4)
-            [0.5, 0.0, 0. , 0.],
-            [0. , 0.5, 0. , 0.],
-            [0.0, 0. , 0.5, 0.],
+            [0.5, 0.0, 0., 0.],
+            [0., 0.5, 0., 0.],
+            [0.0, 0., 0.5, 0.],
             [0.5, 0.5, 0.5, 1.]
         ],
         array![
@@ -82,7 +82,7 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
         ],
         array![
             //Simplex O,5 (15 16 8 19)
-            [0., 0. , 0., 0.5],
+            [0., 0., 0., 0.5],
             [0., 0., 0., 0.],
             [0.5, 0., 0.5, 0.],
             [0., 0.5, 0.5, 0.],
@@ -91,12 +91,12 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
         ],
         array![
             //Simplex O,6 (14 18 15 19)
-            [0.,  0. , 0.,   0.5],
-            [0.5, 0.5, 0.,   0.],
-            [0.5, 0. , 0.5,  0.],
-            [0.,  0. , 0.,   0.],
-            [0.,  0. , 0.,   0.],
-            [0.,  0.5, 0.5,  0.5]
+            [0., 0., 0., 0.5],
+            [0.5, 0.5, 0., 0.],
+            [0.5, 0., 0.5, 0.],
+            [0., 0., 0., 0.],
+            [0., 0., 0., 0.],
+            [0., 0.5, 0.5, 0.5]
         ],
         array![
             //Simplex O,7
@@ -134,48 +134,48 @@ fn subdivision_transformations() -> [Array2<f64>; 19] {
         ],
         array![
             // O O,2 (13 2 14 19 12 18)
-            [0.5, 0. , 0. , 0.5, 0. , 0. ],
-            [0.5, 1. , 0.5, 0. , 0.5, 0.5],
-            [0. , 0. , 0.5, 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0.5, 0. ],
-            [0. , 0. , 0. , 0.5, 0. , 0.5],
+            [0.5, 0., 0., 0.5, 0., 0.],
+            [0.5, 1., 0.5, 0., 0.5, 0.5],
+            [0., 0., 0.5, 0., 0., 0.],
+            [0., 0., 0., 0., 0., 0.],
+            [0., 0., 0., 0., 0.5, 0.],
+            [0., 0., 0., 0.5, 0., 0.5],
         ],
         array![
             // O O,3 (7 3 8 19 14 15)
-            [0.5, 0. , 0. , 0.5, 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0.5, 0. ],
-            [0.5, 1. , 0.5, 0. , 0.5, 0.5],
-            [0. , 0. , 0.5, 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0.5, 0. , 0.5],
+            [0.5, 0., 0., 0.5, 0., 0.],
+            [0., 0., 0., 0., 0.5, 0.],
+            [0.5, 1., 0.5, 0., 0.5, 0.5],
+            [0., 0., 0.5, 0., 0., 0.],
+            [0., 0., 0., 0., 0., 0.],
+            [0., 0., 0., 0.5, 0., 0.5],
         ],
         array![
             // O O,4 (9 4 10 19 8 16)
-            [0.5, 0. , 0. , 0.5, 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0.5, 0. ],
-            [0.5, 1. , 0.5, 0. , 0.5, 0.5],
-            [0. , 0. , 0.5, 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0.5, 0. , 0.5],
+            [0.5, 0., 0., 0.5, 0., 0.],
+            [0., 0., 0., 0., 0., 0.],
+            [0., 0., 0., 0., 0.5, 0.],
+            [0.5, 1., 0.5, 0., 0.5, 0.5],
+            [0., 0., 0.5, 0., 0., 0.],
+            [0., 0., 0., 0.5, 0., 0.5],
         ],
         array![
             // O O,5 (11 5 12 19 10 17)
-            [0.5, 0. , 0. , 0.5, 0. , 0. ],
-            [0. , 0. , 0.5, 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0.5, 0. ],
-            [0.5, 1. , 0.5, 0. , 0.5, 0.5],
-            [0. , 0. , 0. , 0.5, 0. , 0.5],
+            [0.5, 0., 0., 0.5, 0., 0.],
+            [0., 0., 0.5, 0., 0., 0.],
+            [0., 0., 0., 0., 0., 0.],
+            [0., 0., 0., 0., 0.5, 0.],
+            [0.5, 1., 0.5, 0., 0.5, 0.5],
+            [0., 0., 0., 0.5, 0., 0.5],
         ],
         array![
             // O O,6 (19 15 16 17 18 6)
-            [0.5, 0. , 0. , 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0. , 0.5, 0. ],
-            [0. , 0.5, 0. , 0. , 0. , 0. ],
-            [0. , 0. , 0.5, 0. , 0. , 0. ],
-            [0. , 0. , 0. , 0.5, 0. , 0. ],
-            [0.5, 0.5, 0.5, 0.5, 0.5, 1. ],
+            [0.5, 0., 0., 0., 0., 0.],
+            [0., 0., 0., 0., 0.5, 0.],
+            [0., 0.5, 0., 0., 0., 0.],
+            [0., 0., 0.5, 0., 0., 0.],
+            [0., 0., 0., 0.5, 0., 0.],
+            [0.5, 0.5, 0.5, 0.5, 0.5, 1.],
         ],
     ]
 }
@@ -235,21 +235,23 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Hierarchic3DIntegrator<I> {
         //println!("{:?}",parent_vector);
         let subdivision_transformations = &subdivision_transformations();
         // Transformation ist ein Standardfall abhängig von dem ersten Kind
-        
-        let mut result = if is_tetrahedron_domain_number(parent_vector[0]) { array![
-            [1.0, 0.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0]
-        ] } else {
+
+        let mut result = if is_tetrahedron_domain_number(parent_vector[0]) {
             array![
-            [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-        ]
+                [1.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ]
+        } else {
+            array![
+                [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+            ]
         };
         for i in 0..parent_vector.len() - 1 {
             let current = parent_vector[i];
@@ -372,7 +374,7 @@ impl Hierarchic3DIntegratorData {
     /// 20 is opening, 21 is closing
     pub fn new_cache_from_vec_tree(vec_tree: &Vec<u8>) -> Self {
         let arena = &mut Arena::new();
-        
+
         // Zeiger
         let mut index = 0;
         // Stackw
@@ -381,7 +383,8 @@ impl Hierarchic3DIntegratorData {
         loop {
             let element = vec_tree[index];
             match element {
-                0 => { // Ist es Null, dann ist das der erste Knoten
+                0 => {
+                    // Ist es Null, dann ist das der erste Knoten
                     let node_id = arena.new_node(NodeData::new(false, element));
                     root_node_id = Some(node_id);
                     stack.push(node_id);
@@ -392,16 +395,15 @@ impl Hierarchic3DIntegratorData {
                     let node_id = arena.new_node(NodeData::new(false, element));
 
                     // Dieser muss einen Elternknoten haben, welcher auf dem Stack ist.
-                    let parent : &NodeId = stack.last().unwrap();
+                    let parent: &NodeId = stack.last().unwrap();
                     parent.append(node_id, arena);
 
-                    // ist der nächste 
-                    if let Some(next_id) = vec_tree.get(index+1) {
+                    // ist der nächste
+                    if let Some(next_id) = vec_tree.get(index + 1) {
                         if *next_id == 20_u8 {
                             stack.push(node_id);
                         }
-                    } 
-                    
+                    }
                 }
                 20 => {}
                 21 => {
@@ -411,11 +413,11 @@ impl Hierarchic3DIntegratorData {
                     panic!()
                 }
             }
-            
+
             if stack.is_empty() {
                 break;
             }
-            index +=1;
+            index += 1;
         }
         // Die Arena ist fertig, aber sie wird formal noch geteilt
         // Um Eigentümer davon zu werden, muss ich mir das Eigentum nehmen. (take ownership)
@@ -425,17 +427,15 @@ impl Hierarchic3DIntegratorData {
                 panic!("No Root Node found!")
             }
             Some(root) => {
-
-                println!("{:?}",root.debug_pretty_print(&arena));
+                println!("{:?}", root.debug_pretty_print(&arena));
                 let arena = arena;
                 return Self {
                     cached: true,
                     arena: arena,
-                    root_node_id: root
+                    root_node_id: root,
                 };
             }
         }
-        
     }
 }
 
@@ -506,7 +506,6 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                     };
                     //if tree[current_id].get().is_octahedral_subdomain() && current_result > 0.0 { println!("{},{:?}",current_result,vec); }
 
-                    
                     // Wenn das Blatt noch nicht überprüft worden ist und noch nicht consolidiert ist.
                     if !tree[current_id].get().checked && !self.consolidated {
                         //println!("-- Verfeinerung");

@@ -1,6 +1,6 @@
-use ndarray::{array, Array1, Array2, concatenate, stack};
-use num_dual::DualNum;
 use ndarray::Axis;
+use ndarray::{array, concatenate, stack, Array1, Array2};
+use num_dual::DualNum;
 pub struct Simplex3D {
     points: Array2<f64>,
 }
@@ -25,16 +25,16 @@ fn det3x3(mat3x3: &Array2<f64>) -> f64 {
 fn det4x4(mat4x4: &Array2<f64>) -> f64 {
     let mut sum = 0.0;
     for i in 0..4 {
-        let val = mat4x4[[i,0]];
-        let mut mat3x3 = Array2::<f64>::zeros([3,3]);
+        let val = mat4x4[[i, 0]];
+        let mut mat3x3 = Array2::<f64>::zeros([3, 3]);
         for j in 0..3 {
             if j >= i {
                 for k in 0..3 {
-                    mat3x3[[j,k]] = mat4x4[[j+1,k+1]]
+                    mat3x3[[j, k]] = mat4x4[[j + 1, k + 1]]
                 }
             } else {
                 for k in 0..3 {
-                    mat3x3[[j,k]] = mat4x4[[j,k+1]]
+                    mat3x3[[j, k]] = mat4x4[[j, k + 1]]
                 }
             }
         }
@@ -75,17 +75,16 @@ impl Simplex3D {
         let v2p = &v2 - &v0;
         let v3p = &v3 - &v0;
 
-        let mut po = Array2::zeros([3,3]);
+        let mut po = Array2::zeros([3, 3]);
 
         for i in 0..3 {
-            po[[i,0]] = v1p[i];
-            po[[i,1]] = v2p[i];
-            po[[i,2]] = v3p[i];
+            po[[i, 0]] = v1p[i];
+            po[[i, 1]] = v2p[i];
+            po[[i, 2]] = v3p[i];
         }
-        
 
         //println!("{}",po);
-        return 1./6. * det3x3(&po);
+        return 1. / 6. * det3x3(&po);
     }
 }
 
