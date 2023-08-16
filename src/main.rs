@@ -242,10 +242,10 @@ fn main() {
         let now = Instant::now();
         res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache);
         let elapsed_time = now.elapsed();
-        //if count < 10 + 2 * 9 {
+        if count < 10 + 1 * 9 {
             // Wenn Diagonale und erste nebendiagonale durch sind
             cache.make_leafs_unchecked();
-        //}
+        }
         println!(
             "Running [{},{}] took {} milliseconds. Tree size is: {}",
             i,

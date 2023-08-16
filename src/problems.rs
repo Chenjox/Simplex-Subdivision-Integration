@@ -145,6 +145,82 @@ pub mod problem_definition {
         //}
     }
 
+    mod shape_func_2d {
+        use ndarray::Array1;
+
+        // Baryzentrische Lagrange Funktion [Index 0 - 2]
+        fn lagrange_1_function(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
+            if index > 2 {
+                panic!("Illegal Index given");
+            };
+            return barycentric_coordinates[index];
+        }
+        // Knoten 1 - 3 [Index 0 - 2]
+        fn lagrange_2_order_nodal(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
+            if index > 3 {
+                panic!("Illegal Index given");
+            }
+            return lagrange_1_function(barycentric_coordinates, index)
+                * (2. * lagrange_1_function(barycentric_coordinates, index) - 1.);
+        }
+
+        // Knoten 4 - 6 [Index 3 - 5]
+        fn lagrange_2_order_edge(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
+            if index > 2 {
+                panic!("Illegal Index given");
+            }
+            if index < 6 {
+                // 4,5,6
+                let index = index - 3;
+                return 4.
+                    * lagrange_1_function(barycentric_coordinates, index)
+                    * lagrange_1_function(barycentric_coordinates, 2 - index);
+            } else {
+                panic!("Illegal Index given")
+            }
+        }
+
+        pub fn shape_function_from_index(
+            barycentric_coordinates: &Array1<f64>,
+            index: usize,
+        ) -> f64 {
+            if index > 5 {
+                panic!("Illegal Index encountered")
+            }
+            if index < 3 {
+                return lagrange_2_order_nodal(barycentric_coordinates, index);
+            } else {
+                return lagrange_2_order_edge(barycentric_coordinates, index);
+            }
+        }
+
+        pub fn all_shape_functions(barycentric_coordinates: &Array1<f64>) -> Array1<f64> {
+            let mut res = Array1::<f64>::zeros([6]);
+            for i in 0..6 {
+                res[i] = shape_function_from_index(barycentric_coordinates, i);
+            }
+            return res;
+        }
+
+        // [N \otimes N]_{ij}
+        pub fn dyadic_product_component(
+            barycentric_coordinates: &Array1<f64>,
+            row_index: usize,
+            column_index: usize,
+        ) -> f64 {
+            return shape_function_from_index(barycentric_coordinates, row_index)
+                * shape_function_from_index(barycentric_coordinates, column_index);
+        }
+
+        // also called f_base
+        pub fn ansatz_function(
+            nodal_values: &Array1<f64>,
+            barycentric_coordinates: &Array1<f64>,
+        ) -> f64 {
+            return nodal_values.dot(&all_shape_functions(barycentric_coordinates));
+        }
+    }
+
     mod shape_func_3d {
         use ndarray::Array1;
 

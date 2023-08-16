@@ -659,7 +659,7 @@ This can be done recursively, to get a desired accuracy.
 
 
 
-\subsection{Simplex Subdivision}
+\subsection{Hierarchic Simplex Subdivision}
 
 A Criterion for adaptive integration from \cite{gonnetReviewErrorEstimation2012}\begin{align}
     Q &= \iint_{\simplex} F \diff \simplex \\
@@ -722,6 +722,100 @@ Coordinates of any Grandchild-Simplizes can be calculated by chaining $B_{\simpl
               \draw[fill,red] (barycentric cs:ca=0.208,cb=0.396,cc=0.396) coordinate (cb1) circle (2pt);
     \end{tikzpicture}
 \end{Figure}
+
+\subsection{Edgewise Simplex Subdivision}
+
+The edgewise simplex subdivision can also be applied to uniformly subdivide any simplex.
+The points inside the $r$-th edgewise subdivision are indexed by $3$ integers $i_1, i_2, i_3$, which satisfy following 
+relation \begin{equation}
+    i_1 + i_2 + i_3 = r
+\end{equation}
+
+The barycentric coordinates of any points can be calculated by \begin{equation}
+    B = \begin{bmatrix}
+        \frac{i_1}{r} \\
+        \frac{i_2}{r} \\
+        \frac{i_3}{r} \\
+    \end{bmatrix}
+\end{equation}
+
+An example edgewise subdivision is given in figure \ref{fig:4thedgesubdivision}.
+
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \draw[gray,thick] (0,0) coordinate (ca) 
+          -- (-60:9cm) coordinate (cb) 
+          -- (-120:9cm) coordinate (cc) -- cycle;
+        \newcommand{\indcoord}[3]{
+            \draw[fill] (barycentric cs:ca=#1/4,cb=#2/4,cc=#3/4) coordinate (cb#1#2#3) circle (2pt) node[above] {$(#1,#2,#3)$};
+        }
+        \indcoord{4}{0}{0}
+        \indcoord{3}{1}{0}
+        \indcoord{2}{2}{0}
+        \indcoord{1}{3}{0}
+        \indcoord{0}{4}{0}
+
+        \indcoord{0}{3}{1}
+        \indcoord{0}{2}{2}
+        \indcoord{0}{1}{3}
+        \indcoord{0}{0}{4}
+
+        \indcoord{1}{0}{3}
+        \indcoord{2}{0}{2}
+        \indcoord{3}{0}{1}
+        \indcoord{2}{1}{1}
+        \indcoord{1}{2}{1}
+        \indcoord{1}{1}{2}
+    \end{tikzpicture}
+    \caption{The points of the 4-th edge subdivision}
+    \label{fig:4thedgesubdivision}
+\end{Figure}
+
+In the $r$-th edge subdivision, traversal of the points can be done with the vectors indicated in
+
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \path[gray,thick] (0,0) coordinate (ca) 
+          -- (-60:6cm) coordinate (cb) 
+          -- (-120:6cm) coordinate (cc) -- cycle;
+        \newcommand{\indcoord}[3]{
+            \draw[fill] (barycentric cs:ca=#1/3,cb=#2/3,cc=#3/3) coordinate (cb#1#2#3) circle (2pt);% node[above] {$(#1,#2,#3)$};
+        }
+        %\indcoord{3}{0}{0}
+
+        \indcoord{2}{1}{0}
+        \indcoord{1}{2}{0}
+        %\indcoord{0}{3}{0}
+
+        \indcoord{0}{2}{1}
+        \indcoord{0}{1}{2}
+        %\indcoord{0}{0}{3}
+
+        \indcoord{1}{0}{2}
+        \indcoord{2}{0}{1}
+        \indcoord{1}{1}{1}
+
+        \draw[shorten >= 3pt,shorten <= 3pt,->] (cb111) -- (cb210) node[midway,right] {$(1,0,-1)$};
+        \draw[shorten >= 3pt,shorten <= 3pt,->] (cb111) -- (cb120) node[midway,below] {$(0,1,-1)$};
+        \draw[shorten >= 3pt,shorten <= 3pt,->] (cb111) -- (cb021) node[midway,right] {$(-1,1,0)$};
+        \draw[shorten >= 3pt,shorten <= 3pt,->] (cb111) -- (cb012) node[midway,left] {$(-1,0,1)$};
+        \draw[shorten >= 3pt,shorten <= 3pt,->] (cb111) -- (cb102) node[midway,above] {$(0,-1,1)$};
+        \draw[shorten >= 3pt,shorten <= 3pt,->] (cb111) -- (cb201) node[midway,left] {$(1,-1,0)$};
+    \end{tikzpicture}
+    \caption{Traversal through the points}
+    \label{fig:4traversal}
+\end{Figure}
+
+The integration domains will be identified by their \emph{first-most} point $I_0 = (i_1,i_2,i_3)$.
+In order to calculate the neighboring points the following formulas will be used: \begin{align}
+    I_1 &= (i_1,i_2,i_3) + (0,-1,1) & I_2 &= (i_1,i_2,i_3) + (-1,0,1) & I_3 &= (i_1,i_2,i_3) + (-1,1,0)
+\end{align}
+
+The \emph{first-most} points will be enumerated by iterating through the 2 first most indeces.
+
+
 
 \pagebreak
 
