@@ -236,6 +236,20 @@ impl<IntegratorDummy> Simplex2DIntegrator<IntegratorDummy> for Quadrilateral2DIn
         let d3 = transformation.dot(&d3);
         sum += self.integrate_quadrilateral(&d3, func, simplex);
 
-        return sum;
+        // Weil ich die Orientierung verhaut habe, steht hier ein Minus...
+        return -sum;
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use crate::{integrator_tests, integration_2d::domain::IntegratorDummy};
+    use crate::integration_2d::integrators::Quadrilateral2DIntegrator;
+
+    integrator_tests!{
+        gauss_order1: Quadrilateral2DIntegrator: Quadrilateral2DIntegrator::new(1), IntegratorDummy: IntegratorDummy::get(),
+        gauss_order2: Quadrilateral2DIntegrator: Quadrilateral2DIntegrator::new(2), IntegratorDummy: IntegratorDummy::get(),
+        gauss_order3: Quadrilateral2DIntegrator: Quadrilateral2DIntegrator::new(3), IntegratorDummy: IntegratorDummy::get(),
     }
 }

@@ -1,4 +1,4 @@
-use integration_2d::functions::RepeatedPyramidFunction;
+use integration_2d::{functions::RepeatedPyramidFunction, integrators::{hierarchic_integrator, EdgeSubdivisionIntegrator}};
 use integration_3d::{
     functions::{Constant3DFunction, Function3DHistory},
     integrators::Quadrilateral3DIntegrator,
@@ -178,7 +178,7 @@ fn integration_3d_testing() {
     //println!("{},{}", result, sim.get_volume());
 }
 
-fn get_diagonal_order(highest_index: usize) -> Vec<(usize,usize,usize)> {
+fn get_diagonal_order(highest_index: usize) -> Vec<(usize, usize, usize)> {
     let mut res_vec = Vec::new();
     {
         let col = highest_index;
@@ -211,7 +211,7 @@ fn get_diagonal_order(highest_index: usize) -> Vec<(usize,usize,usize)> {
     return res_vec;
 }
 
-fn main() {
+fn matrix_integration_test() {
     let sim = Simplex3D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
         &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
@@ -254,6 +254,39 @@ fn main() {
             cache.tree_size()
         );
     }
-
     println!("{}", res);
+}
+
+fn main() {
+    let sim = Simplex2D::new_from_points(
+        &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), -(2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+    );
+
+    let integrator = Quadrilateral2DIntegrator::new(1);
+    let hierarchic_integrator = EdgeSubdivisionIntegrator::new(integrator, 10);
+
+    let func = Box::new(Function2DHistory::new(Constant2DFunction {}));
+
+    let result = hierarchic_integrator.integrate_simplex(&func, &sim, &mut IntegratorDummy::get());
+
+    println!("{}",result);
+
+    let hist = func.get_history();
+
+    println!("{},{}", hist.len(), result);
+    let mut file = File::create(&"out.csv").unwrap();
+    for el in &hist {
+        //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
+        let sim_points = sim.get_points();
+        let el = &el.0;
+        let point = sim_points.dot(el);
+        write!(file, "{} {}\n",point[0], point[1]).unwrap();
+        //println!(
+        //    "\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",
+        //    el[0], el[1], el[2], el[3]
+        //);
+    }
+    println!("{},{}", result, sim.get_area());
 }

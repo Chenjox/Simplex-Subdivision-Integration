@@ -1,6 +1,23 @@
-use ndarray::{array, Array1, Array2};
+use ndarray::{array, Array1, Array2, Axis};
 
 type Point2D = Array1<f64>;
+
+fn det3x3(mat3x3: &Array2<f64>) -> f64 {
+    let mut sum = 0.0;
+    for j in 0..3 {
+        let mut prod = 1.0;
+        for i in 0..3 {
+            prod = prod * mat3x3[[i, (i + j) % 3]]
+        }
+        sum = sum + prod;
+        let mut prod = -1.0;
+        for i in 0..3 {
+            prod = prod * mat3x3[[(2 - i), (i + j) % 3]]
+        }
+        sum = sum + prod;
+    }
+    return sum;
+}
 
 /// A struct representing a simplex on the Euclidean 2D Plane
 pub struct Simplex2D {
@@ -20,6 +37,16 @@ impl Simplex2D {
 
     pub fn get_points(&self) -> Array2<f64> {
         return self.points.clone();
+    }
+
+    pub fn get_area(&self) -> f64 {
+        let mut points = self.points.clone();
+        points.append(Axis(0), array![ [1.0_f64 ,1. ,1.]].view()).unwrap();
+
+        //let points = points.reversed_axes();
+        println!("{}",points);
+
+        return det3x3(&points)/2.;
     }
 }
 
@@ -73,3 +100,66 @@ impl IntegratorDummy {
 //fn usage(sim: &Simplex2D, func: &Box<dyn Simplex2DFunction>, inte: &Box<dyn Simplex2DIntegrator>) {
 //    let val = inte.integrate(func, sim);
 //}
+#[macro_export]
+macro_rules! integrator_tests {
+    ($($name:ident: $type:ty: $init:expr, $typecache:ty: $initcache:expr,)*) => {
+    $(
+        mod $name {
+            use super::*;
+            use crate::integration_2d::functions::*;
+            use crate::integration_2d::domain::*;
+            use ndarray::array;
+
+            fn get_integrator_cache() -> $typecache {
+                $initcache
+            }
+
+            fn get_instance() -> $type {
+                $init
+            }
+
+            #[test]
+            fn constant_function() {
+                let inte = get_instance();
+                let mut cache = get_integrator_cache();
+
+                let func = Box::new(Constant2DFunction {});
+                // Gegen den Uhrzeigersinn
+                let sim = Simplex2D::new_from_points(
+                    &array![0.0_f64,0.],
+                    &array![1.,0.],
+                    &array![0.,1.],
+                );
+
+                let result = inte.integrate_simplex(&func, &sim, &mut cache);
+
+                let true_result = 0.5;
+                let approx_eq = (true_result - result).abs();
+
+                assert!(approx_eq <= 1e-2_f64, "{} - {} = {}",true_result, result, approx_eq);
+            }
+
+            #[test]
+            fn preserving_orientation() {
+                let inte = get_instance();
+                let mut cache = get_integrator_cache();
+
+                let func = Box::new(Constant2DFunction {});
+                // Gegen den Uhrzeigersinn
+                let sim = Simplex2D::new_from_points(
+                    &array![0.0_f64,0.],
+                    &array![1.,0.],
+                    &array![0.,1.],
+                );
+
+                let result = inte.integrate_simplex(&func, &sim, &mut cache);
+
+                let true_result = (0.5_f64).signum();
+                let approx_eq = result.signum() + true_result;
+
+                assert!(approx_eq == 2.0, "Signum result: {}, Signum expected: {}",result.signum(),true_result);
+            }
+        }
+    )*
+    }
+}
