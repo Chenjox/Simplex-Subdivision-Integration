@@ -43,9 +43,9 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
                 let i0 = i0 +1;
                 if i1 != 0 {
                   let transformation = array![
-                    [i0 as f64 / order as f64,     (i1-1) as f64/order as f64, (i2+1) as f64 / order as f64],
-                    [i0 as f64 / order as f64,     i1 as f64/order as f64, i2 as f64 / order as f64],
-                    [(i0-1) as f64 / order as f64, i1 as f64/order as f64, (i2+1) as f64 / order as f64]
+                    [i0 as f64 / order_fl,     i1 as f64/order_fl, i2 as f64 / order_fl],
+                    [(i0-1) as f64 / order_fl, i1 as f64/order_fl, (i2+1) as f64 / order_fl],
+                    [i0 as f64 / order_fl,     (i1-1) as f64/order_fl, (i2+1) as f64 / order_fl],
                   ];
                   let transformation = transformation.reversed_axes();
                   result += self.base_integrator.integrate_over_domain(&transformation, func, simplex, &mut IntegratorDummy);
@@ -56,9 +56,9 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
                 }
                 // -1,1,0
                 let transformation = array![
-                  [i0 as f64 / order as f64,     i1 as f64/order as f64, i2 as f64 / order as f64],
-                    [(i0-1) as f64 / order as f64,     (i1+1) as f64/order as f64, (i2) as f64 / order as f64],
-                    [(i0-1) as f64 / order as f64, i1 as f64/order as f64, (i2+1) as f64 / order as f64]
+                  [i0 as f64 / order_fl,     i1 as f64/order_fl, i2 as f64 / order_fl],
+                  [(i0-1) as f64 / order_fl, (i1+1) as f64/order_fl, (i2) as f64 / order_fl],
+                  [(i0-1) as f64 / order_fl, i1 as f64/order_fl,     (i2+1) as f64 / order_fl],
                 ];
                 let transformation = transformation.reversed_axes();
                 result += self.base_integrator.integrate_over_domain(&transformation, func, simplex, &mut IntegratorDummy);
@@ -70,5 +70,17 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
             }
         }
         return result;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{integrator_tests, integration_2d::domain::IntegratorDummy};
+    use crate::integration_2d::integrators::{EdgeSubdivisionIntegrator, Quadrilateral2DIntegrator};
+
+    integrator_tests!{
+        order2: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),2), IntegratorDummy: IntegratorDummy::get(),
+        order3: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),3), IntegratorDummy: IntegratorDummy::get(),
+        order4: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),4), IntegratorDummy: IntegratorDummy::get(),
     }
 }

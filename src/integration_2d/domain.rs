@@ -119,7 +119,28 @@ macro_rules! integrator_tests {
             }
 
             #[test]
-            fn constant_function() {
+            fn constant_function_correctness_abs() {
+                let inte = get_instance();
+                let mut cache = get_integrator_cache();
+
+                let func = Box::new(Constant2DFunction {});
+                // Gegen den Uhrzeigersinn
+                let sim = Simplex2D::new_from_points(
+                    &array![0.0_f64,0.],
+                    &array![1.,0.],
+                    &array![0.,1.],
+                );
+
+                let result = inte.integrate_simplex(&func, &sim, &mut cache);
+
+                let true_result = 0.5_f64;
+                let approx_eq = (true_result.abs() - result.abs()).abs();
+
+                assert!(approx_eq <= 1e-2_f64, "Expected: {}, Actual: {}, Diff: {}",true_result, result, approx_eq);
+            }
+
+            #[test]
+            fn constant_function_correctness() {
                 let inte = get_instance();
                 let mut cache = get_integrator_cache();
 
@@ -136,7 +157,7 @@ macro_rules! integrator_tests {
                 let true_result = 0.5;
                 let approx_eq = (true_result - result).abs();
 
-                assert!(approx_eq <= 1e-2_f64, "{} - {} = {}",true_result, result, approx_eq);
+                assert!(approx_eq <= 1e-2_f64, "Expected: {}, Actual: {}, Diff: {}",true_result, result, approx_eq);
             }
 
             #[test]
@@ -157,7 +178,7 @@ macro_rules! integrator_tests {
                 let true_result = (0.5_f64).signum();
                 let approx_eq = result.signum() + true_result;
 
-                assert!(approx_eq == 2.0, "Signum result: {}, Signum expected: {}",result.signum(),true_result);
+                assert!(approx_eq == 2.0, "Expected: {}, Actual: {}",result.signum(),true_result);
             }
         }
     )*
