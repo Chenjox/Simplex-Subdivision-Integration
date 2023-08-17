@@ -218,6 +218,6 @@ mod tests {
     use crate::{integration_2d::domain::IntegratorDummy, integrator_tests};
 
     integrator_tests! {
-        gauss_order1: Hierarchic2DIntegrator<Quadrilateral2DIntegrator>: Hierarchic2DIntegrator::new(Quadrilateral2DIntegrator::new(1),false,1e-2), Hierarchic2DIntegratorData: Hierarchic2DIntegratorData::new_cache(),
+        quadrilaterial1: Hierarchic2DIntegrator<Quadrilateral2DIntegrator>: Hierarchic2DIntegrator::new(Quadrilateral2DIntegrator::new(1),false,1e-2), Hierarchic2DIntegratorData: Hierarchic2DIntegratorData::new_cache(),
     }
 }
