@@ -595,9 +595,59 @@ With the Jacobi Matrix of any particular Domain being \begin{equation}
     \end{tikzpicture}
 \end{Figure}
 
-\subsubsection{Sphere Integrator}
+\subsubsection{Integration Rules in~\cite{lynessModerateDegreeSymmetric1975}}
 
-\subsubsection{Other Quadrature Formulas}
+The Integration Rules in~\cite{lynessModerateDegreeSymmetric1975} which satisfy the \texttt{PI} and $v = \overline{v}$ constraint.
+This only allows rules, which only allow positive weight where all points lie inside the triangle.\marginnote{Some Values were hard to read in my print of the paper.} 
+
+In combination with the edge subdivision scheme, integration points which lie on the boundary might be preferable.
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{c S[table-format=1.17] S[table-format=1.17] S[table-format=1.17] S[table-format=1.17] c}
+        \hline
+        Deg & {Weight $w_i$} & {$\xi_1$} & {$\xi_2$} & {$\xi_3$} & Mult\\
+        \hline
+       4 & 0.3298552309659655 & 0.8168475729804585 & 0.09157621350977073 & {$1 - \xi_1 - \xi_2$} & 3 \\
+       4 & 0.6701447690340345 & 0.1081030181680702 & 0.44594849091596490 & {$1 - \xi_1 - \xi_2$} & 3 \\
+       \hline
+       6 & 0.3503588271790222 & 0.5014265096581342 & 0.2492867451709329  & {$1 - \xi_1 - \xi_2$} & 3 \\ 
+       6 & 0.1525347191106164 & 0.8738219710169965 & 0.06308901449150177 & {$1 - \xi_1 - \xi_2$} & 3 \\
+       6 & 0.4971064537103375 & 0.6365024991213939 & 0.05314504984483216 & {$1 - \xi_1 - \xi_2$} & 6 \\
+       \hline
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{Integration Rules in~\cite{dunavantHighDegreeEfficient1985}}
+
+The Integration Rules in~\cite{dunavantHighDegreeEfficient1985} up to order $5$ are implemented.
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{c S[table-format=1.17] S[table-format=1.17] S[table-format=1.17] S[table-format=1.17] c}
+        \hline
+        Deg & {Weight $w_i$} & {$\xi_1$} & {$\xi_2$} & {$\xi_3$} & Mult\\
+        \hline
+       1 & 1.0 & 0.333333333333333 & 0.333333333333333 & {$1 - \xi_1 - \xi_2$} & 1 \\
+       \hline
+       2 & 0.333333333333333 & 0.666666666666667 & 0.166666666666667 & {$1 - \xi_1 - \xi_2$} & 3 \\ 
+       \hline
+       3 & -0.562500000000000 & 0.333333333333333 & 0.333333333333333 & {$1 - \xi_1 - \xi_2$} & 1 \\
+       3 & 0.520833333333333 & 0.6 & 0.2 & {$1 - \xi_1 - \xi_2$} & 3 \\
+       \hline
+       4 & 0.223381589678011 & 0.108103018168070 & 0.445948490915965 & {$1 - \xi_1 - \xi_2$} & 3 \\
+       4 & 0.109951743655322 & 0.816847572980459 & 0,091576213509771 & {$1 - \xi_1 - \xi_2$} & 3 \\
+       \hline
+       5 & 0.225000000000000 & 0.333333333333333 & 0.333333333333333 & {$1 - \xi_1 - \xi_2$} & 1 \\
+       5 & 0.132394152788506 & 0.059715871789770 & 0.470142064105115 & {$1 - \xi_1 - \xi_2$} & 3 \\
+       5 & 0.125939180544827 & 0.797426985353087 & 0.101286507323456 & {$1 - \xi_1 - \xi_2$} & 3 \\
+       \hline
+    \end{tabular}
+\end{table}
 
 \pagebreak
 
