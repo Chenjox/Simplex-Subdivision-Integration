@@ -241,13 +241,12 @@ impl<IntegratorDummy> Simplex2DIntegrator<IntegratorDummy> for Quadrilateral2DIn
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::{integrator_tests, integration_2d::domain::IntegratorDummy};
     use crate::integration_2d::integrators::Quadrilateral2DIntegrator;
+    use crate::{integration_2d::domain::IntegratorDummy, integrator_tests};
 
-    integrator_tests!{
+    integrator_tests! {
         gauss_order1: Quadrilateral2DIntegrator: Quadrilateral2DIntegrator::new(1), IntegratorDummy: IntegratorDummy::get(),
         gauss_order2: Quadrilateral2DIntegrator: Quadrilateral2DIntegrator::new(2), IntegratorDummy: IntegratorDummy::get(),
         gauss_order3: Quadrilateral2DIntegrator: Quadrilateral2DIntegrator::new(3), IntegratorDummy: IntegratorDummy::get(),

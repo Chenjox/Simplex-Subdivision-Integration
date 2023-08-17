@@ -41,12 +41,14 @@ impl Simplex2D {
 
     pub fn get_area(&self) -> f64 {
         let mut points = self.points.clone();
-        points.append(Axis(0), array![ [1.0_f64 ,1. ,1.]].view()).unwrap();
+        points
+            .append(Axis(0), array![[1.0_f64, 1., 1.]].view())
+            .unwrap();
 
         //let points = points.reversed_axes();
-        println!("{}",points);
+        println!("{}", points);
 
-        return det3x3(&points)/2.;
+        return det3x3(&points) / 2.;
     }
 }
 

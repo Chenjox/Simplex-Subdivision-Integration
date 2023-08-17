@@ -1,4 +1,7 @@
-use integration_2d::{functions::RepeatedPyramidFunction, integrators::{hierarchic_integrator, EdgeSubdivisionIntegrator}};
+use integration_2d::{
+    functions::RepeatedPyramidFunction,
+    integrators::{hierarchic_integrator, EdgeSubdivisionIntegrator},
+};
 use integration_3d::{
     functions::{Constant3DFunction, Function3DHistory},
     integrators::Quadrilateral3DIntegrator,
@@ -271,7 +274,7 @@ fn main() {
 
     let result = hierarchic_integrator.integrate_simplex(&func, &sim, &mut IntegratorDummy::get());
 
-    println!("{}",result);
+    println!("{}", result);
 
     let hist = func.get_history();
 
@@ -282,7 +285,7 @@ fn main() {
         let sim_points = sim.get_points();
         let el = &el.0;
         let point = sim_points.dot(el);
-        write!(file, "{} {}\n",point[0], point[1]).unwrap();
+        write!(file, "{} {}\n", point[0], point[1]).unwrap();
         //println!(
         //    "\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",
         //    el[0], el[1], el[2], el[3]
