@@ -619,7 +619,31 @@ In combination with the edge subdivision scheme, integration points which lie on
     \end{tabular}
 \end{table}
 
+The jacobi determinant will be calculated by expressing $\xi_3$ as \begin{equation}
+    \xi_3 = 1 - \xi_1 - \xi_2
+\end{equation}
+Therefore the integral will be transformed into the $\xi_1^\ast, \xi_2^\ast$ space, using the interpolation functions $N_1, N_2, N_3$, with the jacobi determinant being: \begin{equation}
+    J =\begin{bmatrix}
+        C_1 & C_2 & C_3
+    \end{bmatrix} \begin{bmatrix}
+        \pardiff{N_1}{\xi_1^\ast} & \pardiff{N_1}{\xi_2^\ast} \\
+        \pardiff{N_2}{\xi_1^\ast} & \pardiff{N_2}{\xi_2^\ast} \\
+        \pardiff{N_3}{\xi_1^\ast} & \pardiff{N_3}{\xi_2^\ast} \\
+    \end{bmatrix}
+\end{equation}
+and \begin{equation}
+    \pardiff{N_a}{\xi_j^\ast} = \frac{N_a}{\xi_j} - \frac{N_a}{\xi_3} \quad \forall j = 1,2
+\end{equation}
 
+Therefore \begin{equation}
+    J =\begin{bmatrix}
+        C_1 & C_2 & C_3
+    \end{bmatrix} \begin{bmatrix}
+        1 & 0 \\
+        0 & 1 \\
+        -1 & -1 \\
+    \end{bmatrix}
+\end{equation}
 
 \subsubsection{Integration Rules in~\cite{dunavantHighDegreeEfficient1985}}
 
