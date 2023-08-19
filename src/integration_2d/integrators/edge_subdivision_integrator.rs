@@ -111,13 +111,17 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
 #[cfg(test)]
 mod tests {
     use crate::integration_2d::integrators::{
-        EdgeSubdivisionIntegrator, Quadrilateral2DIntegrator,
+        EdgeSubdivisionIntegrator, Quadrilateral2DIntegrator, DunavantIntegrator
     };
     use crate::{integration_2d::domain::IntegratorDummy, integrator_tests};
 
     integrator_tests! {
-        order2: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),2), IntegratorDummy: IntegratorDummy::get(),
-        order3: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),3), IntegratorDummy: IntegratorDummy::get(),
-        order4: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),4), IntegratorDummy: IntegratorDummy::get(),
+        order2_quad: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),2), IntegratorDummy: IntegratorDummy::get(),
+        order3_quad: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),3), IntegratorDummy: IntegratorDummy::get(),
+        order4_quad: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),4), IntegratorDummy: IntegratorDummy::get(),
+
+        order2_dunavant: EdgeSubdivisionIntegrator<DunavantIntegrator>: EdgeSubdivisionIntegrator::new(DunavantIntegrator::new(1),2), IntegratorDummy: IntegratorDummy::get(),
+        order3_dunavant: EdgeSubdivisionIntegrator<DunavantIntegrator>: EdgeSubdivisionIntegrator::new(DunavantIntegrator::new(2),3), IntegratorDummy: IntegratorDummy::get(),
+        order4_dunavant: EdgeSubdivisionIntegrator<DunavantIntegrator>: EdgeSubdivisionIntegrator::new(DunavantIntegrator::new(3),4), IntegratorDummy: IntegratorDummy::get(),
     }
 }
