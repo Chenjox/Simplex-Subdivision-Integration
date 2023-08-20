@@ -32,6 +32,9 @@
   mark=at position #1 with {\arrow{>}}},postaction={decorate}},
   ->-/.default=0.5
 }
+\tikzset{
+    scale basis/.style={x={#1*1.0cm},y={#1*1.0cm}}
+}
 
 \newcommand{\simplex}{\boldsymbol{\Delta}}
 
@@ -673,6 +676,21 @@ The Integration Rules in~\cite{dunavantHighDegreeEfficient1985} up to order $5$ 
     \end{tabular}
 \end{table}
 
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[shift={(0,0)}]
+            \input{figures/Dunavant2D-1.tikz}
+        \end{scope}
+        \begin{scope}[shift={(2,0)}]
+            \input{figures/Dunavant2D-2.tikz}
+        \end{scope}
+        \begin{scope}[shift={(4,0)}]
+            \input{figures/Dunavant2D-3.tikz}
+        \end{scope}
+    \end{tikzpicture}
+\end{Figure}
+
 \pagebreak
 
 \subsection{Subdivision Integration Strategy}
@@ -733,7 +751,7 @@ This can be done recursively, to get a desired accuracy.
 
 
 
-\subsection{Hierarchic Simplex Subdivision}
+\subsubsection{Hierarchic Simplex Subdivision}
 
 A Criterion for adaptive integration from \cite{gonnetReviewErrorEstimation2012}\begin{align}
     Q &= \iint_{\simplex} F \diff \simplex \\
@@ -797,7 +815,7 @@ Coordinates of any Grandchild-Simplizes can be calculated by chaining $B_{\simpl
     \end{tikzpicture}
 \end{Figure}
 
-\subsection{Edgewise Simplex Subdivision}
+\subsubsection{Edgewise Simplex Subdivision}
 
 The edgewise simplex subdivision can also be applied to uniformly subdivide any simplex.
 The points inside the $r$-th edgewise subdivision are indexed by $3$ integers $i_1, i_2, i_3$, which satisfy following 
@@ -889,7 +907,29 @@ In order to calculate the neighboring points the following formulas will be used
 
 The \emph{first-most} points will be enumerated by iterating through the 2 first most indeces.
 
-
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[shift={(0,0)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-1.tikz}
+        \end{scope}
+        \begin{scope}[shift={(4.5,0)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-2.tikz}
+        \end{scope}
+        \begin{scope}[shift={(9,0)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-3.tikz}
+        \end{scope}
+        \begin{scope}[shift={(0,-4.5)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-4.tikz}
+        \end{scope}
+        \begin{scope}[shift={(4.5,-4.5)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-5.tikz}
+        \end{scope}
+        \begin{scope}[shift={(9,-4.5)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-6.tikz}
+        \end{scope}
+    \end{tikzpicture}
+\end{Figure}
 
 \pagebreak
 

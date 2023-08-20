@@ -111,7 +111,7 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
 #[cfg(test)]
 mod tests {
     use crate::integration_2d::integrators::{
-        EdgeSubdivisionIntegrator, Quadrilateral2DIntegrator, DunavantIntegrator
+        DunavantIntegrator, EdgeSubdivisionIntegrator, Quadrilateral2DIntegrator,
     };
     use crate::{integration_2d::domain::IntegratorDummy, integrator_tests};
 

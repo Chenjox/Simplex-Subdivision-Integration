@@ -68,7 +68,7 @@ pub trait Simplex2DFunction {
 pub trait Simplex2DIntegrator<D> {
     /// This function will be called on a single simplex, given in the third argument.
     fn integrate_simplex<T: Simplex2DFunction>(
-        &self,
+        self: &Self,
         func: &Box<T>,
         simplex: &Simplex2D,
         cache_data: &mut D,
@@ -83,7 +83,7 @@ pub trait Simplex2DIntegrator<D> {
 
     /// A more general function which takes a transformation matrix to map to the initial subdomain of the simplex
     fn integrate_over_domain<T: Simplex2DFunction>(
-        &self,
+        self: &Self,
         transformation: &Array2<f64>,
         func: &Box<T>,
         simplex: &Simplex2D,

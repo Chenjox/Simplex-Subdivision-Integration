@@ -1,12 +1,13 @@
 use integration_2d::{
     functions::RepeatedPyramidFunction,
-    integrators::{hierarchic_integrator, EdgeSubdivisionIntegrator},
+    integrators::{hierarchic_integrator, DunavantIntegrator, EdgeSubdivisionIntegrator},
 };
 use integration_3d::{
     functions::{Constant3DFunction, Function3DHistory},
     integrators::Quadrilateral3DIntegrator,
     Simplex3D, Simplex3DIntegrator,
 };
+use integration_tests::create_figures;
 use ndarray::prelude::*;
 use problems::problem_definition::PhaseFieldFuncDiff23D;
 use std::io::Write;
@@ -29,6 +30,7 @@ use crate::{
 
 mod integration_2d;
 mod integration_3d;
+mod integration_tests;
 mod problems;
 
 fn precision_test(precision: f64) {
@@ -260,7 +262,84 @@ fn matrix_integration_test() {
     println!("{}", res);
 }
 
+fn all_figures() {
+    create_figures(vec![
+        (
+            String::from("Quad2D-1"),
+            Box::new(Quadrilateral2DIntegrator::new(1)),
+        ),
+        (
+            String::from("Quad2D-2"),
+            Box::new(Quadrilateral2DIntegrator::new(2)),
+        ),
+        (
+            String::from("Quad2D-3"),
+            Box::new(Quadrilateral2DIntegrator::new(3)),
+        ),
+    ]);
+    create_figures(vec![
+        (
+            String::from("Dunavant2D-1"),
+            Box::new(DunavantIntegrator::new(1)),
+        ),
+        (
+            String::from("Dunavant2D-2"),
+            Box::new(DunavantIntegrator::new(2)),
+        ),
+        (
+            String::from("Dunavant2D-3"),
+            Box::new(DunavantIntegrator::new(3)),
+        ),
+    ]);
+    create_figures(vec![
+        (
+            String::from("EdgeSubdivision2D-1"),
+            Box::new(EdgeSubdivisionIntegrator::new(
+                DunavantIntegrator::new(1),
+                1,
+            )),
+        ),
+        (
+            String::from("EdgeSubdivision2D-2"),
+            Box::new(EdgeSubdivisionIntegrator::new(
+                DunavantIntegrator::new(1),
+                2,
+            )),
+        ),
+        (
+            String::from("EdgeSubdivision2D-3"),
+            Box::new(EdgeSubdivisionIntegrator::new(
+                DunavantIntegrator::new(1),
+                3,
+            )),
+        ),
+        (
+            String::from("EdgeSubdivision2D-4"),
+            Box::new(EdgeSubdivisionIntegrator::new(
+                DunavantIntegrator::new(1),
+                4,
+            )),
+        ),
+        (
+            String::from("EdgeSubdivision2D-5"),
+            Box::new(EdgeSubdivisionIntegrator::new(
+                DunavantIntegrator::new(1),
+                5,
+            )),
+        ),
+        (
+            String::from("EdgeSubdivision2D-6"),
+            Box::new(EdgeSubdivisionIntegrator::new(
+                DunavantIntegrator::new(1),
+                6,
+            )),
+        ),
+    ]);
+}
+
 fn main() {
+    all_figures();
+    /*
     let sim = Simplex2D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
         &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
@@ -292,4 +371,5 @@ fn main() {
         //);
     }
     println!("{},{}", result, sim.get_area());
+    */
 }
