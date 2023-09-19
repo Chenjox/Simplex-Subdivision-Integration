@@ -229,9 +229,10 @@ fn matrix_integration_test_2d() {
     let mut res = Array2::<f64>::zeros([6, 6]);
     let nodal_values = array![1.0, 1.0, 1.0, -1.0, 0.0, 0.0];
 
-    let basic_integrator = Quadrilateral2DIntegrator::new(3);
-    let hierarchic_inte = Hierarchic2DIntegrator::new(basic_integrator, false, 1e-6);
+    let basic_integrator = Quadrilateral2DIntegrator::new(2);
+    let hierarchic_inte = Hierarchic2DIntegrator::new(basic_integrator, false, 1e-3);
 
+    //let hierarchic_inte = EdgeSubdivisionIntegrator::new(basic_integrator, 100);
     let mut cache = Hierarchic2DIntegratorData::new_cache();
 
     // Zuerst die Hauptdiagonale, dann die Nebendiagonalen
@@ -239,27 +240,28 @@ fn matrix_integration_test_2d() {
     //println!("{:?}",res_vec);
 
     for (count, i, j) in res_vec {
-        let func = Box::new(PhaseFieldFuncDiff22D::new(
+        let func = Box::new(Function2DHistory::new(PhaseFieldFuncDiff22D::new(
             nodal_values.clone(),
             1e-6,
             1.,
             i,
             j,
-        ));
+        )));
         let now = Instant::now();
-        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache);
+        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache); //&mut cache
         let elapsed_time = now.elapsed();
         if count < 6 + 1 * 5 {
             // Wenn Diagonale und erste nebendiagonale durch sind
             cache.make_leafs_unchecked();
         }
         println!(
-            "Running [{},{}] took {} milliseconds. Tree size is: {}",
+            "Running [{},{}] took {} milliseconds. Integration Points are: {}",
             i,
             j,
             elapsed_time.as_millis(),
-            cache.tree_size()
+            func.function_evaluations()
         );
+        func.delete_history();
     }
     println!("{}", res);
 }
