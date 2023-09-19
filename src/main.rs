@@ -8,7 +8,6 @@ use integration_3d::{
     Simplex3D, Simplex3DIntegrator,
 };
 use ndarray::prelude::*;
-use problems::problem_definition::PhaseFieldFuncDiff23D;
 use std::io::Write;
 use std::{fs::File, time::Instant};
 
@@ -24,7 +23,13 @@ use crate::{
         functions::Multiplicative3DFunction,
         integrators::{Hierarchic3DIntegrator, Hierarchic3DIntegratorData},
     },
-    problems::PhaseField2DFunction,
+    problems::{
+        problem_definition::{
+            problem_2d_definition::PhaseFieldFuncDiff22D,
+            problem_3d_definition::PhaseFieldFuncDiff23D,
+        },
+        PhaseField2DFunction,
+    },
 };
 
 mod integration_2d;
@@ -214,7 +219,52 @@ fn get_diagonal_order(highest_index: usize) -> Vec<(usize, usize, usize)> {
     return res_vec;
 }
 
-fn matrix_integration_test() {
+fn matrix_integration_test_2d() {
+    let sim = Simplex2D::new_from_points(
+        &array![1., 1.],
+        &array![1.5, 1. + (3.0f64).sqrt() / 2.],
+        &array![2., 1.],
+    );
+
+    let mut res = Array2::<f64>::zeros([6, 6]);
+    let nodal_values = array![1.0, 1.0, 1.0, -1.0, 0.0, 0.0];
+
+    let basic_integrator = Quadrilateral2DIntegrator::new(3);
+    let hierarchic_inte = Hierarchic2DIntegrator::new(basic_integrator, false, 1e-6);
+
+    let mut cache = Hierarchic2DIntegratorData::new_cache();
+
+    // Zuerst die Hauptdiagonale, dann die Nebendiagonalen
+    let res_vec = get_diagonal_order(5);
+    //println!("{:?}",res_vec);
+
+    for (count, i, j) in res_vec {
+        let func = Box::new(PhaseFieldFuncDiff22D::new(
+            nodal_values.clone(),
+            1e-6,
+            1.,
+            i,
+            j,
+        ));
+        let now = Instant::now();
+        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache);
+        let elapsed_time = now.elapsed();
+        if count < 6 + 1 * 5 {
+            // Wenn Diagonale und erste nebendiagonale durch sind
+            cache.make_leafs_unchecked();
+        }
+        println!(
+            "Running [{},{}] took {} milliseconds. Tree size is: {}",
+            i,
+            j,
+            elapsed_time.as_millis(),
+            cache.tree_size()
+        );
+    }
+    println!("{}", res);
+}
+
+fn matrix_integration_test_3d() {
     let sim = Simplex3D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
         &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
@@ -226,7 +276,7 @@ fn matrix_integration_test() {
     let nodal_values = array![1.0, 1.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
     let basic_integrator = Quadrilateral3DIntegrator::new(3);
-    let hierarchic_inte = Hierarchic3DIntegrator::new(basic_integrator, false, 1e-5);
+    let hierarchic_inte = Hierarchic3DIntegrator::new(basic_integrator, false, 1e-3);
 
     let mut cache = Hierarchic3DIntegratorData::new_cache();
 
@@ -261,6 +311,7 @@ fn matrix_integration_test() {
 }
 
 fn main() {
+    /*
     let sim = Simplex2D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
         &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
@@ -292,4 +343,6 @@ fn main() {
         //);
     }
     println!("{},{}", result, sim.get_area());
+    */
+    matrix_integration_test_2d()
 }

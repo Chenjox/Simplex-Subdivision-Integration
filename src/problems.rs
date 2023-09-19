@@ -166,7 +166,7 @@ pub mod problem_definition {
 
         // Knoten 4 - 6 [Index 3 - 5]
         fn lagrange_2_order_edge(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
-            if index > 2 {
+            if index < 3 {
                 panic!("Illegal Index given");
             }
             if index < 6 {
@@ -301,65 +301,147 @@ pub mod problem_definition {
         }
     }
 
-    // jetzt die Einzelintegranden
-    pub fn phase_field_func_diff2(
-        nodal_values: &Array1<f64>,
-        kreg: f64,
-        l: f64,
-        row_index: usize,
-        column_index: usize,
-        barycentric_coordinates: &Array1<f64>,
-    ) -> f64 {
-        let f_base = ansatz_function(nodal_values, barycentric_coordinates);
-        phase_field_func(f_base, kreg, l)
-            * (varsigma_func_diff1(f_base, kreg).powi(2) - varsigma_func_diff2(f_base, kreg))
-            * dyadic_product_component(barycentric_coordinates, row_index, column_index)
-    }
+    pub mod problem_2d_definition {
+        use ndarray::array;
+        use ndarray::Array1;
 
-    pub struct PhaseFieldFuncDiff23D {
-        nodal_values: Array1<f64>,
-        kreg: f64,
-        l: f64,
-        column_index: usize,
-        row_index: usize,
-    }
+        use crate::integration_2d::domain::Simplex2DFunction;
 
-    impl PhaseFieldFuncDiff23D {
-        pub fn new(
+        use super::phase_field::{phase_field_func, varsigma_func_diff1, varsigma_func_diff2};
+        use super::shape_func_2d::{ansatz_function, dyadic_product_component};
+
+        // jetzt die Einzelintegranden
+        pub fn phase_field_func_diff2(
+            nodal_values: &Array1<f64>,
+            kreg: f64,
+            l: f64,
+            row_index: usize,
+            column_index: usize,
+            barycentric_coordinates: &Array1<f64>,
+        ) -> f64 {
+            let f_base = ansatz_function(nodal_values, barycentric_coordinates);
+            phase_field_func(f_base, kreg, l)
+                * (varsigma_func_diff1(f_base, kreg).powi(2) - varsigma_func_diff2(f_base, kreg))
+                * dyadic_product_component(barycentric_coordinates, row_index, column_index)
+        }
+
+        pub struct PhaseFieldFuncDiff22D {
             nodal_values: Array1<f64>,
             kreg: f64,
             l: f64,
             column_index: usize,
             row_index: usize,
-        ) -> Self {
-            return Self {
-                nodal_values,
-                kreg,
-                l,
-                column_index,
-                row_index,
-            };
+        }
+
+        impl PhaseFieldFuncDiff22D {
+            pub fn new(
+                nodal_values: Array1<f64>,
+                kreg: f64,
+                l: f64,
+                column_index: usize,
+                row_index: usize,
+            ) -> Self {
+                return Self {
+                    nodal_values,
+                    kreg,
+                    l,
+                    column_index,
+                    row_index,
+                };
+            }
+        }
+
+        impl Simplex2DFunction for PhaseFieldFuncDiff22D {
+            fn function(
+                &self,
+                xi1: f64,
+                xi2: f64,
+                xi3: f64,
+                simplex: &crate::integration_2d::Simplex2D,
+            ) -> f64 {
+                let barycentric = array![xi1, xi2, xi3];
+                return phase_field_func_diff2(
+                    &self.nodal_values,
+                    self.kreg,
+                    self.l,
+                    self.row_index,
+                    self.column_index,
+                    &barycentric,
+                );
+            }
         }
     }
 
-    impl Simplex3DFunction for PhaseFieldFuncDiff23D {
-        fn function(
-            &self,
-            xi1: f64,
-            xi2: f64,
-            xi3: f64,
-            xi4: f64,
-            simplex: &crate::integration_3d::Simplex3D,
+    pub mod problem_3d_definition {
+
+        use ndarray::array;
+        use ndarray::Array1;
+
+        use crate::integration_3d::Simplex3DFunction;
+
+        use super::phase_field::{phase_field_func, varsigma_func_diff1, varsigma_func_diff2};
+        use super::shape_func_3d::{ansatz_function, dyadic_product_component};
+
+        // jetzt die Einzelintegranden
+        pub fn phase_field_func_diff2(
+            nodal_values: &Array1<f64>,
+            kreg: f64,
+            l: f64,
+            row_index: usize,
+            column_index: usize,
+            barycentric_coordinates: &Array1<f64>,
         ) -> f64 {
-            let barycentric = array![xi1, xi2, xi3, xi4];
-            return phase_field_func_diff2(
-                &self.nodal_values,
-                self.kreg,
-                self.l,
-                self.row_index,
-                self.column_index,
-                &barycentric,
-            );
+            let f_base = ansatz_function(nodal_values, barycentric_coordinates);
+            phase_field_func(f_base, kreg, l)
+                * (varsigma_func_diff1(f_base, kreg).powi(2) - varsigma_func_diff2(f_base, kreg))
+                * dyadic_product_component(barycentric_coordinates, row_index, column_index)
+        }
+
+        pub struct PhaseFieldFuncDiff23D {
+            nodal_values: Array1<f64>,
+            kreg: f64,
+            l: f64,
+            column_index: usize,
+            row_index: usize,
+        }
+
+        impl PhaseFieldFuncDiff23D {
+            pub fn new(
+                nodal_values: Array1<f64>,
+                kreg: f64,
+                l: f64,
+                column_index: usize,
+                row_index: usize,
+            ) -> Self {
+                return Self {
+                    nodal_values,
+                    kreg,
+                    l,
+                    column_index,
+                    row_index,
+                };
+            }
+        }
+
+        impl Simplex3DFunction for PhaseFieldFuncDiff23D {
+            fn function(
+                &self,
+                xi1: f64,
+                xi2: f64,
+                xi3: f64,
+                xi4: f64,
+                simplex: &crate::integration_3d::Simplex3D,
+            ) -> f64 {
+                let barycentric = array![xi1, xi2, xi3, xi4];
+                return phase_field_func_diff2(
+                    &self.nodal_values,
+                    self.kreg,
+                    self.l,
+                    self.row_index,
+                    self.column_index,
+                    &barycentric,
+                );
+            }
         }
     }
 }
