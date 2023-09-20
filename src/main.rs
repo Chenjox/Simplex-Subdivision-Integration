@@ -231,7 +231,7 @@ fn matrix_integration_test_2d() {
     let mut res = Array2::<f64>::zeros([6, 6]);
     let nodal_values = array![1.0, 1.0, 1.0, -1.0, 0.0, 0.0];
 
-    let basic_integrator = Quadrilateral2DIntegrator::new(2);
+    let basic_integrator = DunavantIntegrator::new(2);
     let hierarchic_inte = Hierarchic2DIntegrator::new(basic_integrator, false, 1e-3);
 
     //let hierarchic_inte = EdgeSubdivisionIntegrator::new(basic_integrator, 100);
@@ -390,7 +390,7 @@ fn all_figures() {
 }
 
 fn main() {
-    all_figures();
+    //all_figures();
     /*
     let sim = Simplex2D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
