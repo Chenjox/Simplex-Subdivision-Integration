@@ -1,0 +1,7 @@
+\coordinate (b1) at (0.000,0.000);
+\coordinate (b2) at (1.000,0.000);
+\coordinate (b3) at (0.500,0.866);
+\draw (b1) -- (b2) -- (b3) --cycle;
+\draw[fill,red] (barycentric cs:b1=0.583,b2=0.208,b3=0.208) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.208,b2=0.583,b3=0.208) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.208,b2=0.208,b3=0.583) circle (0.5mm);

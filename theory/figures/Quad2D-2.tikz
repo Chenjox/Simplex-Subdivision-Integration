@@ -1,0 +1,16 @@
+\coordinate (b1) at (0.000,0.000);
+\coordinate (b2) at (1.000,0.000);
+\coordinate (b3) at (0.500,0.866);
+\draw (b1) -- (b2) -- (b3) --cycle;
+\draw[fill,red] (barycentric cs:b1=0.419,b2=0.291,b3=0.291) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.556,b2=0.078,b3=0.367) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.556,b2=0.367,b3=0.078) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.804,b2=0.098,b3=0.098) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.291,b2=0.419,b3=0.291) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.367,b2=0.556,b3=0.078) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.078,b2=0.556,b3=0.367) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.098,b2=0.804,b3=0.098) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.291,b2=0.291,b3=0.419) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.078,b2=0.367,b3=0.556) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.367,b2=0.078,b3=0.556) circle (0.5mm);
+\draw[fill,red] (barycentric cs:b1=0.098,b2=0.098,b3=0.804) circle (0.5mm);

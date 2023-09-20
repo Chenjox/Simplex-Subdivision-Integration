@@ -8,7 +8,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[ngerman]{babel}
-
+\usepackage[nopdftrailerid=true]{pdfprivacy}
 %\usepackage{isodate}
 \usepackage{graphicx}
 \usepackage{tikz}
@@ -31,6 +31,9 @@
   markings,
   mark=at position #1 with {\arrow{>}}},postaction={decorate}},
   ->-/.default=0.5
+}
+\tikzset{
+    scale basis/.style={x={#1*1.0cm},y={#1*1.0cm}}
 }
 
 \newcommand{\simplex}{\boldsymbol{\Delta}}
@@ -619,7 +622,31 @@ In combination with the edge subdivision scheme, integration points which lie on
     \end{tabular}
 \end{table}
 
+The jacobi determinant will be calculated by expressing $\xi_3$ as \begin{equation}
+    \xi_3 = 1 - \xi_1 - \xi_2
+\end{equation}
+Therefore the integral will be transformed into the $\xi_1^\ast, \xi_2^\ast$ space, using the interpolation functions $N_1, N_2, N_3$, with the jacobi determinant being: \begin{equation}
+    J =\begin{bmatrix}
+        C_1 & C_2 & C_3
+    \end{bmatrix} \begin{bmatrix}
+        \pardiff{N_1}{\xi_1^\ast} & \pardiff{N_1}{\xi_2^\ast} \\
+        \pardiff{N_2}{\xi_1^\ast} & \pardiff{N_2}{\xi_2^\ast} \\
+        \pardiff{N_3}{\xi_1^\ast} & \pardiff{N_3}{\xi_2^\ast} \\
+    \end{bmatrix}
+\end{equation}
+and \begin{equation}
+    \pardiff{N_a}{\xi_j^\ast} = \frac{N_a}{\xi_j} - \frac{N_a}{\xi_3} \quad \forall j = 1,2
+\end{equation}
 
+Therefore \begin{equation}
+    J =\begin{bmatrix}
+        C_1 & C_2 & C_3
+    \end{bmatrix} \begin{bmatrix}
+        1 & 0 \\
+        0 & 1 \\
+        -1 & -1 \\
+    \end{bmatrix}
+\end{equation}
 
 \subsubsection{Integration Rules in~\cite{dunavantHighDegreeEfficient1985}}
 
@@ -648,6 +675,21 @@ The Integration Rules in~\cite{dunavantHighDegreeEfficient1985} up to order $5$ 
        \hline
     \end{tabular}
 \end{table}
+
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[shift={(0,0)}]
+            \input{figures/Dunavant2D-1.tikz}
+        \end{scope}
+        \begin{scope}[shift={(2,0)}]
+            \input{figures/Dunavant2D-2.tikz}
+        \end{scope}
+        \begin{scope}[shift={(4,0)}]
+            \input{figures/Dunavant2D-3.tikz}
+        \end{scope}
+    \end{tikzpicture}
+\end{Figure}
 
 \pagebreak
 
@@ -709,7 +751,7 @@ This can be done recursively, to get a desired accuracy.
 
 
 
-\subsection{Hierarchic Simplex Subdivision}
+\subsubsection{Hierarchic Simplex Subdivision}
 
 A Criterion for adaptive integration from \cite{gonnetReviewErrorEstimation2012}\begin{align}
     Q &= \iint_{\simplex} F \diff \simplex \\
@@ -773,7 +815,7 @@ Coordinates of any Grandchild-Simplizes can be calculated by chaining $B_{\simpl
     \end{tikzpicture}
 \end{Figure}
 
-\subsection{Edgewise Simplex Subdivision}
+\subsubsection{Edgewise Simplex Subdivision}
 
 The edgewise simplex subdivision can also be applied to uniformly subdivide any simplex.
 The points inside the $r$-th edgewise subdivision are indexed by $3$ integers $i_1, i_2, i_3$, which satisfy following 
@@ -865,7 +907,29 @@ In order to calculate the neighboring points the following formulas will be used
 
 The \emph{first-most} points will be enumerated by iterating through the 2 first most indeces.
 
-
+\begin{Figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{scope}[shift={(0,0)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-1.tikz}
+        \end{scope}
+        \begin{scope}[shift={(4.5,0)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-2.tikz}
+        \end{scope}
+        \begin{scope}[shift={(9,0)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-3.tikz}
+        \end{scope}
+        \begin{scope}[shift={(0,-4.5)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-4.tikz}
+        \end{scope}
+        \begin{scope}[shift={(4.5,-4.5)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-5.tikz}
+        \end{scope}
+        \begin{scope}[shift={(9,-4.5)},scale basis=4]
+            \input{figures/EdgeSubdivision2D-6.tikz}
+        \end{scope}
+    \end{tikzpicture}
+\end{Figure}
 
 \pagebreak
 
