@@ -222,8 +222,8 @@ fn get_diagonal_order(highest_index: usize) -> Vec<(usize, usize, usize)> {
 fn matrix_integration_test_2d() {
     let sim = Simplex2D::new_from_points(
         &array![1., 1.],
-        &array![1.5, 1. + (3.0f64).sqrt() / 2.],
         &array![2., 1.],
+        &array![1.5, 1. + (3.0f64).sqrt() / 2.],
     );
 
     let mut res = Array2::<f64>::zeros([6, 6]);
