@@ -1,7 +1,7 @@
 use ndarray::{array, Array2};
 
 use crate::integration_2d::domain::{
-    IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator,
+    det3x3, IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator,
 };
 
 pub struct EdgeSubdivisionIntegrator<I: Simplex2DIntegrator<IntegratorDummy>> {
@@ -76,7 +76,7 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
                             simplex,
                             &mut IntegratorDummy,
                         );
-                        println!("{}", r);
+                        //println!("0: {}", det3x3(&transformation));
                         r
                     }
                     //println!("{},{},{}", i0,i1,i2);
@@ -111,7 +111,7 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
                         simplex,
                         &mut IntegratorDummy,
                     );
-                    println!("{}", r);
+                    //println!("1: {}", det3x3(&transformation));
                     r
                 }
                 //println!("{},{},{}", i0,i1,i2);
@@ -139,5 +139,7 @@ mod tests {
         order2_dunavant: EdgeSubdivisionIntegrator<DunavantIntegrator>: EdgeSubdivisionIntegrator::new(DunavantIntegrator::new(1),2), IntegratorDummy: IntegratorDummy::get(),
         order3_dunavant: EdgeSubdivisionIntegrator<DunavantIntegrator>: EdgeSubdivisionIntegrator::new(DunavantIntegrator::new(2),3), IntegratorDummy: IntegratorDummy::get(),
         order4_dunavant: EdgeSubdivisionIntegrator<DunavantIntegrator>: EdgeSubdivisionIntegrator::new(DunavantIntegrator::new(3),4), IntegratorDummy: IntegratorDummy::get(),
+        order5_dunavant: EdgeSubdivisionIntegrator<DunavantIntegrator>: EdgeSubdivisionIntegrator::new(DunavantIntegrator::new(3),5), IntegratorDummy: IntegratorDummy::get(),
+        order6_dunavant: EdgeSubdivisionIntegrator<DunavantIntegrator>: EdgeSubdivisionIntegrator::new(DunavantIntegrator::new(3),6), IntegratorDummy: IntegratorDummy::get(),
     }
 }

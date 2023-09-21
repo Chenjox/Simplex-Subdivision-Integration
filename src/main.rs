@@ -389,6 +389,16 @@ fn all_figures() {
     ]);
 }
 
+fn export_data(str: &str, data: Vec<[f64; 3]>) {
+    let mut file = File::create(&format!("{}.csv", str)).unwrap();
+    // Header
+
+    //write!(file, "\\begin{{scope}}\n").unwrap();
+    for d in data {
+        write!(file, "{},{},{}\n", d[0], d[1], d[2]).unwrap();
+    }
+}
+
 fn main() {
     //all_figures();
     /*
@@ -425,6 +435,17 @@ fn main() {
     println!("{},{}", result, sim.get_area());
     */
     //matrix_integration_test_2d()
-    edge_refinement_test_2d(DunavantIntegrator::new(2));
-    edge_refinement_test_2d(Quadrilateral2DIntegrator::new(2));
+    let data = edge_refinement_test_2d(DunavantIntegrator::new(1));
+    export_data(&"Edge-Dunavant-1", data);
+    let data = edge_refinement_test_2d(DunavantIntegrator::new(2));
+    export_data(&"Edge-Dunavant-2", data);
+    let data = edge_refinement_test_2d(DunavantIntegrator::new(3));
+    export_data(&"Edge-Dunavant-3", data);
+
+    let data = edge_refinement_test_2d(Quadrilateral2DIntegrator::new(1));
+    export_data(&"Edge-Quad-1", data);
+    let data = edge_refinement_test_2d(Quadrilateral2DIntegrator::new(2));
+    export_data(&"Edge-Quad-2", data);
+    let data = edge_refinement_test_2d(Quadrilateral2DIntegrator::new(3));
+    export_data(&"Edge-Quad-3", data);
 }

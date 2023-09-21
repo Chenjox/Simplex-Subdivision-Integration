@@ -2,7 +2,7 @@ use ndarray::{array, Array1, Array2, Axis};
 
 type Point2D = Array1<f64>;
 
-fn det3x3(mat3x3: &Array2<f64>) -> f64 {
+pub fn det3x3(mat3x3: &Array2<f64>) -> f64 {
     let mut sum = 0.0;
     for j in 0..3 {
         let mut prod = 1.0;
