@@ -84,6 +84,12 @@ impl DunavantIntegrator {
 }
 
 impl Simplex2DIntegrator<IntegratorDummy> for DunavantIntegrator {
+    fn dupe(&self) -> Self {
+        Self {
+            integration_order: self.integration_order,
+        }
+    }
+
     fn integrate_over_domain<T: Simplex2DFunction>(
         &self,
         transformation: &Array2<f64>,

@@ -21,6 +21,13 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> EdgeSubdivisionIntegrator<I> {
 impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDummy>
     for EdgeSubdivisionIntegrator<I>
 {
+    fn dupe(&self) -> Self {
+        return Self {
+            base_integrator: self.base_integrator.dupe(),
+            order: self.order,
+        };
+    }
+
     fn integrate_over_domain<T: Simplex2DFunction>(
         &self,
         transformation: &Array2<f64>,
@@ -61,12 +68,17 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
                     ];
                     let ch_transformation = ch_transformation.reversed_axes();
                     let transformation = transformation.dot(&ch_transformation);
-                    result += self.base_integrator.integrate_over_domain(
-                        &transformation,
-                        func,
-                        simplex,
-                        &mut IntegratorDummy,
-                    );
+
+                    result += {
+                        let r = self.base_integrator.integrate_over_domain(
+                            &transformation,
+                            func,
+                            simplex,
+                            &mut IntegratorDummy,
+                        );
+                        println!("{}", r);
+                        r
+                    }
                     //println!("{},{},{}", i0,i1,i2);
                     //println!("{},{},{}", i0,i1-1,i2+1);
                     ////
@@ -92,12 +104,16 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
                 ];
                 let ch_transformation = ch_transformation.reversed_axes();
                 let transformation = transformation.dot(&ch_transformation);
-                result += self.base_integrator.integrate_over_domain(
-                    &transformation,
-                    func,
-                    simplex,
-                    &mut IntegratorDummy,
-                );
+                result += {
+                    let r = self.base_integrator.integrate_over_domain(
+                        &transformation,
+                        func,
+                        simplex,
+                        &mut IntegratorDummy,
+                    );
+                    println!("{}", r);
+                    r
+                }
                 //println!("{},{},{}", i0,i1,i2);
                 //println!("{},{},{}", i0-1,i1+1,i2+0);
 

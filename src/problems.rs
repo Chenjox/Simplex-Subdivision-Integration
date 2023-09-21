@@ -157,7 +157,7 @@ pub mod problem_definition {
         }
         // Knoten 1 - 3 [Index 0 - 2]
         fn lagrange_2_order_nodal(barycentric_coordinates: &Array1<f64>, index: usize) -> f64 {
-            if index > 3 {
+            if index > 2 {
                 panic!("Illegal Index given");
             }
             return lagrange_1_function(barycentric_coordinates, index)

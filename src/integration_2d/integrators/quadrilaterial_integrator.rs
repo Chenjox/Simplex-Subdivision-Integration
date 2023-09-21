@@ -218,6 +218,12 @@ impl Quadrilateral2DIntegrator {
 }
 
 impl<IntegratorDummy> Simplex2DIntegrator<IntegratorDummy> for Quadrilateral2DIntegrator {
+    fn dupe(&self) -> Self {
+        Self {
+            gauss_degree: self.gauss_degree,
+        }
+    }
+
     fn integrate_over_domain<T: Simplex2DFunction>(
         &self,
         transformation: &Array2<f64>,

@@ -115,6 +115,14 @@ impl Hierarchic2DIntegratorData {
 impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIntegratorData>
     for Hierarchic2DIntegrator<I>
 {
+    fn dupe(&self) -> Self {
+        Self {
+            base_integrator: self.base_integrator.dupe(),
+            precision: self.precision,
+            consolidated: self.consolidated,
+        }
+    }
+
     fn integrate_over_domain<T: Simplex2DFunction>(
         &self,
         transformation: &Array2<f64>,

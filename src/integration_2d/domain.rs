@@ -66,6 +66,8 @@ pub trait Simplex2DFunction {
 /// A general trait implemented by types which supply an integration scheme for a single Simplex.
 /// Allows for easy substitution of simplex integration schemes.
 pub trait Simplex2DIntegrator<D> {
+    fn dupe(&self) -> Self;
+
     /// This function will be called on a single simplex, given in the third argument.
     fn integrate_simplex<T: Simplex2DFunction>(
         self: &Self,

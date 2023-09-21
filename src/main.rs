@@ -7,7 +7,7 @@ use integration_3d::{
     integrators::Quadrilateral3DIntegrator,
     Simplex3D, Simplex3DIntegrator,
 };
-use integration_tests::create_figures;
+use integration_tests::{create_figures, edge_refinement_test_2d};
 use ndarray::prelude::*;
 use std::io::Write;
 use std::{fs::File, time::Instant};
@@ -424,5 +424,7 @@ fn main() {
     }
     println!("{},{}", result, sim.get_area());
     */
-    matrix_integration_test_2d()
+    //matrix_integration_test_2d()
+    edge_refinement_test_2d(DunavantIntegrator::new(2));
+    edge_refinement_test_2d(Quadrilateral2DIntegrator::new(2));
 }
