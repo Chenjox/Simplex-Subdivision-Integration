@@ -279,7 +279,7 @@ fn matrix_integration_test_3d() {
     let mut res = Array2::<f64>::zeros([10, 10]);
     let nodal_values = array![1.0, 1.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
-    let basic_integrator = Quadrilateral3DIntegrator::new(3);
+    let basic_integrator = Quadrilateral3DIntegrator::new(1);
     let hierarchic_inte = Hierarchic3DIntegrator::new(basic_integrator, false, 1e-3);
 
     let mut cache = Hierarchic3DIntegratorData::new_cache();
@@ -299,7 +299,7 @@ fn matrix_integration_test_3d() {
         let now = Instant::now();
         res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache);
         let elapsed_time = now.elapsed();
-        if count < 10 + 1 * 9 {
+        if count < 10 {
             // Wenn Diagonale und erste nebendiagonale durch sind
             cache.make_leafs_unchecked();
         }
@@ -435,6 +435,7 @@ fn main() {
     println!("{},{}", result, sim.get_area());
     */
     //matrix_integration_test_2d()
+    
     let data = edge_refinement_test_2d(DunavantIntegrator::new(1));
     export_data(&"Edge-Dunavant-1", data);
     let data = edge_refinement_test_2d(DunavantIntegrator::new(2));
@@ -448,4 +449,5 @@ fn main() {
     export_data(&"Edge-Quad-2", data);
     let data = edge_refinement_test_2d(Quadrilateral2DIntegrator::new(3));
     export_data(&"Edge-Quad-3", data);
+    //matrix_integration_test_2d()
 }

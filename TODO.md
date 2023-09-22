@@ -6,3 +6,14 @@
 - [ ] Make Benchmarks
 - [ ] Make reference integration in 3d and 2d
 - [ ] Experiment with other quadrature rules
+
+
+# Verana Todos
+
+- [ ] Umdrehen von Integration und Hierarchic (Laufzeit)
+- [ ] 3D Edgewise subdivion
+- [ ] Hybride Strategie
+- [ ] Tipps zum Einzubinden.
+
+- [ ] Einbinden in FEAP.
+- [ ] 
