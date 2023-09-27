@@ -105,6 +105,33 @@ impl Simplex2DResultType for ResultTypeWrapper<f64> {
     }
 }
 
+impl MulAssign<f64> for ResultTypeWrapper<Array2<f64>> {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0 *= rhs
+    }
+}
+
+impl AddAssign<f64> for ResultTypeWrapper<Array2<f64>> {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs
+    }
+}
+
+impl Simplex2DResultType for ResultTypeWrapper<Array2<f64>> {
+    fn add_assign(&mut self, other: &Self) {
+        self.0 = &self.0 + &other.0 
+    }
+
+    fn distance(&self, other: &Self) -> f64 {
+        let diff = &self.0 - &other.0;
+        diff.iter().map(|f| f.powi(2)).sum::<f64>().sqrt()
+    }
+
+    fn additive_neutral_element() -> Self {
+        Self(Array2::zeros([6,6]))
+    }
+}
+
 /// A general trait implemented by types which supply a function to integrate over.
 /// Inputs must be expressed in barycentric coordinates.
 pub trait Simplex2DFunction {
