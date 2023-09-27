@@ -349,6 +349,11 @@ pub mod problem_definition {
 
         impl Simplex2DFunction for PhaseFieldFuncMatrix2D {
             type Return = ResultTypeWrapper<Array2<f64>>;
+
+            fn additive_neutral_element(&self) -> Self::Return {
+                ResultTypeWrapper::new(Array2::zeros([6,6]))
+            }
+
             fn function(
                 &self,
                 xi1: f64,

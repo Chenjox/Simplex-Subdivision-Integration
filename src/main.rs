@@ -26,7 +26,7 @@ use crate::{
     },
     problems::{
         problem_definition::{
-            problem_2d_definition::PhaseFieldFuncDiff22D,
+            problem_2d_definition::{PhaseFieldFuncDiff22D, PhaseFieldFuncMatrix2D},
             problem_3d_definition::PhaseFieldFuncDiff23D,
         },
         PhaseField2DFunction,
@@ -399,43 +399,7 @@ fn export_data(str: &str, data: Vec<[f64; 3]>) {
     }
 }
 
-fn main() {
-    //all_figures();
-    /*
-    let sim = Simplex2D::new_from_points(
-        &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
-        &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
-        &array![-(2.0f64 / 9.0).sqrt(), -(2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
-    );
-
-    let integrator = Quadrilateral2DIntegrator::new(1);
-    let hierarchic_integrator = EdgeSubdivisionIntegrator::new(integrator, 10);
-
-    let func = Box::new(Function2DHistory::new(Constant2DFunction {}));
-
-    let result = hierarchic_integrator.integrate_simplex(&func, &sim, &mut IntegratorDummy::get());
-
-    println!("{}", result);
-
-    let hist = func.get_history();
-
-    println!("{},{}", hist.len(), result);
-    let mut file = File::create(&"out.csv").unwrap();
-    for el in &hist {
-        //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
-        let sim_points = sim.get_points();
-        let el = &el.0;
-        let point = sim_points.dot(el);
-        write!(file, "{} {}\n", point[0], point[1]).unwrap();
-        //println!(
-        //    "\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",
-        //    el[0], el[1], el[2], el[3]
-        //);
-    }
-    println!("{},{}", result, sim.get_area());
-    */
-    //matrix_integration_test_2d()
-    
+fn edge_subdivision_stats() {
     let data = edge_refinement_test_2d(DunavantIntegrator::new(1));
     export_data(&"Edge-Dunavant-1", data);
     let data = edge_refinement_test_2d(DunavantIntegrator::new(2));
@@ -449,5 +413,50 @@ fn main() {
     export_data(&"Edge-Quad-2", data);
     let data = edge_refinement_test_2d(Quadrilateral2DIntegrator::new(3));
     export_data(&"Edge-Quad-3", data);
+}
+
+fn main() {
+    //all_figures();
+    
+    let sim = Simplex2D::new_from_points(
+        &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), -(2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+    );
+
+    let integrator = DunavantIntegrator::new(1);
+    let hierarchic_integrator = Hierarchic2DIntegrator::new(integrator, false, 1e-7);
+
+    let simplex_func = PhaseFieldFuncMatrix2D::new(array![1.0, 1.0, 1.0, -1.0, 0.0, 0.0], 1e-6, 1.0);
+    let func = Box::new(Function2DHistory::new(simplex_func));
+
+    let mut cache = Hierarchic2DIntegratorData::new_cache();
+
+    let result = hierarchic_integrator.integrate_simplex(&func, &sim, &mut cache);
+
+    func.delete_history();
+
+    let result = hierarchic_integrator.integrate_simplex(&func, &sim, &mut cache);
+
+    let hist = func.get_history();
+
+    println!("{},{}", hist.len(), result.get_borrow());
+    let mut file = File::create(&"out.csv").unwrap();
+    for el in &hist {
+        //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
+        let sim_points = sim.get_points();
+        let el = el;
+        let point = sim_points.dot(el);
+        write!(file, "{} {}\n", point[0], point[1]).unwrap();
+        //println!(
+        //    "\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3},b4={:.3}) circle (2pt);",
+        //    el[0], el[1], el[2], el[3]
+        //);
+    }
+    //println!("{},{}", result.get(), sim.get_area());
+    
+    //matrix_integration_test_2d()
+    
+    
     //matrix_integration_test_2d()
 }
