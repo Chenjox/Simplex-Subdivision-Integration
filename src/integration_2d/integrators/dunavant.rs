@@ -1,7 +1,7 @@
 use ndarray::{array, Array1, Array2};
 
 use crate::integration_2d::domain::{
-    IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator,
+    IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
 };
 
 fn det2x2(mat2x2: &Array2<f64>) -> f64 {
@@ -96,7 +96,7 @@ impl Simplex2DIntegrator<IntegratorDummy> for DunavantIntegrator {
         func: &Box<T>,
         simplex: &Simplex2D,
         _cache_data: &mut IntegratorDummy,
-    ) -> f64 {
+    ) -> T::Return {
         //let order = self.integration_order;
         let points = self.get_integration_points();
         let multiplicativities = self.get_integration_points_multiplicativity();
@@ -109,7 +109,7 @@ impl Simplex2DIntegrator<IntegratorDummy> for DunavantIntegrator {
         let real_jacobi = simplex.get_points().dot(transformation);
         let real_jacobi = real_jacobi.dot(&jacobi);
         let determinant = 0.5 * det2x2(&real_jacobi);
-        let mut result = 0.;
+        let mut result = func.additive_neutral_element();
         for i in 0..num_points {
             let point = points.row(i);
             let multiplicativity = multiplicativities[i];
@@ -118,7 +118,9 @@ impl Simplex2DIntegrator<IntegratorDummy> for DunavantIntegrator {
             match multiplicativity {
                 1 => {
                     let integration_point = transformation.dot(&point);
-                    result += determinant * weight * func.function_vec(&integration_point, simplex);
+                    let mut point = func.function_vec(&integration_point, simplex);
+                    point *= determinant * weight;
+                    result.add_assign(&point);
                 }
                 3 => {
                     let perm_points = array![
@@ -128,9 +130,9 @@ impl Simplex2DIntegrator<IntegratorDummy> for DunavantIntegrator {
                     ];
                     let integration_points = transformation.dot(&perm_points);
                     for integration_point in integration_points.columns() {
-                        result += determinant
-                            * weight
-                            * func.function_vec(&integration_point.into_owned(), simplex);
+                        let mut point = func.function_vec(&integration_point.into_owned(), simplex);
+                        point *= determinant * weight;
+                        result.add_assign(&point);
                     }
                 }
                 6 => {
@@ -144,9 +146,9 @@ impl Simplex2DIntegrator<IntegratorDummy> for DunavantIntegrator {
                     ];
                     let integration_points = transformation.dot(&perm_points);
                     for integration_point in integration_points.columns() {
-                        result += determinant
-                            * weight
-                            * func.function_vec(&integration_point.into_owned(), simplex);
+                        let mut point = func.function_vec(&integration_point.into_owned(), simplex);
+                        point *= determinant * weight;
+                        result.add_assign(&point);
                     }
                 }
                 _ => {

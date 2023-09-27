@@ -1,4 +1,4 @@
-use crate::domain::Simplex2DFunction;
+use crate::{domain::Simplex2DFunction, integration_2d::domain::ResultTypeWrapper};
 
 use self::{problem_definition::phase_field::phase_field_func, shape_func::approx_func};
 
@@ -302,9 +302,11 @@ pub mod problem_definition {
     }
 
     pub mod problem_2d_definition {
+        use ndarray::Array2;
         use ndarray::array;
         use ndarray::Array1;
 
+        use crate::integration_2d::domain::ResultTypeWrapper;
         use crate::integration_2d::domain::Simplex2DFunction;
 
         use super::phase_field::{phase_field_func, varsigma_func_diff1, varsigma_func_diff2};
@@ -323,6 +325,55 @@ pub mod problem_definition {
             phase_field_func(f_base, kreg, l)
                 * (varsigma_func_diff1(f_base, kreg).powi(2) - varsigma_func_diff2(f_base, kreg))
                 * dyadic_product_component(barycentric_coordinates, row_index, column_index)
+        }
+
+        pub struct PhaseFieldFuncMatrix2D {
+            nodal_values: Array1<f64>,
+            kreg: f64,
+            l: f64
+        }
+
+        impl PhaseFieldFuncMatrix2D {
+            pub fn new(
+                nodal_values: Array1<f64>,
+                kreg: f64,
+                l: f64,
+            ) -> Self {
+                return Self {
+                    nodal_values,
+                    kreg,
+                    l
+                };
+            }
+        }
+
+        impl Simplex2DFunction for PhaseFieldFuncMatrix2D {
+            type Return = ResultTypeWrapper<Array2<f64>>;
+            fn function(
+                &self,
+                xi1: f64,
+                xi2: f64,
+                xi3: f64,
+                simplex: &crate::integration_2d::Simplex2D,
+            ) -> Self::Return {
+                let barycentric = array![xi1, xi2, xi3];
+
+                let mut mat = Array2::zeros([6,6]);
+                for i in 0..6 {
+                    for j in 0..6 {
+                        mat[[i,j]] =phase_field_func_diff2(
+                            &self.nodal_values,
+                            self.kreg,
+                            self.l,
+                            i,
+                            j,
+                            &barycentric,
+                        );
+                    }
+                }
+
+                return ResultTypeWrapper::new(mat);
+            }
         }
 
         pub struct PhaseFieldFuncDiff22D {
@@ -352,22 +403,23 @@ pub mod problem_definition {
         }
 
         impl Simplex2DFunction for PhaseFieldFuncDiff22D {
+            type Return = ResultTypeWrapper<f64>;
             fn function(
                 &self,
                 xi1: f64,
                 xi2: f64,
                 xi3: f64,
                 simplex: &crate::integration_2d::Simplex2D,
-            ) -> f64 {
+            ) -> Self::Return {
                 let barycentric = array![xi1, xi2, xi3];
-                return phase_field_func_diff2(
+                return ResultTypeWrapper::new(phase_field_func_diff2(
                     &self.nodal_values,
                     self.kreg,
                     self.l,
                     self.row_index,
                     self.column_index,
                     &barycentric,
-                );
+                ));
             }
         }
     }
@@ -451,8 +503,9 @@ pub struct PhaseField2DFunction {
 }
 
 impl Simplex2DFunction for PhaseField2DFunction {
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, _simplex: &crate::domain::Simplex2D) -> f64 {
+    type Return = ResultTypeWrapper<f64>;
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, _simplex: &crate::domain::Simplex2D) -> Self::Return {
         let f_base = approx_func(self.weights, xi1, xi2, xi3);
-        return phase_field_func(f_base, 0.000001, 1.0);
+        return ResultTypeWrapper::new(phase_field_func(f_base, 0.000001, 1.0));
     }
 }

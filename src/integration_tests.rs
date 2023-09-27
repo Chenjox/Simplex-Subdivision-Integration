@@ -52,7 +52,7 @@ pub fn create_figures(integrators: Vec<(String, Box<impl Simplex2DIntegrator<Int
         write!(file, "\\draw (b1) -- (b2) -- (b3) --cycle;\n").unwrap();
         for el in &hist {
             //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
-            let el = &el.0;
+            let el = &el;
             write!(
                 file,
                 "\\draw[fill,red] (barycentric cs:b1={:.3},b2={:.3},b3={:.3}) circle (0.5mm);\n",
@@ -134,7 +134,7 @@ pub fn edge_refinement_test_2d<I: Simplex2DIntegrator<IntegratorDummy>>(
                 *i,
                 *j,
             )));
-            res[[*i, *j]] = edge_integrator.integrate_simplex(&func, &sim, &mut dummy); //&mut cache
+            res[[*i, *j]] = edge_integrator.integrate_simplex(&func, &sim, &mut dummy).get(); //&mut cache
 
             evals = func.function_evaluations();
         }
@@ -187,7 +187,7 @@ fn hierarchic_integration_test_2d<I: Simplex2DIntegrator<IntegratorDummy>>(base_
             i,
             j,
         )));
-        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache); //&mut cache
+        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache).get(); //&mut cache
         if count < 6 + 1 * 5 {
             // Wenn Diagonale und erste nebendiagonale durch sind
             cache.make_leafs_unchecked();

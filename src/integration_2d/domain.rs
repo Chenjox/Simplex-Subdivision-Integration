@@ -1,3 +1,5 @@
+use std::ops::{Mul, Add, MulAssign, AddAssign};
+
 use ndarray::{array, Array1, Array2, Axis};
 
 type Point2D = Array1<f64>;
@@ -52,13 +54,96 @@ impl Simplex2D {
     }
 }
 
+pub trait Simplex2DResultType: MulAssign<f64> + AddAssign<f64>{
+    fn add_assign(&mut self, other: &Self);
+
+    fn distance(&self, other: &Self) -> f64;
+
+    fn additive_neutral_element() -> Self;
+}
+
+#[derive(Debug)]
+pub struct ResultTypeWrapper<T>(T);
+
+impl<T> ResultTypeWrapper<T> {
+    pub fn new(t: T) -> Self {
+        Self(t)
+    }
+
+    pub fn get(self) -> T {
+        self.0
+    }
+
+    pub fn get_borrow(&self) -> &T {
+        &self.0
+    }
+}
+
+impl MulAssign<f64> for ResultTypeWrapper<f64> {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0 *= rhs
+    }
+}
+
+impl AddAssign<f64> for ResultTypeWrapper<f64> {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs
+    }
+}
+
+impl Simplex2DResultType for ResultTypeWrapper<f64> {
+    fn add_assign(&mut self, other: &Self) {
+        self.0 += other.0
+    }
+
+    fn distance(&self, other: &Self) -> f64 {
+        (self.0 - other.0).abs()
+    }
+
+    fn additive_neutral_element() -> Self {
+        Self(0.)
+    }
+}
+
+impl MulAssign<f64> for ResultTypeWrapper<Array2<f64>> {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0 *= rhs
+    }
+}
+
+impl AddAssign<f64> for ResultTypeWrapper<Array2<f64>> {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs
+    }
+}
+
+impl Simplex2DResultType for ResultTypeWrapper<Array2<f64>> {
+    fn add_assign(&mut self, other: &Self) {
+        self.0 = &self.0 + &other.0 
+    }
+
+    fn distance(&self, other: &Self) -> f64 {
+        let diff = &self.0 - &other.0;
+        diff.iter().map(|f| f.powi(2)).sum::<f64>().sqrt()
+    }
+
+    fn additive_neutral_element() -> Self {
+        Self(Array2::zeros([6,6]))
+    }
+}
+
 /// A general trait implemented by types which supply a function to integrate over.
 /// Inputs must be expressed in barycentric coordinates.
 pub trait Simplex2DFunction {
-    /// The function over the Simplex.
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64;
+    type Return : Simplex2DResultType;
 
-    fn function_vec(&self, xi: &Array1<f64>, simplex: &Simplex2D) -> f64 {
+    fn additive_neutral_element(&self) -> Self::Return {
+        Self::Return::additive_neutral_element()
+    }
+    /// The function over the Simplex.
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> Self::Return;
+
+    fn function_vec(&self, xi: &Array1<f64>, simplex: &Simplex2D) -> Self::Return {
         self.function(xi[0], xi[1], xi[2], simplex)
     }
 }
@@ -74,7 +159,7 @@ pub trait Simplex2DIntegrator<D> {
         func: &Box<T>,
         simplex: &Simplex2D,
         cache_data: &mut D,
-    ) -> f64 {
+    ) -> T::Return {
         self.integrate_over_domain(
             &array![[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
             func,
@@ -90,7 +175,7 @@ pub trait Simplex2DIntegrator<D> {
         func: &Box<T>,
         simplex: &Simplex2D,
         cache_data: &mut D,
-    ) -> f64;
+    ) -> T::Return;
 }
 
 pub struct IntegratorDummy;
@@ -137,10 +222,10 @@ macro_rules! integrator_tests {
 
                 let result = inte.integrate_simplex(&func, &sim, &mut cache);
 
-                let true_result = 0.5_f64;
-                let approx_eq = (true_result.abs() - result.abs()).abs();
+                let true_result = ResultTypeWrapper::new(0.5_f64);
+                let approx_eq = true_result.distance(&result);
 
-                assert!(approx_eq <= 1e-2_f64, "Expected: {}, Actual: {}, Diff: {}",true_result, result, approx_eq);
+                assert!(approx_eq <= 1e-2_f64, "Expected: {:?}, Actual: {:?}, Diff: {}",true_result, result, approx_eq);
             }
 
             #[test]
@@ -158,10 +243,10 @@ macro_rules! integrator_tests {
 
                 let result = inte.integrate_simplex(&func, &sim, &mut cache);
 
-                let true_result = 0.5;
-                let approx_eq = (true_result - result).abs();
+                let true_result = ResultTypeWrapper::new(0.5_f64);
+                let approx_eq = true_result.distance(&result);
 
-                assert!(approx_eq <= 1e-2_f64, "Expected: {}, Actual: {}, Diff: {}",true_result, result, approx_eq);
+                assert!(approx_eq <= 1e-2_f64, "Expected: {:?}, Actual: {:?}, Diff: {}",true_result, result, approx_eq);
             }
 
             #[test]
@@ -179,10 +264,10 @@ macro_rules! integrator_tests {
 
                 let result = inte.integrate_simplex(&func, &sim, &mut cache);
 
-                let true_result = (0.5_f64).signum();
-                let approx_eq = result.signum() + true_result;
+                let true_result = ResultTypeWrapper::new(0.5_f64);
+                let approx_eq = result.get_borrow().signum() + true_result.get_borrow().signum();
 
-                assert!(approx_eq == 2.0, "Expected: {}, Actual: {}",result.signum(),true_result);
+                assert!(approx_eq == 2.0, "Expected: {:?}, Actual: {:?}",result,true_result);
             }
         }
     )*

@@ -32,8 +32,9 @@ impl PyramidFunction {
 }
 
 impl Simplex2DFunction for PyramidFunction {
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
-        self.height * (xi1 / self.xi1p).min(xi2 / self.xi2p).min(xi3 / self.xi3p)
+    type Return = ResultTypeWrapper<f64>;
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> ResultTypeWrapper<f64> {
+        ResultTypeWrapper::new(self.height * (xi1 / self.xi1p).min(xi2 / self.xi2p).min(xi3 / self.xi3p))
     }
 }
 
@@ -58,13 +59,14 @@ impl RepeatedPyramidFunction {
     }
 }
 impl Simplex2DFunction for RepeatedPyramidFunction {
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
+    type Return = ResultTypeWrapper<f64>;
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> Self::Return {
         let mut sum = 0.0;
         for i in 0..self.pyramids.len() {
             let a = &self.pyramids[i];
             sum += Self::get_pyramid_value(xi1, xi2, xi3, &a)
         }
-        return sum;
+        return ResultTypeWrapper::new(sum);
     }
 }
 
@@ -73,8 +75,9 @@ pub struct Constant2DFunction;
 
 /// Implementation of the trait [`Simplex2DFunction`] for the struct [`Constant2DFunction`]
 impl Simplex2DFunction for Constant2DFunction {
-    fn function(&self, _xi1: f64, _xi2: f64, _xi3: f64, _simplex: &Simplex2D) -> f64 {
-        1.0
+    type Return = ResultTypeWrapper<f64>;
+    fn function(&self, _xi1: f64, _xi2: f64, _xi3: f64, _simplex: &Simplex2D) -> Self::Return {
+        ResultTypeWrapper::new(1.0)
     }
 }
 
@@ -89,7 +92,7 @@ impl Constant2DFunctionHistory {
 
 /// A struct which will record all function evaluations of the given [`Simplex2DFunction`]
 pub struct Function2DHistory<F: Simplex2DFunction> {
-    history: RefCell<Vec<(Array1<f64>, f64)>>,
+    history: RefCell<Vec<Array1<f64>>>,
     function: F,
 }
 
@@ -102,7 +105,7 @@ impl<F: Simplex2DFunction> Function2DHistory<F> {
     }
     /// A history of all function evaluations will be returned.
     /// Drops the struct upon after this function.
-    pub fn get_history(self) -> Vec<(Array1<f64>, f64)> {
+    pub fn get_history(self) -> Vec<Array1<f64>> {
         return self.history.take();
     }
 
@@ -117,11 +120,12 @@ impl<F: Simplex2DFunction> Function2DHistory<F> {
 }
 
 impl<F: Simplex2DFunction> Simplex2DFunction for Function2DHistory<F> {
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> f64 {
+    type Return = F::Return;
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> F::Return {
         let result = self.function.function(xi1, xi2, xi3, simplex);
         {
             let mut history = self.history.borrow_mut();
-            history.push((array![xi1, xi2, xi3], result));
+            history.push(array![xi1, xi2, xi3]);
         }
         result
     }
