@@ -1,6 +1,6 @@
 use ndarray::{array, Array1, Array2};
 
-use crate::integration_2d::domain::{Simplex2D, Simplex2DFunction, Simplex2DIntegrator};
+use crate::integration_2d::domain::{Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType};
 
 fn det2x2(mat2x2: &Array2<f64>) -> f64 {
     mat2x2[[0, 0]] * mat2x2[[1, 1]] - mat2x2[[0, 1]] * mat2x2[[1, 0]]
@@ -187,8 +187,8 @@ impl Quadrilateral2DIntegrator {
         barycentric_domain: &Array2<f64>,
         func: &Box<T>,
         simplex: &Simplex2D,
-    ) -> f64 {
-        let mut sum = 0.0;
+    ) -> T::Return {
+        let mut sum = func.additive_neutral_element();
         let gauss_points = self.get_gauss_points();
         let gauss_weights = self.get_gauss_weights();
         for i in 0..self.gauss_degree {
@@ -204,12 +204,11 @@ impl Quadrilateral2DIntegrator {
                 let real_jacobi = simplex.get_points().dot(&barycentric_jacobi);
                 let determinant = det2x2(&real_jacobi);
 
-                let func_result = func.function_vec(&barycentric_coords, simplex);
+                let mut func_result = func.function_vec(&barycentric_coords, simplex);
 
-                let integral_result =
-                    determinant * func_result * gauss_weights[i] * gauss_weights[j];
+                func_result *= determinant * gauss_weights[i] * gauss_weights[j];
 
-                sum += integral_result;
+                sum.add_assign(&func_result);
             }
         }
 
@@ -230,20 +229,21 @@ impl<IntegratorDummy> Simplex2DIntegrator<IntegratorDummy> for Quadrilateral2DIn
         func: &Box<T>,
         simplex: &Simplex2D,
         cached_data: &mut IntegratorDummy,
-    ) -> f64 {
-        let mut sum = 0.;
+    ) -> T::Return {
+        let mut sum = func.additive_neutral_element();
         let d1 = Quadrilateral2DIntegrator::get_quadrilateral_D1();
         let d1 = transformation.dot(&d1);
-        sum += self.integrate_quadrilateral(&d1, func, simplex);
+        sum.add_assign(&self.integrate_quadrilateral(&d1, func, simplex));
         let d2 = Quadrilateral2DIntegrator::get_quadrilateral_D2();
         let d2 = transformation.dot(&d2);
-        sum += self.integrate_quadrilateral(&d2, func, simplex);
+        sum.add_assign(&self.integrate_quadrilateral(&d2, func, simplex));
         let d3 = Quadrilateral2DIntegrator::get_quadrilateral_D3();
         let d3 = transformation.dot(&d3);
-        sum += self.integrate_quadrilateral(&d3, func, simplex);
+        sum.add_assign(&self.integrate_quadrilateral(&d3, func, simplex));
 
         // Weil ich die Orientierung verhaut habe, steht hier ein Minus...
-        return -sum;
+        sum *= -1.;
+        return sum;
     }
 }
 

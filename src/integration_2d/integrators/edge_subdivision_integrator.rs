@@ -1,7 +1,7 @@
 use ndarray::{array, Array2};
 
 use crate::integration_2d::domain::{
-    det3x3, IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator,
+    det3x3, IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
 };
 
 pub struct EdgeSubdivisionIntegrator<I: Simplex2DIntegrator<IntegratorDummy>> {
@@ -34,11 +34,11 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
         func: &Box<T>,
         simplex: &Simplex2D,
         cached_data: &mut IntegratorDummy,
-    ) -> f64 {
+    ) -> T::Return {
         let order = self.order;
         let order_fl = order as f64;
 
-        let mut result = 0.;
+        let mut result = func.additive_neutral_element();
 
         let order = order - 1;
         for i in 0..=order {
@@ -69,7 +69,7 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
                     let ch_transformation = ch_transformation.reversed_axes();
                     let transformation = transformation.dot(&ch_transformation);
 
-                    result += {
+                    result.add_assign(&{
                         let r = self.base_integrator.integrate_over_domain(
                             &transformation,
                             func,
@@ -78,7 +78,7 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
                         );
                         //println!("0: {}", det3x3(&transformation));
                         r
-                    }
+                    })
                     //println!("{},{},{}", i0,i1,i2);
                     //println!("{},{},{}", i0,i1-1,i2+1);
                     ////
@@ -104,16 +104,16 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
                 ];
                 let ch_transformation = ch_transformation.reversed_axes();
                 let transformation = transformation.dot(&ch_transformation);
-                result += {
+                result.add_assign(&{
                     let r = self.base_integrator.integrate_over_domain(
                         &transformation,
                         func,
                         simplex,
                         &mut IntegratorDummy,
                     );
-                    //println!("1: {}", det3x3(&transformation));
+                    //println!("0: {}", det3x3(&transformation));
                     r
-                }
+                })
                 //println!("{},{},{}", i0,i1,i2);
                 //println!("{},{},{}", i0-1,i1+1,i2+0);
 

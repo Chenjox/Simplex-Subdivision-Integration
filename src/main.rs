@@ -65,7 +65,7 @@ fn precision_test(precision: f64) {
 
     let hist = func.get_history();
 
-    println!("{},{},{},{}", result, precision, evals_build, hist.len());
+    println!("{},{},{},{}", result.get(), precision, evals_build, hist.len());
 }
 
 fn integration_test() {
@@ -103,8 +103,8 @@ fn integration_test() {
         writeln!(f, "{} {} 0.0", points[[0, i]], points[[1, i]]).expect("Unable to write!");
     }
     for i in &hist {
-        let p = points.dot(&i.0);
-        writeln!(f, "{} {} {}", p[0], p[1], i.1).expect("Unable to write!");
+        let p = points.dot(i);
+        writeln!(f, "{} {}", p[0], p[1]).expect("Unable to write!");
     }
 }
 
@@ -250,7 +250,7 @@ fn matrix_integration_test_2d() {
             j,
         )));
         let now = Instant::now();
-        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache); //&mut cache
+        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache).get(); //&mut cache
         let elapsed_time = now.elapsed();
         if count < 6 + 1 * 5 {
             // Wenn Diagonale und erste nebendiagonale durch sind

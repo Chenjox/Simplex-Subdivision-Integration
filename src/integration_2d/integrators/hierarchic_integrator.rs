@@ -2,7 +2,7 @@ use indextree::{Arena, NodeEdge, NodeId};
 use ndarray::prelude::*;
 
 use crate::integration_2d::domain::{
-    IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator,
+    IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
 };
 
 pub struct Hierarchic2DIntegrator<I: Simplex2DIntegrator<IntegratorDummy>> {
@@ -129,7 +129,7 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIn
         func: &Box<T>,
         simplex: &Simplex2D,
         cached_data: &mut Hierarchic2DIntegratorData,
-    ) -> f64 {
+    ) -> T::Return {
         // Sollte cached_data noch nicht initialisiert worden sein, dann wirds zeit
         // Danach ist der Cache grundsätzlich gültig.
         if !cached_data.cached {
@@ -143,13 +143,13 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIn
 
         let mut state_changed = true;
         let precision_threshold = self.precision;
-        let mut result = 0.;
+        let mut result = func.additive_neutral_element();
 
         while state_changed {
             // Grundsätzlich wird sich der Baum nicht ändern
             state_changed = false;
             // Das Integral wird von vorn Integriert.
-            result = 0.;
+            result = func.additive_neutral_element();
             // Alle Knoten DFS durchgehen
             let mut next_edge = Some(NodeEdge::Start(root_node_id));
             while let Some(current_edge) = next_edge {
@@ -189,7 +189,7 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIn
                     // Wenn das Blatt noch nicht überprüft worden ist und noch nicht consolidiert ist.
                     if !tree[current_id].get().checked && !self.consolidated {
                         // Dann wird eine Verfeinerungsstufe mehr eingebaut.
-                        let mut child_result = 0.;
+                        let mut child_result = func.additive_neutral_element();
                         for i in 0..4 {
                             let i_1 = i + 1;
                             let mut child_vec = vec.clone();
@@ -198,15 +198,15 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIn
                             let child_trans =
                                 Hierarchic2DIntegrator::<I>::get_transformation(&child_vec);
                             let child_transformation = transformation.dot(&child_trans);
-                            child_result += self.base_integrator.integrate_over_domain(
+                            child_result.add_assign(&self.base_integrator.integrate_over_domain(
                                 &child_transformation,
                                 func,
                                 simplex,
                                 &mut IntegratorDummy::get(),
-                            );
+                            ));
                         }
                         // Wenn die Verfeinerung "genauer" ist, dann wird der Baum angepasst.
-                        if (current_result - child_result).abs() > precision_threshold {
+                        if current_result.distance(&child_result).abs() > precision_threshold {
                             // Dieses Element wurde geprüft
                             tree[current_id].get_mut().checked = true;
                             // dem Element fügen wir die Kinder hinzu
@@ -228,7 +228,7 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIn
                             tree[current_id].get_mut().checked = true;
                         }
                     }
-                    result += current_result;
+                    result.add_assign(&current_result);
                 }
 
                 //*tree[current_id].get_mut() = 42;
