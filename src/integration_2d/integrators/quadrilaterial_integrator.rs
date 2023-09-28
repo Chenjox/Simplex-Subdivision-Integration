@@ -1,6 +1,8 @@
 use ndarray::{array, Array1, Array2};
 
-use crate::integration_2d::domain::{Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType};
+use crate::integration_2d::domain::{
+    Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
+};
 
 fn det2x2(mat2x2: &Array2<f64>) -> f64 {
     mat2x2[[0, 0]] * mat2x2[[1, 1]] - mat2x2[[0, 1]] * mat2x2[[1, 0]]

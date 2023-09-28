@@ -134,7 +134,9 @@ pub fn edge_refinement_test_2d<I: Simplex2DIntegrator<IntegratorDummy>>(
                 *i,
                 *j,
             )));
-            res[[*i, *j]] = edge_integrator.integrate_simplex(&func, &sim, &mut dummy).get(); //&mut cache
+            res[[*i, *j]] = edge_integrator
+                .integrate_simplex(&func, &sim, &mut dummy)
+                .get(); //&mut cache
 
             evals = func.function_evaluations();
         }
@@ -187,7 +189,9 @@ fn hierarchic_integration_test_2d<I: Simplex2DIntegrator<IntegratorDummy>>(base_
             i,
             j,
         )));
-        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache).get(); //&mut cache
+        res[[i, j]] = hierarchic_inte
+            .integrate_simplex(&func, &sim, &mut cache)
+            .get(); //&mut cache
         if count < 6 + 1 * 5 {
             // Wenn Diagonale und erste nebendiagonale durch sind
             cache.make_leafs_unchecked();

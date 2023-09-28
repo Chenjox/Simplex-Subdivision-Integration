@@ -1,4 +1,4 @@
-use std::ops::{Mul, Add, MulAssign, AddAssign};
+use std::ops::{Add, AddAssign, Mul, MulAssign};
 
 use ndarray::{array, Array1, Array2, Axis};
 
@@ -54,7 +54,7 @@ impl Simplex2D {
     }
 }
 
-pub trait Simplex2DResultType: MulAssign<f64> + AddAssign<f64>{
+pub trait Simplex2DResultType: MulAssign<f64> + AddAssign<f64> {
     fn add_assign(&mut self, other: &Self);
 
     fn distance(&self, other: &Self) -> f64;
@@ -119,7 +119,7 @@ impl AddAssign<f64> for ResultTypeWrapper<Array2<f64>> {
 
 impl Simplex2DResultType for ResultTypeWrapper<Array2<f64>> {
     fn add_assign(&mut self, other: &Self) {
-        self.0 = &self.0 + &other.0 
+        self.0 = &self.0 + &other.0
     }
 
     fn distance(&self, other: &Self) -> f64 {
@@ -128,14 +128,14 @@ impl Simplex2DResultType for ResultTypeWrapper<Array2<f64>> {
     }
 
     fn additive_neutral_element() -> Self {
-        Self(Array2::zeros([6,6]))
+        Self(Array2::zeros([6, 6]))
     }
 }
 
 /// A general trait implemented by types which supply a function to integrate over.
 /// Inputs must be expressed in barycentric coordinates.
 pub trait Simplex2DFunction {
-    type Return : Simplex2DResultType;
+    type Return: Simplex2DResultType;
 
     fn additive_neutral_element(&self) -> Self::Return {
         Self::Return::additive_neutral_element()

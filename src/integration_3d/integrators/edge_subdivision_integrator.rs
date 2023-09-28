@@ -43,9 +43,10 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDumm
         let order = order - 1;
         for i in 0..=order {
             for j in 0..=(order - i) {
-                let k = order - i - j;
-                //println!("{},{},{}", j, i, k);
-                let (i0, i1, i2) = (j, i, k);
+                for k in 0..=(order -i -j) {
+                    let m = order - i - j - k;
+                    println!("{},{},{},{}", j, i, k, m);
+                    let (i0, i1, i2, i3) = (j, i, k, m);
                 // 0,-1,1
                 let i0 = i0 + 1;
                 if i1 != 0 {
@@ -118,6 +119,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDumm
                 //println!("{},{},{}", i0-1,i1+1,i2+0);
 
                 //println!("{},{},{}", i0-1,i1,i2+1);
+            }
             }
         }
         return result;

@@ -33,8 +33,16 @@ impl PyramidFunction {
 
 impl Simplex2DFunction for PyramidFunction {
     type Return = ResultTypeWrapper<f64>;
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, simplex: &Simplex2D) -> ResultTypeWrapper<f64> {
-        ResultTypeWrapper::new(self.height * (xi1 / self.xi1p).min(xi2 / self.xi2p).min(xi3 / self.xi3p))
+    fn function(
+        &self,
+        xi1: f64,
+        xi2: f64,
+        xi3: f64,
+        simplex: &Simplex2D,
+    ) -> ResultTypeWrapper<f64> {
+        ResultTypeWrapper::new(
+            self.height * (xi1 / self.xi1p).min(xi2 / self.xi2p).min(xi3 / self.xi3p),
+        )
     }
 }
 

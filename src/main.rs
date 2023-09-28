@@ -65,7 +65,13 @@ fn precision_test(precision: f64) {
 
     let hist = func.get_history();
 
-    println!("{},{},{},{}", result.get(), precision, evals_build, hist.len());
+    println!(
+        "{},{},{},{}",
+        result.get(),
+        precision,
+        evals_build,
+        hist.len()
+    );
 }
 
 fn integration_test() {
@@ -250,7 +256,9 @@ fn matrix_integration_test_2d() {
             j,
         )));
         let now = Instant::now();
-        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache).get(); //&mut cache
+        res[[i, j]] = hierarchic_inte
+            .integrate_simplex(&func, &sim, &mut cache)
+            .get(); //&mut cache
         let elapsed_time = now.elapsed();
         if count < 6 + 1 * 5 {
             // Wenn Diagonale und erste nebendiagonale durch sind
@@ -417,7 +425,8 @@ fn edge_subdivision_stats() {
 
 fn main() {
     //all_figures();
-    
+
+    /*
     let sim = Simplex2D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
         &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
@@ -453,10 +462,19 @@ fn main() {
         //    el[0], el[1], el[2], el[3]
         //);
     }
+    */
     //println!("{},{}", result.get(), sim.get_area());
-    
+
     //matrix_integration_test_2d()
-    
-    
-    //matrix_integration_test_2d()
+
+    let order = 6;
+    for i in 0..=order {
+        for j in 0..=(order - i) {
+            for k in 0..=(order - i - j) {
+                let m = order - i - j - k;
+                println!("{},{},{},{}", j, i, k, m);
+                let (i0, i1, i2, i3) = (j, i, k, m);
+            }
+        }
+    }
 }
