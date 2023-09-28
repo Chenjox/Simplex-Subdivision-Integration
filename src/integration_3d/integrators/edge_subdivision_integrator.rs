@@ -49,7 +49,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDumm
                     let (i0, i1, i2, i3) = (j, i, k, m);
                 // 0,-1,1
                 let i0 = i0 + 1;
-                if i1 != 0 {
+                    if i1 != 0 {
                     let ch_transformation = array![
                         [
                             i0 as f64 / order_fl,

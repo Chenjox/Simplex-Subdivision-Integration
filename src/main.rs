@@ -423,6 +423,35 @@ fn edge_subdivision_stats() {
     export_data(&"Edge-Quad-3", data);
 }
 
+fn factorial(arg: usize) -> usize {
+    let mut result = 1;
+    for i in 0..arg {
+        result *= arg - i
+    }
+    result
+}
+
+fn binomial(n: u64, k: u64) -> u64 {
+    let mut res = 1;
+    for i in 0..k {
+        res = (res * (n - i)) / (i + 1);
+    }
+    res
+}
+
+fn num_simplizes(highest_dim: u64, order: u64, dim_simplex: u64) -> i64 {
+    let mut result = 0;
+    for i in 0..=dim_simplex {
+        let c = binomial(highest_dim + (dim_simplex + 1 - i) * order, highest_dim);
+        if i % 2 == 0 {
+            result += (binomial(dim_simplex, i) * c) as i64
+        } else {
+            result -= (binomial(dim_simplex, i) * c) as i64
+        };
+    }
+    return result;
+}
+
 fn main() {
     //all_figures();
 
@@ -467,7 +496,7 @@ fn main() {
 
     //matrix_integration_test_2d()
 
-    let order = 6;
+    let order = 4;
     for i in 0..=order {
         for j in 0..=(order - i) {
             for k in 0..=(order - i - j) {
@@ -476,5 +505,12 @@ fn main() {
                 let (i0, i1, i2, i3) = (j, i, k, m);
             }
         }
+    }
+
+    let dim = 2;
+    for i in 0..10 {
+        //println!("{}! = {}",i,factorial(i));
+        println!("3-Simplex in {}th Subdivision: {}", i, num_simplizes(dim, i, 2));
+        println!("1-Simplex in {}th Subdivision: {}", i, num_simplizes(dim, i, 0))
     }
 }
