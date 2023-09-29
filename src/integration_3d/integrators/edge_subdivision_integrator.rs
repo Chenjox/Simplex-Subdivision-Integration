@@ -33,7 +33,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDumm
         let order_fl = order as f64;
 
         let mut result = func.additive_neutral_element();
-        todo!("Generalize to 3 Dimensions, currently it's only two.");
+        //todo!("Generalize to 3 Dimensions, currently it's only two.");
         let order = order - 1;
         for i in 0..=order {
             for j in 0..=(order - i) {
@@ -46,7 +46,32 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDumm
                     // Shift zum größeren Simplex
                     let i0 = i0 + 1.;
                     //
-                    println!("{:2.2},{:2.2},{:2.2},{:2.2}", i0, i1, i2, i3);
+                    println!("{:2.0},{:2.0},{:2.0},{:2.0}", i0, i1, i2, i3);
+
+                    // Dieser Fall geht immer
+                    let ch_transformation = array![
+                        [i0 / order_fl, i1 / order_fl, i2 / order_fl, i3 / order_fl],
+                        [
+                            (i0 - 1.) / order_fl,
+                            (i1 + 1.) / order_fl,
+                            i2 / order_fl,
+                            i3 / order_fl
+                        ],
+                        [
+                            (i0 - 1.) / order_fl,
+                            i1 / order_fl,
+                            (i2 + 1.) / order_fl,
+                            i3 / order_fl
+                        ],
+                        [
+                            (i0 - 1.) / order_fl,
+                            i1 / order_fl,
+                            i2 / order_fl,
+                            (i3 + 1.) / order_fl
+                        ]
+                    ];
+                    let ch_transformation = ch_transformation.reversed_axes();
+                    let transformation = transformation.dot(&ch_transformation);
 
                     //let ch_transformation = ch_transformation.reversed_axes();
                     //let transformation = transformation.dot(&ch_transformation);
@@ -59,11 +84,227 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDumm
                         );
                         //println!("0: {}", det3x3(&transformation));
                         r
-                    })
-                    //println!("{},{},{}", i0,i1,i2);
-                    //println!("{},{},{}", i0-1,i1+1,i2+0);
+                    });
 
-                    //println!("{},{},{}", i0-1,i1,i2+1);
+                    // Oktaederfall
+                    if i0 >= 2. {
+                        let ch_transformation = array![
+                            [
+                                (i0 - 1.) / order_fl,
+                                i1 / order_fl,
+                                i2 / order_fl,
+                                (i3 + 1.) / order_fl
+                            ],
+                            [
+                                (i0 - 1.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                i2 / order_fl,
+                                i3 / order_fl
+                            ],
+                            [
+                                (i0 - 1.) / order_fl,
+                                i1 / order_fl,
+                                (i2 + 1.) / order_fl,
+                                i3 / order_fl
+                            ],
+                            [
+                                (i0 - 2.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                (i2 + 1.) / order_fl,
+                                i3 / order_fl
+                            ]
+                        ];
+                        let ch_transformation = ch_transformation.reversed_axes();
+                        //println!("DetOkt1 = {}", det4x4(&ch_transformation));
+                        let transformation = transformation.dot(&ch_transformation);
+
+                        //let ch_transformation = ch_transformation.reversed_axes();
+                        //let transformation = transformation.dot(&ch_transformation);
+                        result.add_assign(&{
+                            let r = self.base_integrator.integrate_over_domain(
+                                &transformation,
+                                func,
+                                simplex,
+                                &mut IntegratorDummy,
+                            );
+                            //println!("0: {}", det3x3(&transformation));
+                            r
+                        });
+
+                        let ch_transformation = array![
+                            [
+                                (i0 - 1.) / order_fl,
+                                i1 / order_fl,
+                                (i2 + 1.) / order_fl,
+                                i3 / order_fl
+                            ],
+                            [
+                                (i0 - 2.) / order_fl,
+                                i1 / order_fl,
+                                (i2 + 1.) / order_fl,
+                                (i3 + 1.) / order_fl
+                            ],
+                            [
+                                (i0 - 1.) / order_fl,
+                                i1 / order_fl,
+                                i2 / order_fl,
+                                (i3 + 1.) / order_fl
+                            ],
+                            [
+                                (i0 - 2.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                (i2 + 1.) / order_fl,
+                                i3 / order_fl
+                            ]
+                        ];
+                        let ch_transformation = ch_transformation.reversed_axes();
+                        //println!("DetOkt2 = {}", det4x4(&ch_transformation));
+                        let transformation = transformation.dot(&ch_transformation);
+
+                        //let ch_transformation = ch_transformation.reversed_axes();
+                        //let transformation = transformation.dot(&ch_transformation);
+                        result.add_assign(&{
+                            let r = self.base_integrator.integrate_over_domain(
+                                &transformation,
+                                func,
+                                simplex,
+                                &mut IntegratorDummy,
+                            );
+                            //println!("0: {}", det3x3(&transformation));
+                            r
+                        });
+
+                        let ch_transformation = array![
+                            [
+                                (i0 - 2.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                (i2 + 1.) / order_fl,
+                                i3 / order_fl
+                            ],
+                            [
+                                (i0 - 2.) / order_fl,
+                                i1 / order_fl,
+                                (i2 + 1.) / order_fl,
+                                (i3 + 1.) / order_fl
+                            ],
+                            [
+                                (i0 - 1.) / order_fl,
+                                i1 / order_fl,
+                                i2 / order_fl,
+                                (i3 + 1.) / order_fl
+                            ],
+                            [
+                                (i0 - 2.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                i2 / order_fl,
+                                (i3 + 1.) / order_fl
+                            ]
+                        ];
+                        let ch_transformation = ch_transformation.reversed_axes();
+                        //println!("DetOkt3 = {}", det4x4(&ch_transformation));
+                        let transformation = transformation.dot(&ch_transformation);
+
+                        //let ch_transformation = ch_transformation.reversed_axes();
+                        //let transformation = transformation.dot(&ch_transformation);
+                        result.add_assign(&{
+                            let r = self.base_integrator.integrate_over_domain(
+                                &transformation,
+                                func,
+                                simplex,
+                                &mut IntegratorDummy,
+                            );
+                            //println!("0: {}", det3x3(&transformation));
+                            r
+                        });
+
+                        let ch_transformation = array![
+                            [
+                                (i0 - 2.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                i2 / order_fl,
+                                (i3 + 1.) / order_fl
+                            ],
+                            [
+                                (i0 - 2.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                (i2 + 1.) / order_fl,
+                                i3 / order_fl
+                            ],
+                            [
+                                (i0 - 1.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                i2 / order_fl,
+                                i3 / order_fl
+                            ],
+                            [
+                                (i0 - 1.) / order_fl,
+                                i1 / order_fl,
+                                i2 / order_fl,
+                                (i3 + 1.) / order_fl
+                            ]
+                        ];
+                        let ch_transformation = ch_transformation.reversed_axes();
+                        //println!("DetOkt4 = {}", det4x4(&ch_transformation));
+                        let transformation = transformation.dot(&ch_transformation);
+
+                        //let ch_transformation = ch_transformation.reversed_axes();
+                        //let transformation = transformation.dot(&ch_transformation);
+                        result.add_assign(&{
+                            let r = self.base_integrator.integrate_over_domain(
+                                &transformation,
+                                func,
+                                simplex,
+                                &mut IntegratorDummy,
+                            );
+                            //println!("0: {}", det3x3(&transformation));
+                            r
+                        });
+                    }
+                    // Umgedrehter Tetraederfall
+                    if i0 >= 3. {
+                        let ch_transformation = array![
+                            [
+                                (i0 - 2.) / order_fl,
+                                i1 / order_fl,
+                                (i2 + 1.) / order_fl,
+                                (i3 + 1.) / order_fl
+                            ],
+                            [
+                                (i0 - 2.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                i2 / order_fl,
+                                (i3 + 1.) / order_fl
+                            ],
+                            [
+                                (i0 - 2.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                (i2 + 1.) / order_fl,
+                                i3 / order_fl
+                            ],
+                            [
+                                (i0 - 3.) / order_fl,
+                                (i1 + 1.) / order_fl,
+                                (i2 + 1.) / order_fl,
+                                (i3 + 1.) / order_fl
+                            ]
+                        ];
+                        let ch_transformation = ch_transformation.reversed_axes();
+                        println!("DetTet2 = {}", det4x4(&ch_transformation));
+                        let transformation = transformation.dot(&ch_transformation);
+
+                        //let ch_transformation = ch_transformation.reversed_axes();
+                        //let transformation = transformation.dot(&ch_transformation);
+                        result.add_assign(&{
+                            let r = self.base_integrator.integrate_over_domain(
+                                &transformation,
+                                func,
+                                simplex,
+                                &mut IntegratorDummy,
+                            );
+                            //println!("0: {}", det3x3(&transformation));
+                            r
+                        });
+                    }
                 }
             }
         }
