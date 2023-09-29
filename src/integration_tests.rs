@@ -2,9 +2,10 @@ use ndarray::{array, Array2};
 use std::fs::File;
 use std::io::Write;
 
+use crate::common::IntegratorDummy;
 use crate::{
     integration_2d::{
-        domain::{IntegratorDummy, Simplex2D, Simplex2DIntegrator},
+        domain::{Simplex2D, Simplex2DIntegrator},
         functions::{Function2DHistory, RepeatedPyramidFunction},
         integrators::{
             hierarchic_integrator::{Hierarchic2DIntegrator, Hierarchic2DIntegratorData},

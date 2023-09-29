@@ -1,7 +1,8 @@
 use ndarray::{array, Array2};
 
+use crate::common::IntegratorDummy;
 use crate::integration_2d::domain::{
-    det3x3, IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
+    det3x3, Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
 };
 
 pub struct EdgeSubdivisionIntegrator<I: Simplex2DIntegrator<IntegratorDummy>> {
@@ -126,10 +127,11 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<IntegratorDumm
 
 #[cfg(test)]
 mod tests {
+    use crate::common::IntegratorDummy;
     use crate::integration_2d::integrators::{
         DunavantIntegrator, EdgeSubdivisionIntegrator, Quadrilateral2DIntegrator,
     };
-    use crate::{integration_2d::domain::IntegratorDummy, integrator_tests};
+    use crate::integrator_tests;
 
     integrator_tests! {
         order2_quad: EdgeSubdivisionIntegrator<Quadrilateral2DIntegrator>: EdgeSubdivisionIntegrator::new(Quadrilateral2DIntegrator::new(1),2), IntegratorDummy: IntegratorDummy::get(),

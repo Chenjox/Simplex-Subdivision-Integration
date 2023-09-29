@@ -6,9 +6,10 @@ use std::ops::AddAssign;
 
 use ndarray::{array, Array1, Array2};
 
+use crate::common::IntegratorDummy;
 use crate::integration_3d::{
     domain::{Simplex3D, Simplex3DFunction, Simplex3DIntegrator},
-    IntegratorDummy, Simplex3DResultType,
+    Simplex3DResultType,
 };
 
 pub struct OrientationChecker;
@@ -38,7 +39,7 @@ impl Simplex3DIntegrator<IntegratorDummy> for OrientationChecker {
             let point = Self::point_order(i);
             let point = transformation.dot(&point);
 
-            Simplex3DResultType::add_assign(&mut result,&func.function_vec(&point, simplex));
+            Simplex3DResultType::add_assign(&mut result, &func.function_vec(&point, simplex));
         }
         return result;
     }

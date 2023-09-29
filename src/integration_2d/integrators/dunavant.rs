@@ -1,7 +1,8 @@
 use ndarray::{array, Array1, Array2};
 
+use crate::common::IntegratorDummy;
 use crate::integration_2d::domain::{
-    IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
+    Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
 };
 
 fn det2x2(mat2x2: &Array2<f64>) -> f64 {
@@ -162,8 +163,9 @@ impl Simplex2DIntegrator<IntegratorDummy> for DunavantIntegrator {
 
 #[cfg(test)]
 mod tests {
+    use crate::common::IntegratorDummy;
     use crate::integration_2d::integrators::DunavantIntegrator;
-    use crate::{integration_2d::domain::IntegratorDummy, integrator_tests};
+    use crate::integrator_tests;
 
     integrator_tests! {
         order1: DunavantIntegrator: DunavantIntegrator::new(1), IntegratorDummy: IntegratorDummy::get(),

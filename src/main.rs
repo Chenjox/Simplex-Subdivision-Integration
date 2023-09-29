@@ -1,10 +1,13 @@
+use crate::common::IntegratorDummy;
 use integration_2d::{
     functions::RepeatedPyramidFunction,
     integrators::{hierarchic_integrator, DunavantIntegrator, EdgeSubdivisionIntegrator},
 };
 use integration_3d::{
     functions::{Constant3DFunction, Function3DHistory},
-    integrators::Quadrilateral3DIntegrator,
+    integrators::{
+        edge_subdivision_integrator::EdgeSubdivisionIntegrator as Edge3D, Quadrilateral3DIntegrator,
+    },
     Simplex3D, Simplex3DIntegrator,
 };
 use integration_tests::{create_figures, edge_refinement_test_2d};
@@ -33,6 +36,7 @@ use crate::{
     },
 };
 
+mod common;
 mod integration_2d;
 mod integration_3d;
 mod integration_tests;
@@ -305,7 +309,9 @@ fn matrix_integration_test_3d() {
             j,
         ));
         let now = Instant::now();
-        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache).get();
+        res[[i, j]] = hierarchic_inte
+            .integrate_simplex(&func, &sim, &mut cache)
+            .get();
         let elapsed_time = now.elapsed();
         if count < 10 {
             // Wenn Diagonale und erste nebendiagonale durch sind
@@ -455,6 +461,23 @@ fn num_simplizes(highest_dim: u64, order: u64, dim_simplex: u64) -> i64 {
 fn main() {
     //all_figures();
 
+    let sim = Simplex3D::new_from_points(
+        &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), (2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+        &array![-(2.0f64 / 9.0).sqrt(), -(2.0f64 / 3.0).sqrt(), -1.0 / 3.0],
+        &array![0.0, 0.0, 1.0],
+    );
+
+    let mut res = Array2::<f64>::zeros([10, 10]);
+    let nodal_values = array![1.0, 1.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+
+    let basic_integrator = Quadrilateral3DIntegrator::new(1);
+    let edge_inte = Edge3D::new(basic_integrator, 3);
+
+    let func = Box::new(Constant3DFunction {});
+
+    edge_inte.integrate_simplex(&func, &sim, &mut IntegratorDummy::get());
+
     /*
     let sim = Simplex2D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],
@@ -496,6 +519,7 @@ fn main() {
 
     //matrix_integration_test_2d()
 
+    /*
     let order = 4;
     for i in 0..=order {
         for j in 0..=(order - i) {
@@ -520,5 +544,5 @@ fn main() {
             i,
             num_simplizes(dim, i, 0)
         )
-    }
+    }*/
 }

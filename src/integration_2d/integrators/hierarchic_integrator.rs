@@ -1,8 +1,9 @@
 use indextree::{Arena, NodeEdge, NodeId};
 use ndarray::prelude::*;
 
+use crate::common::IntegratorDummy;
 use crate::integration_2d::domain::{
-    IntegratorDummy, Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
+    Simplex2D, Simplex2DFunction, Simplex2DIntegrator, Simplex2DResultType,
 };
 
 pub struct Hierarchic2DIntegrator<I: Simplex2DIntegrator<IntegratorDummy>> {
@@ -243,10 +244,11 @@ impl<I: Simplex2DIntegrator<IntegratorDummy>> Simplex2DIntegrator<Hierarchic2DIn
 
 #[cfg(test)]
 mod tests {
+    use crate::common::IntegratorDummy;
     use crate::integration_2d::integrators::{
         Hierarchic2DIntegrator, Hierarchic2DIntegratorData, Quadrilateral2DIntegrator,
     };
-    use crate::{integration_2d::domain::IntegratorDummy, integrator_tests};
+    use crate::integrator_tests;
 
     integrator_tests! {
         quadrilaterial1: Hierarchic2DIntegrator<Quadrilateral2DIntegrator>: Hierarchic2DIntegrator::new(Quadrilateral2DIntegrator::new(1),false,1e-2), Hierarchic2DIntegratorData: Hierarchic2DIntegratorData::new_cache(),

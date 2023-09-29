@@ -1,6 +1,9 @@
 use ndarray::{array, Array1, Array2};
 
-use crate::integration_3d::{domain::{Simplex3D, Simplex3DFunction, Simplex3DIntegrator}, Simplex3DResultType};
+use crate::integration_3d::{
+    domain::{Simplex3D, Simplex3DFunction, Simplex3DIntegrator},
+    Simplex3DResultType,
+};
 
 fn det2x2(mat2x2: &Array2<f64>) -> f64 {
     mat2x2[[0, 0]] * mat2x2[[1, 1]] - mat2x2[[0, 1]] * mat2x2[[1, 0]]
@@ -379,9 +382,8 @@ impl Quadrilateral3DIntegrator {
 
                     let mut func_result = func.function_vec(&barycentric_coords, simplex);
 
-                    func_result *= determinant * gauss_weights[i]
-                        * gauss_weights[j]
-                        * gauss_weights[k];
+                    func_result *=
+                        determinant * gauss_weights[i] * gauss_weights[j] * gauss_weights[k];
 
                     sum.add_assign(&func_result);
                 }

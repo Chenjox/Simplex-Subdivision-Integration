@@ -1,4 +1,4 @@
-use std::ops::{MulAssign, AddAssign};
+use std::ops::{AddAssign, MulAssign};
 
 use ndarray::Axis;
 use ndarray::{array, concatenate, stack, Array1, Array2};
@@ -173,7 +173,8 @@ impl Simplex3DResultType for ResultTypeWrapper<Array2<f64>> {
 pub trait Simplex3DFunction {
     type Return: Simplex3DResultType;
     /// The function over the Simplex.
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, xi4: f64, simplex: &Simplex3D) -> Self::Return;
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, xi4: f64, simplex: &Simplex3D)
+        -> Self::Return;
 
     fn function_vec(&self, xi: &Array1<f64>, simplex: &Simplex3D) -> Self::Return {
         self.function(xi[0], xi[1], xi[2], xi[3], simplex)
@@ -215,14 +216,6 @@ pub trait Simplex3DIntegrator<D> {
         simplex: &Simplex3D,
         cache_data: &mut D,
     ) -> T::Return;
-}
-
-pub struct IntegratorDummy;
-
-impl IntegratorDummy {
-    pub fn get() -> Self {
-        Self {}
-    }
 }
 
 //fn usage(sim: &Simplex2D, func: &Box<dyn Simplex2DFunction>, inte: &Box<dyn Simplex2DIntegrator>) {

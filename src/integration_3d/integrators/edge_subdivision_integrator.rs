@@ -1,7 +1,8 @@
 use ndarray::{array, Array2};
 
+use crate::common::IntegratorDummy;
 use crate::integration_3d::domain::{
-    det4x4, IntegratorDummy, Simplex3D, Simplex3DFunction, Simplex3DIntegrator, Simplex3DResultType,
+    det4x4, Simplex3D, Simplex3DFunction, Simplex3DIntegrator, Simplex3DResultType,
 };
 
 pub struct EdgeSubdivisionIntegrator<I: Simplex3DIntegrator<IntegratorDummy>> {
@@ -39,11 +40,13 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDumm
                 for k in 0..=(order - i - j) {
                     // Die vierte Koordinate
                     let m = order - i - j - k;
-                    println!("{},{},{},{}", j, i, k, m);
+                    //println!("{},{},{},{}", j, i, k, m);
                     // Umbenennung
                     let (i0, i1, i2, i3) = (j as f64, i as f64, k as f64, m as f64);
-                    // 0,-1,1
-                    
+                    // Shift zum größeren Simplex
+                    let i0 = i0 + 1.;
+                    //
+                    println!("{:2.2},{:2.2},{:2.2},{:2.2}", i0, i1, i2, i3);
 
                     //let ch_transformation = ch_transformation.reversed_axes();
                     //let transformation = transformation.dot(&ch_transformation);

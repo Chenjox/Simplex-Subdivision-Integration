@@ -3,9 +3,10 @@ use std::{mem, ops::AddAssign};
 use indextree::{Arena, NodeEdge, NodeId};
 use ndarray::prelude::*;
 
+use crate::common::IntegratorDummy;
 use crate::integration_3d::{
     domain::{Simplex3D, Simplex3DFunction, Simplex3DIntegrator},
-    IntegratorDummy, Simplex3DResultType,
+    Simplex3DResultType,
 };
 
 pub struct Hierarchic3DIntegrator<I: Simplex3DIntegrator<IntegratorDummy>> {
@@ -549,11 +550,14 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
                                     let child_transformation = transformation.dot(&child_trans);
-                                    Simplex3DResultType::add_assign(&mut child_result, &self.integrate_tetrahedron(
-                                        &child_transformation,
-                                        func,
-                                        simplex,
-                                    ));
+                                    Simplex3DResultType::add_assign(
+                                        &mut child_result,
+                                        &self.integrate_tetrahedron(
+                                            &child_transformation,
+                                            func,
+                                            simplex,
+                                        ),
+                                    );
                                 }
                                 // und 1 Kindoktaeder (Index 13)
                                 {
@@ -564,11 +568,14 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
                                     let child_transformation = transformation.dot(&child_trans);
-                                    Simplex3DResultType::add_assign(&mut child_result, &self.integrate_octahedron(
-                                        &child_transformation,
-                                        func,
-                                        simplex,
-                                    ));
+                                    Simplex3DResultType::add_assign(
+                                        &mut child_result,
+                                        &self.integrate_octahedron(
+                                            &child_transformation,
+                                            func,
+                                            simplex,
+                                        ),
+                                    );
                                 }
                             }
                         } else {
@@ -583,11 +590,14 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
                                     let child_transformation = transformation.dot(&child_trans);
-                                    Simplex3DResultType::add_assign(&mut child_result, &self.integrate_tetrahedron(
-                                        &child_transformation,
-                                        func,
-                                        simplex,
-                                    ));
+                                    Simplex3DResultType::add_assign(
+                                        &mut child_result,
+                                        &self.integrate_tetrahedron(
+                                            &child_transformation,
+                                            func,
+                                            simplex,
+                                        ),
+                                    );
                                 }
                                 // und 6 Kindoktaeder (Index 14 bis 19)
                                 for i in 0..6 {
@@ -598,11 +608,14 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
                                     let child_trans =
                                         Hierarchic3DIntegrator::<I>::get_transformation(&child_vec);
                                     let child_transformation = transformation.dot(&child_trans);
-                                    Simplex3DResultType::add_assign(&mut child_result, &self.integrate_octahedron(
-                                        &child_transformation,
-                                        func,
-                                        simplex,
-                                    ));
+                                    Simplex3DResultType::add_assign(
+                                        &mut child_result,
+                                        &self.integrate_octahedron(
+                                            &child_transformation,
+                                            func,
+                                            simplex,
+                                        ),
+                                    );
                                 }
                             }
                         }
