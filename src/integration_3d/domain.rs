@@ -1,3 +1,5 @@
+use std::ops::{MulAssign, AddAssign};
+
 use ndarray::Axis;
 use ndarray::{array, concatenate, stack, Array1, Array2};
 use num_dual::DualNum;
@@ -22,7 +24,7 @@ fn det3x3(mat3x3: &Array2<f64>) -> f64 {
     return sum;
 }
 
-fn det4x4(mat4x4: &Array2<f64>) -> f64 {
+pub fn det4x4(mat4x4: &Array2<f64>) -> f64 {
     let mut sum = 0.0;
     for i in 0..4 {
         let val = mat4x4[[i, 0]];
@@ -88,14 +90,97 @@ impl Simplex3D {
     }
 }
 
+pub trait Simplex3DResultType: MulAssign<f64> + AddAssign<f64> {
+    fn add_assign(&mut self, other: &Self);
+
+    fn distance(&self, other: &Self) -> f64;
+
+    fn additive_neutral_element() -> Self;
+}
+
+#[derive(Debug)]
+pub struct ResultTypeWrapper<T>(T);
+
+impl<T> ResultTypeWrapper<T> {
+    pub fn new(t: T) -> Self {
+        Self(t)
+    }
+
+    pub fn get(self) -> T {
+        self.0
+    }
+
+    pub fn get_borrow(&self) -> &T {
+        &self.0
+    }
+}
+
+impl MulAssign<f64> for ResultTypeWrapper<f64> {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0 *= rhs
+    }
+}
+
+impl AddAssign<f64> for ResultTypeWrapper<f64> {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs
+    }
+}
+
+impl Simplex3DResultType for ResultTypeWrapper<f64> {
+    fn add_assign(&mut self, other: &Self) {
+        self.0 += other.0
+    }
+
+    fn distance(&self, other: &Self) -> f64 {
+        (self.0 - other.0).abs()
+    }
+
+    fn additive_neutral_element() -> Self {
+        Self(0.)
+    }
+}
+
+impl MulAssign<f64> for ResultTypeWrapper<Array2<f64>> {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0 *= rhs
+    }
+}
+
+impl AddAssign<f64> for ResultTypeWrapper<Array2<f64>> {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs
+    }
+}
+
+impl Simplex3DResultType for ResultTypeWrapper<Array2<f64>> {
+    fn add_assign(&mut self, other: &Self) {
+        self.0 = &self.0 + &other.0
+    }
+
+    fn distance(&self, other: &Self) -> f64 {
+        let diff = &self.0 - &other.0;
+        diff.iter().map(|f| f.powi(2)).sum::<f64>().sqrt()
+    }
+
+    fn additive_neutral_element() -> Self {
+        Self(Array2::zeros([10, 10]))
+    }
+}
+
 /// A general trait implemented by types which supply a function to integrate over.
 /// Inputs must be expressed in barycentric coordinates.
 pub trait Simplex3DFunction {
+    type Return: Simplex3DResultType;
     /// The function over the Simplex.
-    fn function(&self, xi1: f64, xi2: f64, xi3: f64, xi4: f64, simplex: &Simplex3D) -> f64;
+    fn function(&self, xi1: f64, xi2: f64, xi3: f64, xi4: f64, simplex: &Simplex3D) -> Self::Return;
 
-    fn function_vec(&self, xi: &Array1<f64>, simplex: &Simplex3D) -> f64 {
+    fn function_vec(&self, xi: &Array1<f64>, simplex: &Simplex3D) -> Self::Return {
         self.function(xi[0], xi[1], xi[2], xi[3], simplex)
+    }
+
+    fn additive_neutral_element(&self) -> Self::Return {
+        Self::Return::additive_neutral_element()
     }
 }
 
@@ -108,7 +193,7 @@ pub trait Simplex3DIntegrator<D> {
         func: &Box<T>,
         simplex: &Simplex3D,
         cache_data: &mut D,
-    ) -> f64 {
+    ) -> T::Return {
         self.integrate_over_domain(
             &array![
                 [1.0, 0.0, 0.0, 0.0],
@@ -129,7 +214,7 @@ pub trait Simplex3DIntegrator<D> {
         func: &Box<T>,
         simplex: &Simplex3D,
         cache_data: &mut D,
-    ) -> f64;
+    ) -> T::Return;
 }
 
 pub struct IntegratorDummy;

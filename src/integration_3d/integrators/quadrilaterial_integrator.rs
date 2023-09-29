@@ -1,6 +1,6 @@
 use ndarray::{array, Array1, Array2};
 
-use crate::integration_3d::domain::{Simplex3D, Simplex3DFunction, Simplex3DIntegrator};
+use crate::integration_3d::{domain::{Simplex3D, Simplex3DFunction, Simplex3DIntegrator}, Simplex3DResultType};
 
 fn det2x2(mat2x2: &Array2<f64>) -> f64 {
     mat2x2[[0, 0]] * mat2x2[[1, 1]] - mat2x2[[0, 1]] * mat2x2[[1, 0]]
@@ -352,8 +352,8 @@ impl Quadrilateral3DIntegrator {
         barycentric_domain: &Array2<f64>,
         func: &Box<T>,
         simplex: &Simplex3D,
-    ) -> f64 {
-        let mut sum = 0.0;
+    ) -> T::Return {
+        let mut sum = func.additive_neutral_element();
         let gauss_points = self.get_gauss_points();
         let gauss_weights = self.get_gauss_weights();
         for i in 0..self.gauss_degree {
@@ -377,15 +377,13 @@ impl Quadrilateral3DIntegrator {
                     let real_jacobi = simplex.get_points().dot(&barycentric_jacobi);
                     let determinant = det3x3(&real_jacobi);
 
-                    let func_result = func.function_vec(&barycentric_coords, simplex);
+                    let mut func_result = func.function_vec(&barycentric_coords, simplex);
 
-                    let integral_result = determinant
-                        * func_result
-                        * gauss_weights[i]
+                    func_result *= determinant * gauss_weights[i]
                         * gauss_weights[j]
                         * gauss_weights[k];
 
-                    sum += integral_result;
+                    sum.add_assign(&func_result);
                 }
             }
         }
@@ -401,7 +399,7 @@ impl<IntegratorDummy> Simplex3DIntegrator<IntegratorDummy> for Quadrilateral3DIn
         func: &Box<T>,
         simplex: &Simplex3D,
         _cached_data: &mut IntegratorDummy,
-    ) -> f64 {
+    ) -> T::Return {
         if !(transformation.shape()[0] == 4 && transformation.shape()[1] == 4) {
             panic!(
                 "Die Transformationsmatrix ist nicht der Dimension 4 x 4, sondern {} x {}",
@@ -409,13 +407,13 @@ impl<IntegratorDummy> Simplex3DIntegrator<IntegratorDummy> for Quadrilateral3DIn
                 transformation.shape()[1]
             )
         }
-        let mut sum = 0.;
+        let mut sum = func.additive_neutral_element();
         for i in 1..=4 {
             // M(4,8)
             let d1 = Quadrilateral3DIntegrator::get_quadrilateral(i);
             // M(4,8) = M(4,4) x M(4,8)
             let d1 = transformation.dot(&d1);
-            sum += self.integrate_quadrilateral(&d1, func, simplex);
+            sum.add_assign(&self.integrate_quadrilateral(&d1, func, simplex));
         }
         return sum;
     }

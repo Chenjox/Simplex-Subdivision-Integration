@@ -430,6 +430,7 @@ pub mod problem_definition {
         use ndarray::array;
         use ndarray::Array1;
 
+        use crate::integration_3d::ResultTypeWrapper;
         use crate::integration_3d::Simplex3DFunction;
 
         use super::phase_field::{phase_field_func, varsigma_func_diff1, varsigma_func_diff2};
@@ -477,6 +478,7 @@ pub mod problem_definition {
         }
 
         impl Simplex3DFunction for PhaseFieldFuncDiff23D {
+            type Return = ResultTypeWrapper<f64>;
             fn function(
                 &self,
                 xi1: f64,
@@ -484,16 +486,16 @@ pub mod problem_definition {
                 xi3: f64,
                 xi4: f64,
                 simplex: &crate::integration_3d::Simplex3D,
-            ) -> f64 {
+            ) -> Self::Return {
                 let barycentric = array![xi1, xi2, xi3, xi4];
-                return phase_field_func_diff2(
+                return ResultTypeWrapper::new(phase_field_func_diff2(
                     &self.nodal_values,
                     self.kreg,
                     self.l,
                     self.row_index,
                     self.column_index,
                     &barycentric,
-                );
+                ));
             }
         }
     }

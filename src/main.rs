@@ -143,7 +143,7 @@ fn integration_testing() {
     for el in &hist {
         //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
         let sim_points = sim.get_points();
-        let el = &el.0;
+        let el = el;
         let point = sim_points.dot(el);
         write!(file, "{} {} {}\n", point[0], point[1], point[2]).unwrap();
         //println!(
@@ -152,7 +152,7 @@ fn integration_testing() {
         //);
     }
 
-    println!("{}", result);
+    println!("{}", result.get());
 }
 
 fn integration_3d_testing() {
@@ -178,7 +178,7 @@ fn integration_3d_testing() {
 
     let hist = func.get_history();
 
-    println!("{},{}", hist.len(), result);
+    println!("{},{}", hist.len(), result.get_borrow());
     //let mut file = File::create(&"out.csv").unwrap();
     //for el in &hist {
     //    //println!("{},{}",el, el.fold(0., |f1, f2| f1 + f2));
@@ -305,7 +305,7 @@ fn matrix_integration_test_3d() {
             j,
         ));
         let now = Instant::now();
-        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache);
+        res[[i, j]] = hierarchic_inte.integrate_simplex(&func, &sim, &mut cache).get();
         let elapsed_time = now.elapsed();
         if count < 10 {
             // Wenn Diagonale und erste nebendiagonale durch sind
@@ -510,7 +510,15 @@ fn main() {
     let dim = 2;
     for i in 0..10 {
         //println!("{}! = {}",i,factorial(i));
-        println!("3-Simplex in {}th Subdivision: {}", i, num_simplizes(dim, i, 2));
-        println!("1-Simplex in {}th Subdivision: {}", i, num_simplizes(dim, i, 0))
+        println!(
+            "3-Simplex in {}th Subdivision: {}",
+            i,
+            num_simplizes(dim, i, 2)
+        );
+        println!(
+            "1-Simplex in {}th Subdivision: {}",
+            i,
+            num_simplizes(dim, i, 0)
+        )
     }
 }

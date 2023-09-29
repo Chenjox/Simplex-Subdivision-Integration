@@ -1,10 +1,10 @@
 use ndarray::{array, Array2};
 
 use crate::integration_3d::domain::{
-    det3x3, IntegratorDummy, Simplex3D, Simplex3DFunction, Simplex3DIntegrator, Simplex3DResultType,
+    det4x4, IntegratorDummy, Simplex3D, Simplex3DFunction, Simplex3DIntegrator, Simplex3DResultType,
 };
 
-pub struct EdgeSubdivisionIntegrator<I: Simplex2DIntegrator<IntegratorDummy>> {
+pub struct EdgeSubdivisionIntegrator<I: Simplex3DIntegrator<IntegratorDummy>> {
     base_integrator: I,
     order: usize,
 }
@@ -21,14 +21,7 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> EdgeSubdivisionIntegrator<I> {
 impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDummy>
     for EdgeSubdivisionIntegrator<I>
 {
-    fn dupe(&self) -> Self {
-        return Self {
-            base_integrator: self.base_integrator.dupe(),
-            order: self.order,
-        };
-    }
-
-    fn integrate_over_domain<T: Simplex2DFunction>(
+    fn integrate_over_domain<T: Simplex3DFunction>(
         &self,
         transformation: &Array2<f64>,
         func: &Box<T>,
@@ -43,33 +36,17 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDumm
         let order = order - 1;
         for i in 0..=order {
             for j in 0..=(order - i) {
-                for k in 0..=(order -i -j) {
+                for k in 0..=(order - i - j) {
+                    // Die vierte Koordinate
                     let m = order - i - j - k;
                     println!("{},{},{},{}", j, i, k, m);
-                    let (i0, i1, i2, i3) = (j, i, k, m);
-                // 0,-1,1
-                let i0 = i0 + 1;
-                    if i1 != 0 {
-                    let ch_transformation = array![
-                        [
-                            i0 as f64 / order_fl,
-                            i1 as f64 / order_fl,
-                            i2 as f64 / order_fl
-                        ],
-                        [
-                            (i0 - 1) as f64 / order_fl,
-                            i1 as f64 / order_fl,
-                            (i2 + 1) as f64 / order_fl
-                        ],
-                        [
-                            i0 as f64 / order_fl,
-                            (i1 - 1) as f64 / order_fl,
-                            (i2 + 1) as f64 / order_fl
-                        ],
-                    ];
-                    let ch_transformation = ch_transformation.reversed_axes();
-                    let transformation = transformation.dot(&ch_transformation);
+                    // Umbenennung
+                    let (i0, i1, i2, i3) = (j as f64, i as f64, k as f64, m as f64);
+                    // 0,-1,1
+                    
 
+                    //let ch_transformation = ch_transformation.reversed_axes();
+                    //let transformation = transformation.dot(&ch_transformation);
                     result.add_assign(&{
                         let r = self.base_integrator.integrate_over_domain(
                             &transformation,
@@ -81,48 +58,12 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<IntegratorDumm
                         r
                     })
                     //println!("{},{},{}", i0,i1,i2);
-                    //println!("{},{},{}", i0,i1-1,i2+1);
-                    ////
+                    //println!("{},{},{}", i0-1,i1+1,i2+0);
+
                     //println!("{},{},{}", i0-1,i1,i2+1);
                 }
-                // -1,1,0
-                let ch_transformation = array![
-                    [
-                        i0 as f64 / order_fl,
-                        i1 as f64 / order_fl,
-                        i2 as f64 / order_fl
-                    ],
-                    [
-                        (i0 - 1) as f64 / order_fl,
-                        (i1 + 1) as f64 / order_fl,
-                        (i2) as f64 / order_fl
-                    ],
-                    [
-                        (i0 - 1) as f64 / order_fl,
-                        i1 as f64 / order_fl,
-                        (i2 + 1) as f64 / order_fl
-                    ],
-                ];
-                let ch_transformation = ch_transformation.reversed_axes();
-                let transformation = transformation.dot(&ch_transformation);
-                result.add_assign(&{
-                    let r = self.base_integrator.integrate_over_domain(
-                        &transformation,
-                        func,
-                        simplex,
-                        &mut IntegratorDummy,
-                    );
-                    //println!("0: {}", det3x3(&transformation));
-                    r
-                })
-                //println!("{},{},{}", i0,i1,i2);
-                //println!("{},{},{}", i0-1,i1+1,i2+0);
-
-                //println!("{},{},{}", i0-1,i1,i2+1);
-            }
             }
         }
         return result;
     }
 }
-
