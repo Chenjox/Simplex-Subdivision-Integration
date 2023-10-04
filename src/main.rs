@@ -472,12 +472,13 @@ fn main() {
     let nodal_values = array![1.0, 1.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
     let basic_integrator = Quadrilateral3DIntegrator::new(1);
-    let edge_inte = Edge3D::new(basic_integrator, 3);
+    let edge_inte = Edge3D::new(basic_integrator, 10);
 
     let func = Box::new(Constant3DFunction {});
 
     edge_inte.integrate_simplex(&func, &sim, &mut IntegratorDummy::get());
 
+    println!("{}",sim.get_volume())
     /*
     let sim = Simplex2D::new_from_points(
         &array![(8.0f64 / 9.0).sqrt(), 0., -1.0 / 3.0],

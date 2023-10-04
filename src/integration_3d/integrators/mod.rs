@@ -7,3 +7,4 @@ pub mod visual_integrator;
 //pub use self::hierarchic_integrator::*;
 pub use self::hierarchic_integrator::*;
 pub use self::quadrilaterial_integrator::*;
+pub use self::edge_subdivision_integrator::*;

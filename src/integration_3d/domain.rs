@@ -221,3 +221,93 @@ pub trait Simplex3DIntegrator<D> {
 //fn usage(sim: &Simplex2D, func: &Box<dyn Simplex2DFunction>, inte: &Box<dyn Simplex2DIntegrator>) {
 //    let val = inte.integrate(func, sim);
 //}
+#[macro_export]
+macro_rules! integrator_tests_3d {
+    ($($name:ident: $type:ty: $init:expr, $typecache:ty: $initcache:expr,)*) => {
+    $(
+        mod $name {
+            use super::*;
+            use crate::integration_3d::functions::*;
+            use crate::integration_3d::domain::*;
+            use ndarray::array;
+
+            fn get_integrator_cache() -> $typecache {
+                $initcache
+            }
+
+            fn get_instance() -> $type {
+                $init
+            }
+
+            #[test]
+            fn constant_function_correctness_abs() {
+                let inte = get_instance();
+                let mut cache = get_integrator_cache();
+
+                let func = Box::new(Constant3DFunction {});
+                // Gegen den Uhrzeigersinn
+                let sim = Simplex3D::new_from_points(
+                    &array![ (8./9.0_f64).sqrt() , 0., - 1./3.],
+                    &array![-(2./9.0_f64).sqrt(), (2./3.0_f64).sqrt(),-1./3.],
+                    &array![-(2./9.0_f64).sqrt(),-(2./3.0_f64).sqrt(),-1./3.],
+                    &array![0.,0.,1.],
+                );
+
+                
+
+                let result = inte.integrate_simplex(&func, &sim, &mut cache);
+
+                let true_result = ResultTypeWrapper::new((2.0_f64).sqrt() * ((8./3.0_f64).sqrt()).powi(3) / 12.);
+                let approx_eq = true_result.distance(&result);
+
+                assert!(approx_eq <= 1e-2_f64, "Expected: {:?}, Actual: {:?}, Diff: {}",true_result, result, approx_eq);
+            }
+
+            #[test]
+            fn constant_function_correctness() {
+                let inte = get_instance();
+                let mut cache = get_integrator_cache();
+
+                let func = Box::new(Constant3DFunction {});
+                // Gegen den Uhrzeigersinn
+                let sim = Simplex3D::new_from_points(
+                    &array![ (8./9.0_f64).sqrt() , 0., - 1./3.],
+                    &array![-(2./9.0_f64).sqrt(), (2./3.0_f64).sqrt(),-1./3.],
+                    &array![-(2./9.0_f64).sqrt(),-(2./3.0_f64).sqrt(),-1./3.],
+                    &array![0.,0.,1.],
+                );
+
+                let result = inte.integrate_simplex(&func, &sim, &mut cache);
+
+                let true_result = ResultTypeWrapper::new((2.0_f64).sqrt() * ((8./3.0_f64).sqrt()).powi(3) / 12.);
+                let approx_eq = true_result.distance(&result);
+
+                assert!(approx_eq <= 1e-2_f64, "Expected: {:?}, Actual: {:?}, Diff: {}",true_result, result, approx_eq);
+            }
+
+            #[test]
+            fn preserving_orientation() {
+                let inte = get_instance();
+                let mut cache = get_integrator_cache();
+
+                let func = Box::new(Constant3DFunction {});
+                // Gegen den Uhrzeigersinn
+                let sim = Simplex3D::new_from_points(
+                    &array![ (8./9.0_f64).sqrt() , 0., - 1./3.],
+                    &array![-(2./9.0_f64).sqrt(), (2./3.0_f64).sqrt(),-1./3.],
+                    &array![-(2./9.0_f64).sqrt(),-(2./3.0_f64).sqrt(),-1./3.],
+                    &array![0.,0.,1.],
+                );
+
+
+                let result = inte.integrate_simplex(&func, &sim, &mut cache);
+
+                let true_result = ResultTypeWrapper::new((2.0_f64).sqrt() * ((8./3.0_f64).sqrt()).powi(3) / 12.);
+                let approx_eq = result.get_borrow().signum() + true_result.get_borrow().signum();
+
+                assert!(approx_eq == 2.0, "Expected: {:?}, Actual: {:?}",result,true_result);
+            }
+        }
+    )*
+    }
+}

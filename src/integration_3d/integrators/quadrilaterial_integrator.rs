@@ -420,3 +420,16 @@ impl<IntegratorDummy> Simplex3DIntegrator<IntegratorDummy> for Quadrilateral3DIn
         return sum;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::common::IntegratorDummy;
+    use crate::integration_3d::integrators::Quadrilateral3DIntegrator;
+    use crate::integrator_tests_3d;
+
+    integrator_tests_3d! {
+        // gauss_order1: Quadrilateral3DIntegrator: Quadrilateral3DIntegrator::new(1), IntegratorDummy: IntegratorDummy::get(), // Unterintegriert?
+        gauss_order2: Quadrilateral3DIntegrator: Quadrilateral3DIntegrator::new(2), IntegratorDummy: IntegratorDummy::get(),
+        gauss_order3: Quadrilateral3DIntegrator: Quadrilateral3DIntegrator::new(3), IntegratorDummy: IntegratorDummy::get(),
+    }
+}

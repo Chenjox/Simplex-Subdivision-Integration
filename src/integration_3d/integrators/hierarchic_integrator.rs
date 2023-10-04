@@ -685,3 +685,17 @@ impl<I: Simplex3DIntegrator<IntegratorDummy>> Simplex3DIntegrator<Hierarchic3DIn
         return result;
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use crate::common::IntegratorDummy;
+    use crate::integration_3d::integrators::{
+        Hierarchic3DIntegrator, Hierarchic3DIntegratorData, Quadrilateral3DIntegrator,
+    };
+    use crate::integrator_tests_3d;
+
+    integrator_tests_3d! {
+        quadrilaterial1: Hierarchic3DIntegrator<Quadrilateral3DIntegrator>: Hierarchic3DIntegrator::new(Quadrilateral3DIntegrator::new(2),false,1e-2), Hierarchic3DIntegratorData: Hierarchic3DIntegratorData::new_cache(),
+    }
+}
