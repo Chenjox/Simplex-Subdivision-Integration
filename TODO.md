@@ -11,7 +11,7 @@
 # Verana Todos
 
 - [x] Umdrehen von Integration und Hierarchic (Laufzeit)
-- [ ] 3D Edgewise subdivion
+- [x] 3D Edgewise subdivion
 - [ ] Hybride Strategie
 - [ ] Tipps zum Einzubinden.
 
